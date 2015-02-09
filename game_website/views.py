@@ -4,4 +4,11 @@ from django.http import HttpResponse
 
 class Home(View):
     def get(self, *args):
-        return HttpResponse('<html><body>Test</body></html>')
+        html = """
+        <html>
+            <body>
+                <h1>Home</h1>
+                <a href="/admin">Admin page</a>
+            </body>
+        </html>"""
+        return HttpResponse(html)
