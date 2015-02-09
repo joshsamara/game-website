@@ -26,6 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+DJANGO_ENV = os.environ.setdefault('DJANGO_ENV', 'local').lower()
 
 # Application definition
 
@@ -57,11 +58,11 @@ WSGI_APPLICATION = 'game_website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 # TODO: Set up individiual settings files
-if 'TRAVIS' in os.environ:
+if DJANGO_ENV == 'travis':
     DATABASES = {
         'default': {
             'ENGINE':   'django.db.backends.postgresql_psycopg2',
-            'NAME':     'travisci',
+            'NAME':     'travisdb',
             'USER':     'postgres',
             'PASSWORD': '',
             'HOST':     'localhost',
