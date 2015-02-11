@@ -6,6 +6,10 @@
 * PostgreSQL 9.3+
 
 
+### Clone the Repository
+
+        git clone git@github.com:joshsamara/game-website.git
+
 ### Set up Postgres
 
 1. Download PostgreSQL 9.3 (or above) and get it running if you haven't already.
