@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from game_website.views import Home
 
+# Use this file to import all other url
 urlpatterns = [
     # Examples:
     # url(r'^blog/', include('blog.urls')),
