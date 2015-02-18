@@ -9,6 +9,7 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
+            #User needs to be Logged in after creation
             return HttpResponseRedirect("/")
     else:
         form = UserCreationForm()

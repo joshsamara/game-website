@@ -55,6 +55,8 @@ ROOT_URLCONF = 'game_website.urls'
 
 WSGI_APPLICATION = 'game_website.wsgi.application'
 
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -107,4 +109,4 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'core/templates'),
 )
 
-LOGIN_URL = '/core/register'
+LOGIN_URL = '/core/login'

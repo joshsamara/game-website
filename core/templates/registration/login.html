@@ -2,7 +2,7 @@
 <h1>Log In</h1>
 
 {% block content %}
-<form action="{% url 'django.contrib.auth.views.login' %}" method="post">
+<form  method="post" action = "{% url 'core:login' %} ">
       {% csrf_token %}
 
     <table>
