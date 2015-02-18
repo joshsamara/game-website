@@ -8,7 +8,7 @@
 
 ### Clone the Repository
 
-        git clone git@github.com:joshsamara/game-website.git
+    $ git clone git@github.com:joshsamara/game-website.git
 
 ### Set up Postgres
 
@@ -32,32 +32,32 @@
 ### Create a [Virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
 First install **virtualenv** with pip
 
-        $ pip install virtualenv
+    $ pip install virtualenv
 
 It's recommended to also install **virualenvwrapper**
 
-        $ pip install virtualenvwrapper
-        $ export WORKON_HOME=~/Envs
-        $ source /usr/local/bin/virtualenvwrapper.sh
+    $ pip install virtualenvwrapper
+    $ export WORKON_HOME=~/Envs
+    $ source /usr/local/bin/virtualenvwrapper.sh
 
 Then create your **virtualenv**
 
-        $ cd this_project_folder
-        $ mkvirtualenv game-site
+    $ cd this_project_folder
+    $ mkvirtualenv game-site
 
 Now activate your **virutalenv**
 
 If you installed **virtualenvwrapper**:
 
-        $ workon game-site
+    $ workon game-site
 
 If you didn't:
 
-        $ source game-site/bin/activate
+    $ source game-site/bin/activate
 
 To deactivate the **virtualenv** use
 
-        $ deactivate
+    $ deactivate
 
 ### Install python requirements
 With your **virtualenv** activated, run
