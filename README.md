@@ -23,7 +23,7 @@
 2. Make a Postgres database and user
 
         $ psql
-        # CREATE USER gameadmin SUPERUSER WITH PASSWORD 'password';
+        # CREATE USER gameadmin WITH PASSWORD 'password';
         # CREATE DATABASE gamesite;
         # GRANT ALL PRIVILEGES ON DATABASE "gamesite" to gameadmin;
         # ALTER ROLE gameadmin CREATEDB;
