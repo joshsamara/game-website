@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1> Welcome! </h1>
+
+<a href="/admin">Admin page</a>
+
+<a href="{% url 'django.contrib.auth.views.logout' %}">logout</a>
+{% endblock %}
+
