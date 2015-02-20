@@ -3,7 +3,7 @@
 {% block content %}
 <h1> Welcome! </h1>
 
-<a href="/admin">Admin page</a>
+<a href="{% url 'admin:index' %}">Admin page</a>
 
 <a href="{% url 'core:logout' %}">logout</a>
 {% endblock %}
