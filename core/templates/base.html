@@ -3,26 +3,39 @@
 <html>
 <head>
 
+  {# Change the title block based on what page you're on #}
   <title>{% block title %}Game Website{% endblock %}</title>
 
+  {# Load these on every page #}
+  <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  {# Put anything else you want to load in the head block #}
   {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
   {% endblock %}
 
 </head>
 <body>
-  {% block nav %}
-    <a href="/"> Home </a>
-    <br/> <br/> <br/>
-  {% endblock %}
+  {# Add anything to the navbar n this file #}
+  {% include "_base_nav.html" %}
 
-  {% block content %}
-  {% endblock %}
+  <div class="container">
+    {# Add page content here #}
+    {% block content %}
+    {% endblock %}
+  </div>
 
+  {# If you want to change the footer do it here #}
   {% block foot %}
-    <br/> <br/> <br/>
-    <p>Footer</p>
+  <footer class="footer">
+    <div class="container">
+      <p class="text-muted">Footer</p>
+    </div>
+  </footer>
+  {% endblock %}
+
+  {# Load any page specific js here #}
+  {% block bottom %}
   {% endblock %}
 <body>
-
-</head>
