@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1> Welcome! </h1>
+<div class="page-header">
+  <h1> Home </h1>
+</div>
 
-<a href="{% url 'admin:index' %}">Admin page</a>
-
-<a href="{% url 'core:logout' %}">logout</a>
+<div class="lead">
+  <ul>
+    <li><a href="{% url 'admin:index' %}">Admin page</a></li>
+    <li><a href="{% url 'core:logout' %}">Logout</a></li>
+  </ul>
+</div>
 {% endblock %}
 
