@@ -1,11 +1,11 @@
-from django.conf.urls import include, url
+from django.conf.urls import include, url, patterns
 from django.contrib import admin
-from game_website.views import Home
 
-urlpatterns = [
+urlpatterns = patterns(
+    '',
     # Examples:
     # url(r'^blog/', include('blog.urls')),
-
-    url(r'^$', Home.as_view(), name='home'),
-    url(r'^admin/', include(admin.site.urls)),
-]
+    # We'll use core as our default app, so we won't have a url prefix
+    url(r'^', include('core.urls.base', namespace="core")),
+    url(r'^admin/', include(admin.site.urls), name="admin"),
+)

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+PROJECT_DIR = os.path.join(BASE_DIR, 'game_website')
 
 
 # Quick-start development settings - unsuitable for production
@@ -54,6 +55,8 @@ ROOT_URLCONF = 'game_website.urls'
 
 WSGI_APPLICATION = 'game_website.wsgi.application'
 
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -61,23 +64,23 @@ WSGI_APPLICATION = 'game_website.wsgi.application'
 if DJANGO_ENV == 'travis':
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.postgresql_psycopg2',
-            'NAME':     'travisdb',
-            'USER':     'postgres',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'travisdb',
+            'USER': 'postgres',
             'PASSWORD': '',
-            'HOST':     'localhost',
-            'PORT':     '',
+            'HOST': 'localhost',
+            'PORT': '',
         }
     }
 else:
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.postgresql_psycopg2',
-            'NAME':     'gamesite',
-            'USER':     'gameadmin',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'gamesite',
+            'USER': 'gameadmin',
             'PASSWORD': 'password',
-            'HOST':     'localhost',
-            'PORT':     '',
+            'HOST': 'localhost',
+            'PORT': '',
         }
     }
 
@@ -100,3 +103,15 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "core", "static"),
+)
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+    os.path.join(PROJECT_DIR, 'templates'),
+    os.path.join(BASE_DIR, 'core', 'templates'),
+)
+
+LOGIN_URL = '/login/'
