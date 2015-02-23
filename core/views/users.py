@@ -10,7 +10,7 @@ def register(request):
         if form.is_valid():
             new_user = form.save()
             #User needs to be Logged in after creation
-            return HttpResponseRedirect("/core/")
+            return HttpResponseRedirect("/")
     else:
         form = UserCreationForm()
     return render(request, "registration/register.html", {
