@@ -3,7 +3,7 @@
 <html>
 <head>
 
-  <title>{% block title %}Game Website{% endblock %}</title>
+  <title>{% block title %}Specific Game{% endblock %}</title>
 
   {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
@@ -17,6 +17,7 @@
   {% endblock %}
 
   {% block content %}
+      Currently viewing game: {{ game_id }}
   {% endblock %}
 
   {% block foot %}
