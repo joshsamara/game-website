@@ -7,9 +7,9 @@ urlpatterns = patterns(
     # url(r'^blog/', include('blog.urls')),
     '',
     url(r'^$', Home.as_view(), name='home'),
-    url(r'^register/$', register),
     url(r'^games/$', games.main),
     url(r'^games/(?P<game_id>\d+)/$', games.specific),
+    url(r'^register/$', register, name='register'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='logout'),
 )
