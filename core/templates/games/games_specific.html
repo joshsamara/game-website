@@ -1,27 +1,21 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html>
-<head>
+{% extends 'base.html' %}
 
-  <title>{% block title %}Specific Game{% endblock %}</title>
+{% block title %}
+    Specific Game
+{% endblock %}
 
-  {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
-  {% endblock %}
-
-</head>
-<body>
-  {% block nav %}
-    <a href="/"> Home </a>
-    <br/> <br/> <br/>
-  {% endblock %}
-
-  {% block content %}
-      Currently viewing game: {{ game_id }}
-  {% endblock %}
-
-  {% block foot %}
-    <br/> <br/> <br/>
-    <p>Footer</p>
-  {% endblock %}
-</body>
+{% block content %}
+    <div class="center-block">
+        <h1>{{ game.name }}</h1>
+        <ul>
+            <li>{{ game.link }}</li>
+            <li><img src="{{ game.image.url }}" class="img-rounded"/></li>
+            <li>{{ game.description }}</li>
+            <li>{{ game.owner }}</li>
+            <li>{{ game.date_published }}</li>
+            <li>{{ game.author_name }}</li>
+            <li>{{ game.event_name }}</li>
+            <li>{{ game.genre }}</li>
+        </ul>
+    </div>
+{% endblock %}

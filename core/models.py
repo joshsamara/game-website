@@ -3,11 +3,12 @@ from django.contrib.auth.models import User
 
 
 class Game(models.Model):
-    game_link = models.CharField(max_length=200)
-    game_image = models.ImageField(null=True)
-    game_description = models.CharField(max_length=5000)
-    game_owner = models.ForeignKey(User)
-    game_date_published = models.DateField()
-    game_author_name = models.CharField(max_length=75)
-    game_event_name = models.CharField(max_length=75)
-    game_genre = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    link = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='game_images', null=True)
+    description = models.CharField(max_length=5000)
+    owner = models.ForeignKey(User)
+    date_published = models.DateField()
+    author_name = models.CharField(max_length=75)
+    event_name = models.CharField(max_length=75)
+    genre = models.CharField(max_length=50)
