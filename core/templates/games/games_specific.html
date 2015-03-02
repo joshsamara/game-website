@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}
+{% block title %}/
     Specific Game
 {% endblock %}
 
@@ -18,7 +18,7 @@
                 <br/>
                 <ul>
                     {% for member in game.group.members.all %}
-                        <li>{{ member.username }}</li>
+                        <li><a href="/users/{{ member.id }}">{{ member.username }}</a></li>
                     {% endfor %}
                 </ul>
 
@@ -31,7 +31,7 @@
             <div class="row">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Description
+                        <h4>Game Description</h4>
                     </div>
                     <div class="panel-body">
                         {{ game.description }}
@@ -54,6 +54,7 @@
             </div>
 
             <div class="row">
+                <br/>
                 Brought to you by {{ game.event_name }}
             </div>
         </div>
