@@ -5,17 +5,57 @@
 {% endblock %}
 
 {% block content %}
-    <div class="center-block">
-        <h1>{{ game.name }}</h1>
-        <ul>
-            <li>{{ game.link }}</li>
-            <li><img src="{{ game.image.url }}" class="img-rounded"/></li>
-            <li>{{ game.description }}</li>
-            <li>{{ game.owner }}</li>
-            <li>{{ game.date_published }}</li>
-            <li>{{ game.author_name }}</li>
-            <li>{{ game.event_name }}</li>
-            <li>{{ game.genre }}</li>
-        </ul>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="row">
+                <h1>{{ game.name }}</h1>
+            </div>
+            <div class="row">
+                <img src="{{ game.image.url }}" class="img-rounded">
+            </div>
+            <div class="row">
+                <strong>Game Authors</strong>
+                <br/>
+                <ul>
+                    {% for member in game.group.members.all %}
+                        <li>{{ member.username }}</li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+            <div class="row">
+                Published {{ game.date_published }}
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Description
+                    </div>
+                    <div class="panel-body">
+                        {{ game.description }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <strong>
+                    Link:
+                </strong>
+                <a href="{{ game.link }}">
+                    {{ game.link }}
+                </a>
+            </div>
+
+
+            <div class="row">
+                <strong>Genre: </strong>{{ game.genre }}
+            </div>
+
+            <div class="row">
+                Brought to you by {{ game.event_name }}
+            </div>
+        </div>
     </div>
 {% endblock %}

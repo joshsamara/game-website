@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class Group(models.Model):
+    members = models.ManyToManyField(User)
+    name = models.CharField(max_length=50)
+
+
 class Game(models.Model):
     name = models.CharField(max_length=50)
     link = models.CharField(max_length=200)
@@ -9,6 +14,6 @@ class Game(models.Model):
     description = models.CharField(max_length=5000)
     owner = models.ForeignKey(User)
     date_published = models.DateField()
-    author_name = models.CharField(max_length=75)
+    group = models.ForeignKey(Group, null=True)
     event_name = models.CharField(max_length=75)
     genre = models.CharField(max_length=50)
