@@ -124,4 +124,4 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'core', 'templates'),
 )
 
-LOGIN_URL = '/login/'
+LOGIN_URL = 'login/'
