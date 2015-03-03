@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Games List
+{% endblock %}
+
+{% block content %}
+    <ul>
+        {% for game in games_list %}
+            <li><a href="{% url 'core:games_specific' game.id %}">Game {{ game.id }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

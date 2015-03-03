@@ -3,8 +3,8 @@
   <div class="container container-fluid">
     <a class="navbar-brand" href="/"><i class="fa fa-gamepad"></i></a>
     <ul class="nav navbar-nav">
-      <li class="{% if navbar_active == 'home' %}active{% endif %}" h><a href="/">Home</a></li>
-      <li class="{% if navbar_active == 'game' %}active{% endif %}" h><a href={% url 'core:games_specific' 2%}>Games</a></li>
+      <li class="{% if navbar_active == 'home' %}active{% endif %}"><a href="/">Home</a></li>
+      <li class="{% if navbar_active == 'game' %}active{% endif %}"><a href={% url 'core:games_main' %}>Games</a></li>
     </ul>
   </div>
 </nav>

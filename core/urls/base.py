@@ -1,6 +1,6 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 from django.conf.urls.static import static
-from core.views import Home, register, games
+from core.views import Home, register
 
 # Use this file to import all other url
 from game_website import settings
@@ -10,7 +10,7 @@ urlpatterns = patterns(
     # url(r'^blog/', include('blog.urls')),
     '',
     url(r'^$', Home.as_view(), name='home'),
-    url(r'^games/(?P<game_id>\d+)/$', games.specific, name='games_specific'),
+    url(r'^games/', include('core.urls.games')),
     url(r'^register/$', register, name='register'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='logout'),

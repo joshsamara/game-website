@@ -6,6 +6,9 @@ class Group(models.Model):
     members = models.ManyToManyField(User)
     name = models.CharField(max_length=50)
 
+    def __unicode__(self):
+        return self.name
+
 
 class Game(models.Model):
     name = models.CharField(max_length=50)
@@ -17,3 +20,6 @@ class Game(models.Model):
     group = models.ForeignKey(Group, null=True)
     event_name = models.CharField(max_length=75)
     genre = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.name

@@ -7,3 +7,10 @@ def specific(request, game_id):
     return render(request, 'games/games_specific.html', {
         'game': game
     })
+
+
+def main(request):
+    games_list = Game.objects.all()
+    return render(request, 'games/games_main.html', {
+        'games_list': games_list
+    })
