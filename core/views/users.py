@@ -1,18 +1,18 @@
-# from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
+from core.forms import RegisterUserForm
 from django.shortcuts import render
 
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterUserForm(request.POST)
         if form.is_valid():
-            new_user = form.save()
-            #User needs to be Logged in after creation
+            form.save()
+            # User needs to be Logged in after creation
             return HttpResponseRedirect("/")
     else:
-        form = UserCreationForm()
+        form = RegisterUserForm()
+
     return render(request, "registration/register.html", {
         'form': form,
     })
