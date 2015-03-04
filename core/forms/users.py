@@ -29,13 +29,10 @@ class RegisterUserForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = 'id-registerForm'
         self.helper.form_method = 'post'
-        # self.helper.form_action = 'register'
-
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean_email(self):
-        # Since User.username is unique, this check is redundant,
-        # but it sets a nicer error message than the ORM. See #13147.
+        # Keep emails unique
         email = self.cleaned_data['email']
         try:
             User.objects.get(email=email)
