@@ -17,6 +17,6 @@
         </div>
         <input class="btn btn-primary" type="submit" value="login"/>
         <a class="btn btn-default" href={% url 'core:register' %}>Register</a>
-        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}/{% endif %}"/>
+        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'core:home' %}{% endif %}"/>
     </form>
 {% endblock %}
