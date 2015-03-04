@@ -22,7 +22,7 @@ def main(request):
 def edit(request, game_id):
     selected_game = Game.objects.get(pk=game_id)
     if request.method == 'POST':
-        form = GameForm(request.POST, instance=selected_game)
+        form = GameForm(request.POST, request.FILES, instance=selected_game)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('core:games_specific', args=[game_id]))
