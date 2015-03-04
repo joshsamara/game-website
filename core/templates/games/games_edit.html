@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Edit Game
+{% endblock %}
+
+{% block content %}
+    <form action="" enctype="multipart/form-data" method="post">
+        <table>
+            {% csrf_token %}
+            {% load crispy_forms_tags %}
+            {% crispy form form.helper %}
+        </table>
+        <input type="submit" value="Submit"/>
+    </form>
+{% endblock %}

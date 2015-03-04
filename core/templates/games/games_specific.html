@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Specific Game
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+
+
+        {#### SIDEBAR ####}
+        <div class="col-md-2">
+
+            <div class="row">
+                <div class="center-block text-center">
+                    <h1>{{ game.name }}</h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="center-block">
+                    <img src="{{ game.image.thumbnail.url }}" class="img-responsive img-rounded">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="center-block">
+                    <strong>Game Authors</strong>
+                    <br/>
+                    <ul>
+                        {% for member in game.group.members.all %}
+                            <li><a href="/users/{{ member.id }}">{{ member.username }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="center-block">
+                    Published {{ game.date_published }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="center-block" style="padding-top: 10px">
+                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games_edit' game.id %}">Edit Game</a>
+                </div>
+            </div>
+
+        </div>
+
+
+        {#### MAIN COLUMN ####}
+        <div class="col-md-10">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Game Description</h4>
+                    </div>
+                    <div class="panel-body">
+                        {{ game.description }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <strong>
+                    Link:
+                </strong>
+                <a href="{{ game.link }}">
+                    {{ game.link }}
+                </a>
+            </div>
+
+
+            <div class="row">
+                <strong>Genre: </strong>{{ game.genre }}
+            </div>
+
+            <div class="row">
+                <br/>
+                Brought to you by {{ game.event_name }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
