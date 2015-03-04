@@ -4,3 +4,4 @@ ipython==2.4.0
 Werkzeug==0.10.1
 django-extensions==1.5.0
 Pillow==2.7.0
+django-stdimage==1.2.2

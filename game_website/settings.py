@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_extensions',
     'core',
+    'stdimage',
 )
 
 MIDDLEWARE_CLASSES = (

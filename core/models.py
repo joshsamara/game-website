@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from stdimage.models import StdImageField
 
 
 class Group(models.Model):
@@ -13,7 +14,7 @@ class Group(models.Model):
 class Game(models.Model):
     name = models.CharField(max_length=50)
     link = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='game_images', null=True)
+    image = StdImageField(upload_to='game_images', variations={'thumbnail': {'width': 200, 'height': 200}})
     description = models.CharField(max_length=5000)
     owner = models.ForeignKey(User)
     date_published = models.DateField()

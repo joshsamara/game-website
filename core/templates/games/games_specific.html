@@ -7,25 +7,38 @@
 {% block content %}
     <div class="row">
         <div class="col-md-3">
+
             <div class="row">
-                <h1>{{ game.name }}</h1>
+                <div class="center-block">
+                    <h1>{{ game.name }}</h1>
+                </div>
             </div>
+
             <div class="row">
-                <img src="{{ game.image.url }}" class="img-rounded">
+                <div class="center-block">
+                    <img src="{{ game.image.thumbnail.url }}" class="img-responsive img-rounded">
+                </div>
             </div>
+
             <div class="row">
-                <strong>Game Authors</strong>
-                <br/>
-                <ul>
-                    {% for member in game.group.members.all %}
-                        <li><a href="/users/{{ member.id }}">{{ member.username }}</a></li>
-                    {% endfor %}
-                </ul>
+                <div class="center-block">
+                    <strong>Game Authors</strong>
+                    <br/>
+                    <ul>
+                        {% for member in game.group.members.all %}
+                            <li><a href="/users/{{ member.id }}">{{ member.username }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
+
             <div class="row">
-                Published {{ game.date_published }}
+                <div class="center-block">
+                    Published {{ game.date_published }}
+                </div>
             </div>
-            <div class="row">
+
+            <div class="row center-block">
                 <a href="{% url 'core:games_edit' game.id %}">Edit Game</a>
             </div>
 
