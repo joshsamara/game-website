@@ -1,5 +1,7 @@
 from django import forms
 from core.models import User
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -21,6 +23,15 @@ class RegisterUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("email",)
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterUserForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-registerForm'
+        self.helper.form_method = 'post'
+        # self.helper.form_action = 'register'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean_email(self):
         # Since User.username is unique, this check is redundant,
