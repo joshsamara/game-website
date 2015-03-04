@@ -13,9 +13,9 @@ class Group(models.Model):
 
 class Game(models.Model):
     name = models.CharField(max_length=50)
-    link = models.CharField(max_length=200)
+    link = models.URLField()
     image = StdImageField(upload_to='game_images', variations={'thumbnail': {'width': 200, 'height': 200}})
-    description = models.CharField(max_length=5000)
+    description = models.TextField(max_length=5000)
     owner = models.ForeignKey(User)
     date_published = models.DateField()
     group = models.ForeignKey(Group, null=True)

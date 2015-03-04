@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.conf import global_settings
 import os
+from django.core.urlresolvers import reverse
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_DIR = os.path.join(BASE_DIR, 'game_website')
 
@@ -125,4 +127,4 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'core', 'templates'),
 )
 
-LOGIN_URL = '/login/'
+LOGIN_URL = 'core:login'
