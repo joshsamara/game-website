@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'core',
     'stdimage',
+    'crispy_forms'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -128,3 +129,5 @@ TEMPLATE_DIRS = (
 )
 
 LOGIN_URL = 'core:login'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

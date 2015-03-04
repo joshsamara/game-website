@@ -25,3 +25,8 @@ body {
     height: 60px;
     background-color: #f5f5f5;
 }
+
+.center-block {
+  display: table;
+  margin: 0 auto;
+}

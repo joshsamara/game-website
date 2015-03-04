@@ -6,10 +6,13 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-3">
+
+
+        {#### SIDEBAR ####}
+        <div class="col-md-2">
 
             <div class="row">
-                <div class="center-block">
+                <div class="center-block text-center">
                     <h1>{{ game.name }}</h1>
                 </div>
             </div>
@@ -39,13 +42,16 @@
             </div>
 
             <div class="row">
-                <div class="center-block">
-                    <a href="{% url 'core:games_edit' game.id %}">Edit Game</a>
+                <div class="center-block" style="padding-top: 10px">
+                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games_edit' game.id %}">Edit Game</a>
                 </div>
             </div>
 
         </div>
-        <div class="col-md-8">
+
+
+        {#### MAIN COLUMN ####}
+        <div class="col-md-10">
             <div class="row">
                 <div class="panel panel-default">
                     <div class="panel-heading">

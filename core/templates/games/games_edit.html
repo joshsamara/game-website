@@ -8,7 +8,8 @@
     <form action="" enctype="multipart/form-data" method="post">
         <table>
             {% csrf_token %}
-            {{ form.as_table }}
+            {% load crispy_forms_tags %}
+            {% crispy form form.helper %}
         </table>
         <input type="submit" value="Submit"/>
     </form>
