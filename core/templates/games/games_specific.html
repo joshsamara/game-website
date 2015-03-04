@@ -21,11 +21,14 @@
                         <li><a href="/users/{{ member.id }}">{{ member.username }}</a></li>
                     {% endfor %}
                 </ul>
-
             </div>
             <div class="row">
                 Published {{ game.date_published }}
             </div>
+            <div class="row">
+                <a href="{% url 'core:games_edit' game.id %}">Edit Game</a>
+            </div>
+
         </div>
         <div class="col-md-8">
             <div class="row">
