@@ -1,6 +1,8 @@
 from django.http import HttpResponseRedirect
 from core.forms import RegisterUserForm
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login
+from django.core.urlresolvers import reverse
 
 
 def register(request):
@@ -8,8 +10,12 @@ def register(request):
         form = RegisterUserForm(request.POST)
         if form.is_valid():
             form.save()
-            # User needs to be Logged in after creation
-            return HttpResponseRedirect("/")
+            username = request.POST['email']
+            password = request.POST['password1']
+            user = authenticate(username=username,
+                                password=password)
+            login(request, user)
+            return HttpResponseRedirect(reverse('core:home'))
     else:
         form = RegisterUserForm()
 
