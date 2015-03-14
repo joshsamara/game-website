@@ -18,10 +18,17 @@
       <li><a href={% url 'core:logout' %}>Logout</a></li>
     </ul>
   {% else %}
-    <ul class="nav navbar-nav navbar-right">
-      {# TODO: To be updated to an inline login page #}
-      <li><a href={% url 'core:login' %}>Click Here to Login</a></li>
-    </ul>
+    <form class="navbar-form navbar-right" method="post" action="{% url 'core:login' %}" role="login">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Login:</label>
+        <input name="username" type="text" class="form-control" placeholder="Email">
+        <input name="password" type="password" class="form-control" placeholder="Password">
+      <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'core:home' %}{% endif %}"/>
+      </div>
+      <button type="submit" class="btn btn-primary">Login</button>
+      <a class="btn btn-default" href={% url 'core:register' %}>Register</a>
+    </form>
   {% endif %}
   </div>
 </nav>
