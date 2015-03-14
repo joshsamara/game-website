@@ -7,11 +7,12 @@ def get_navbar_active(request):
 def default_context_processor(request):
     """ Get context we want on every page. """
     try:
-        user = request.user,
+        user = request.user
     except AttributeError:
         user = None
     context = {
         'current_user': user,
         'navbar_active': get_navbar_active(request),
+        'logged_in': user.pk is not None,
     }
     return context
