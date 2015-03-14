@@ -1,22 +1,17 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="page-header">
-        <h1>Log In</h1>
+  <div class="page-header">
+    <h1>Log In</h1>
+  </div>
+  <form method="post" action="{% url 'core:login' %}" class="form-signin">{% csrf_token %}
+    {{ form|crispy }}
+    {# Hide the next URL in the form #}
+    <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'core:home' %}{% endif %}"/>
+    <div>
+      <button type="submit" class="btn btn-primary">Login</button>
+      <a class="btn btn-default" href={% url 'core:register' %}>Register</a>
     </div>
-
-    <form class="form" method="post" action="{% url 'core:login' %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="Username">{{ form.username.label_tag }}</label>
-            {{ form.username }}
-        </div>
-        <div class="form-group">
-            <label for="Password">{{ form.password.label_tag }}</label>
-            {{ form.password }}
-        </div>
-        <input class="btn btn-primary" type="submit" value="login"/>
-        <a class="btn btn-default" href={% url 'core:register' %}>Register</a>
-        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'core:home' %}{% endif %}"/>
-    </form>
+  </form>
 {% endblock %}
