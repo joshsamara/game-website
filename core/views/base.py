@@ -11,7 +11,7 @@ class LoginRequiredMixin(object):
         return login_required(view)
 
 
-class Home(LoginRequiredMixin, View):
+class Home(View):
     """ Default index page handler. """
     def get(self, request, *args, **kwargs):
         return render(request, "index.html")
