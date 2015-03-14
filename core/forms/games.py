@@ -1,4 +1,6 @@
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, HTML, Submit, Button, Fieldset
 from django.forms import ModelForm, Textarea
 from core.models import Game
 
@@ -11,4 +13,25 @@ class GameForm(ModelForm):
             'description': Textarea(attrs={'cols': 100, 'rows': 15})
         }
 
-    helper = FormHelper()
+    def __init__(self, *args, **kwargs):
+        super(GameForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                'Currently Editing Game',
+                'name',
+                'link',
+                HTML("""{% if form.image.value %}<img class="img-responsive" src="{{ MEDIA_URL }}{{ form.image.value }}">
+                {% endif %}"""),
+                'image',
+                'description',
+                'owner',
+                'group',
+                'event_name',
+                'genre'
+            ),
+            FormActions(
+                Submit('save', 'Save'),
+                Button('cancel', 'Cancel', onclick='history.go(-1);', css_class="btn-default")
+            )
+        )

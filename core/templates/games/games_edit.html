@@ -5,12 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    <form action="" enctype="multipart/form-data" method="post">
-        <table>
-            {% csrf_token %}
-            {% load crispy_forms_tags %}
-            {% crispy form form.helper %}
-        </table>
-        <input type="submit" value="Submit"/>
-    </form>
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+    <br/><br/>
 {% endblock %}
