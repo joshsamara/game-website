@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.conf import global_settings
 import os
+from game_website import local_settings
 from django.core.urlresolvers import reverse
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -133,8 +134,8 @@ LOGIN_URL = 'core:login'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 AWS_STORAGE_BUCKET_NAME = 'gamewebsitebucket'
-AWS_ACCESS_KEY_ID = ''
-AWS_SECRET_ACCESS_KEY = ''
+AWS_ACCESS_KEY_ID = local_settings.AWS_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY = local_settings.AWS_SECRET_KEY
 AWS_S3_HOST = 's3-us-west-2.amazonaws.com'
 # Tell django-storages that when coming up with the URL for an item in S3 storage, keep
 # it simple - just use this domain plus the path. (If this isn't set, things get complicated).
