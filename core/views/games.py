@@ -2,19 +2,27 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from core.forms import GameForm
-from core.models import Game
+from core.models import Game, Group
 
 
 def specific(request, game_id):
     game = Game.objects.get(pk=game_id)
-    return render(request, 'games/games_specific.html', {
+    return render(request, 'games/specific.html', {
         'game': game
     })
 
 
 def main(request):
     games_list = Game.objects.all()
-    return render(request, 'games/games_main.html', {
+    return render(request, 'games/main.html', {
+        'games_list': games_list
+    })
+
+
+def my_games(request):
+    groups = Group.objects.filter(members__id=request.user.id)
+    games_list = Game.objects.filter(group__in=groups)
+    return render(request, 'games/main.html', {
         'games_list': games_list
     })
 
@@ -37,7 +45,7 @@ def edit(request, game_id):
             return HttpResponseRedirect(reverse('core:games_specific', args=[game_id]))
     else:
         form = GameForm(instance=selected_game)
-    return render(request, 'games/games_edit.html', {
+    return render(request, 'games/edit_game.html', {
         'game_id': game_id,
         'form': form
     })
