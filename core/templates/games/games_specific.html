@@ -24,12 +24,11 @@
             </div>
 
             <div class="row">
-                <div class="center-block">
+                <div class="text-center">
                     <strong>Game Authors</strong>
-                    <br/>
                     <ul>
                         {% for member in game.group.members.all %}
-                            <li><a href="/users/{{ member.id }}">{{ member.username }}</a></li>
+                            <li><a href="/users/{{ member.id }}">{{ member.email }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -43,7 +42,8 @@
 
             <div class="row">
                 <div class="center-block" style="padding-top: 10px">
-                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games_edit' game.id %}">Edit Game</a>
+                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games_edit' game.id %}">Edit
+                        Game</a>
                 </div>
             </div>
 

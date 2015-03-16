@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from core.forms import GameForm
 from core.models import Game
@@ -21,6 +21,15 @@ def main(request):
 
 def edit(request, game_id):
     selected_game = Game.objects.get(pk=game_id)
+
+    permission_to_edit = False
+    for u in selected_game.group.members.all():
+        if request.user.id == u.id:
+            permission_to_edit = True
+
+    if not permission_to_edit:
+        return HttpResponse("You don't have permission to edit this game")
+
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES, instance=selected_game)
         if form.is_valid():
