@@ -6,3 +6,4 @@ django-extensions==1.5.0
 Pillow==2.7.0
 django-stdimage==1.2.2
 django-crispy-forms==1.4.0
+boto==2.36.0
