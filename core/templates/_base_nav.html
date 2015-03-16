@@ -1,34 +1,43 @@
 {# Add navbar items here #}
 <nav class="navbar navbar-default">
-  <div class="container container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="{% url 'core:home' %}"><i class="fa fa-gamepad"></i></a>
+    <div class="container container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'core:home' %}"><i class="fa fa-gamepad"></i></a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="{% if navbar_active == 'home' %}active{% endif %}"><a href={% url 'core:home' %}>Home</a></li>
+            <li class="dropdown {% if navbar_active == 'games' %}active{% endif %}">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                    Games
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'core:games_main' %}">All Games</a></li>
+                    <li><a href="#">My Games</a></li>
+                </ul>
+            </li>
+        </ul>
+
+
+        {# Handle Logging in the Navabar #}
+        {% if logged_in %}
+            <ul class="nav navbar-nav navbar-right">
+                {# TODO: Cause this to redirect to profile page #}
+                <li><a href="#">{{ user.email }}</a></li>
+                <li><a href={% url 'core:logout' %}>Logout</a></li>
+            </ul>
+        {% else %}
+            <form class="navbar-form navbar-right" method="post" action="{% url 'core:login' %}" role="login">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Login:</label>
+                    <input name="username" type="text" class="form-control" placeholder="Email">
+                    <input name="password" type="password" class="form-control" placeholder="Password">
+                    <input type="hidden" name="next"
+                           value="{% if next %}{{ next }}{% else %}{% url 'core:home' %}{% endif %}"/>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <a class="btn btn-default" href={% url 'core:register' %}>Register</a>
+            </form>
+        {% endif %}
     </div>
-    <ul class="nav navbar-nav">
-      <li class="{% if navbar_active == 'home' %}active{% endif %}"><a href={% url 'core:home' %}>Home</a></li>
-      <li class="{% if navbar_active == 'game' %}active{% endif %}"><a href={% url 'core:games_main' %}>Games</a></li>
-    </ul>
-
-
-  {# Handle Logging in the Navabar #}
-  {% if logged_in %}
-    <ul class="nav navbar-nav navbar-right">
-      {# TODO: Cause this to redirect to profile page #}
-      <li><a href="#">{{user.email}}</a></li>
-      <li><a href={% url 'core:logout' %}>Logout</a></li>
-    </ul>
-  {% else %}
-    <form class="navbar-form navbar-right" method="post" action="{% url 'core:login' %}" role="login">
-      {% csrf_token %}
-      <div class="form-group">
-        <label>Login:</label>
-        <input name="username" type="text" class="form-control" placeholder="Email">
-        <input name="password" type="password" class="form-control" placeholder="Password">
-      <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'core:home' %}{% endif %}"/>
-      </div>
-      <button type="submit" class="btn btn-primary">Login</button>
-      <a class="btn btn-default" href={% url 'core:register' %}>Register</a>
-    </form>
-  {% endif %}
-  </div>
 </nav>
