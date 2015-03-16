@@ -59,3 +59,4 @@ target/
 # Static folders for Django
 /static
 /media
+local_settings.py
