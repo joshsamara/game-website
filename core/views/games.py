@@ -5,6 +5,13 @@ from core.forms import GameForm
 from core.models import Game, Group
 
 
+def main(request):
+    games_list = Game.objects.all()
+    return render(request, 'games/main.html', {
+        'games_list': games_list
+    })
+
+
 def specific(request, game_id):
     game = Game.objects.get(pk=game_id)
     return render(request, 'games/specific.html', {
@@ -12,10 +19,18 @@ def specific(request, game_id):
     })
 
 
-def main(request):
-    games_list = Game.objects.all()
-    return render(request, 'games/main.html', {
-        'games_list': games_list
+def new_game(request):
+    if request.method == 'POST':
+        form = GameForm(request.POST, request.FILES)
+        if form.is_valid():
+            game = form.save()
+            return HttpResponseRedirect(reverse('core:games_specific', args=[game.id]))
+    else:
+        form = GameForm()
+    return render(request, 'games/game_form.html', {
+        'title': 'New Game',
+        'heading': 'Creating New Game',
+        'form': form
     })
 
 
@@ -45,7 +60,8 @@ def edit(request, game_id):
             return HttpResponseRedirect(reverse('core:games_specific', args=[game_id]))
     else:
         form = GameForm(instance=selected_game)
-    return render(request, 'games/edit_game.html', {
-        'game_id': game_id,
+    return render(request, 'games/game_form.html', {
+        'title': 'Edit Game',
+        'heading': 'Currently Editing ' + selected_game.name,
         'form': form
     })

@@ -18,7 +18,7 @@ class GameForm(ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
-                'Currently Editing Game',
+                '{{ heading }}',
                 'name',
                 'link',
                 HTML("""{% if form.image.value %}<img class="img-responsive" src="{{ MEDIA_URL }}{{ form.image.value }}">
