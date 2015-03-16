@@ -13,8 +13,8 @@ urlpatterns = patterns(
     url(r'^games/', include('core.urls.games')),
     url(r'^register/$', register, name='register'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='logout'),
-
+    url(r'^logout/$', 'django.contrib.auth.views.logout',
+        {'next_page': 'core:home'}, name='logout'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
     static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # Used to serve static media in a dev environment. Should be disabled in production
