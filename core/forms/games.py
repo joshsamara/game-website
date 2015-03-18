@@ -28,6 +28,7 @@ class GameForm(ModelForm):
                 'tags',
                 'group',
                 'event_name',
+                'game_file'
             ),
             FormActions(
                 Submit('save', 'Save'),
