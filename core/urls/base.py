@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url, include
 from django.conf.urls.static import static
-from core.views import Home, register, profile
+from core.views import Home, register, Profile
 
 # Use this file to import all other url
 from game_website import settings
@@ -12,7 +12,7 @@ urlpatterns = patterns(
     url(r'^$', Home.as_view(), name='home'),
     url(r'^games/', include('core.urls.games')),
     url(r'^register/$', register, name='register'),
-    url(r'^profile/$', profile, name='profile'),
+    url(r'^profile/$', Profile.as_view(), name='profile'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': 'core:home'}, name='logout'),

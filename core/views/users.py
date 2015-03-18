@@ -1,8 +1,10 @@
+from django.views.generic import View
 from django.http import HttpResponseRedirect
 from core.forms import RegisterUserForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
+from . import LoginRequiredMixin
 
 
 def register(request):
@@ -23,5 +25,7 @@ def register(request):
         'form': form,
     })
 
-def profile(request):
-    return render(request, "user/profile.html")
+
+class Profile(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return render(request, "user/profile.html")
