@@ -64,22 +64,21 @@
             </div>
 
             <div class="row">
-                <strong>
-                    Link:
-                </strong>
-                <a href="{{ game.link }}">
-                    {{ game.link }}
-                </a>
-            </div>
-
-
-            <div class="row">
-                <strong>Genre: </strong>{{ game.genre }}
+                {% if game.link %}
+                    <strong>
+                        Link:
+                    </strong>
+                    <a href="{{ game.link }}">
+                        {{ game.link }}
+                    </a>
+                {% endif %}
             </div>
 
             <div class="row">
                 <br/>
-                Brought to you by {{ game.event_name }}
+                {% if game.event_name %}
+                    Brought to you by {{ game.event_name }}
+                {% endif %}
             </div>
         </div>
     </div>

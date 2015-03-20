@@ -36,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return full_name.strip()
 
     def get_short_name(self):
-        "Returns the short name for the user."
+        """Returns the short name for the user."""
         return self.first_name
 
 
@@ -48,15 +48,22 @@ class Group(models.Model):
         return self.name
 
 
+class GameTag(models.Model):
+    value = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.value
+
+
 class Game(models.Model):
     name = models.CharField(max_length=50)
-    link = models.URLField()
-    image = StdImageField(upload_to='game_images', variations={'thumbnail': {'width': 200, 'height': 200}})
+    link = models.URLField(blank=True, default='')
+    image = StdImageField(upload_to='game_images', null=True, blank=True, variations={'thumbnail': {'width': 200, 'height': 200}})
     description = models.TextField(max_length=5000)
     date_published = models.DateField(auto_now_add=True)
-    group = models.ForeignKey(Group, null=True)
-    event_name = models.CharField(max_length=75)
-    genre = models.CharField(max_length=50)
+    group = models.ForeignKey(Group)
+    event_name = models.CharField(max_length=75, blank=True, default='')
+    tags = models.ManyToManyField(GameTag, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
