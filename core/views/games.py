@@ -1,9 +1,10 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
+from django.m
 from core.forms import GameForm
 from core.models import Game, Group
-
+from django.views import generic
 
 def main(request):
     games_list = Game.objects.all()
@@ -67,3 +68,11 @@ def edit(request, game_id):
         'heading': 'Currently Editing ' + selected_game.name,
         'form': form
     })
+class GameSearch(generic.ListView):
+template_name='games/game_results.html'
+    context_object_name = 'test'
+    def get_query_set(self):
+        game_name = self.request.kwargs['game_name']
+        searchedGames = Game.objects.filter(name=r'^game_name$')
+        print searchedGames
+        return searchedGames

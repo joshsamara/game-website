@@ -10,4 +10,5 @@ urlpatterns = patterns(
     url(r'^new/$', games.new_game, name='games_new'),
     url(r'^(?P<game_id>\d+)/$', games.specific, name='games_specific'),
     url(r'^(?P<game_id>\d+)/edit/$', games.edit, name='games_edit'),
+    url(r'^edit/(?P<game_name>\w+)$', games.edit, name='games_edit'),
 )
