@@ -1,4 +1,7 @@
-<div class="center-block text-center">
+<div class="thumbnail">
     <img src="{{ related_game.image.thumbnail.url }}" class="img-responsive img-rounded">
-    {{ related_game.name }}
+
+    <div class="caption text-center" style="padding-top: 5px">
+        <a href="{% url 'core:games_specific' related_game.id %}"><h3>{{ related_game.name }}</h3></a>
+    </div>
 </div>
