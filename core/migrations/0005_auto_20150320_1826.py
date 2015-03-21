@@ -36,12 +36,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='game',
-            name='link',
-            field=models.URLField(default=b'', blank=True),
-            preserve_default=True,
-        ),
-        migrations.AlterField(
-            model_name='game',
             name='tags',
             field=models.ManyToManyField(to='core.GameTag', null=True, blank=True),
             preserve_default=True,
