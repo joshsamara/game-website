@@ -88,8 +88,16 @@
         <div class="well">
             <div class="row">
                 {% for related_game in related_games %}
-                    <div class="col-md-3">
-                        {% include  'games/related_game.html' %}
+                    <div class="col-md-2 col-xs-4" >
+                        <div class="thumbnail" style="  height: 100%; width: 128px">
+                            <img src="{{ related_game.image.thumbnail.url }}" class="img-responsive img-rounded"
+                                 style="display: block;">
+
+                            <div class="caption text-center">
+                                <a href="{% url 'core:games_specific' related_game.id %}">
+                                    {{ related_game.name }}</a>
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
