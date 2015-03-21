@@ -82,4 +82,17 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <h3>Related Games</h3>
+
+        <div class="well">
+            <div class="row">
+                {% for related_game in related_games %}
+                    <div class="col-md-3">
+                        {% include  'games/related_game.html' %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
