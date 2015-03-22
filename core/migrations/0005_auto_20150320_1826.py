@@ -39,5 +39,5 @@ class Migration(migrations.Migration):
             name='tags',
             field=models.ManyToManyField(to='core.GameTag', null=True, blank=True),
             preserve_default=True,
-        ),
+        ), 
     ]
