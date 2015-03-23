@@ -32,12 +32,25 @@ class Profile(LoginRequiredMixin, View):
         return render(request, "user/profile.html")
 
 
-class GroupList(LoginRequiredMixin, ListView):
+class UserGroupsView(LoginRequiredMixin, ListView):
+    template_name = "user/groups.html"
+
+    def get_queryset(self):
+        return self.request.user.groups.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(UserGroupsView, self).get_context_data(**kwargs)
+        context["page_title"] = "My Groups"
+        return context
+
+
+class GroupsView(LoginRequiredMixin, ListView):
     template_name = "user/groups.html"
 
     def get_queryset(self):
         return Group.objects.all()
 
     def get_context_data(self, **kwargs):
-        context = super(GroupList, self).get_context_data(**kwargs)
+        context = super(GroupsView, self).get_context_data(**kwargs)
+        context["page_title"] = "Groups"
         return context
