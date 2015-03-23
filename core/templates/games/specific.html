@@ -28,7 +28,9 @@
                     <strong>Game Authors</strong>
                     <ul>
                         {% for member in game.group.members.all %}
-                            <li><a href="/users/{{ member.id }}">{{ member.email }}</a></li>
+                            <li><a href="/users/{{ member.id }}">
+                                <div style="word-wrap: break-word;">{{ member.email }}</div>
+                            </a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -88,7 +90,7 @@
         <div class="well">
             <div class="row">
                 {% for related_game in related_games %}
-                    <div class="col-md-2 col-xs-4" >
+                    <div class="col-md-2 col-xs-4">
                         <div class="thumbnail" style="  height: 100%; width: 128px">
                             <img src="{{ related_game.image.thumbnail.url }}" class="img-responsive img-rounded"
                                  style="display: block;">

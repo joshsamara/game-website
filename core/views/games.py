@@ -14,7 +14,7 @@ def main(request):
 
 def specific(request, game_id):
     game = Game.objects.get(pk=game_id)
-    related_games = (game, game, game, game, game, game)
+    related_games = Game.objects.filter(tags__in=game.tags.all).distinct().exclude(pk=game.id)
     return render(request, 'games/specific.html', {
         'game': game,
         'related_games': related_games,
