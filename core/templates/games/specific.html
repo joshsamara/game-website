@@ -24,18 +24,20 @@
                 </div>
             </div>
 
+            {% if game.group %}
             <div class="row">
                 <div class="text-center">
                     <strong>Game Authors</strong>
-                    <ul>
+                    <div class="text-centered">
                         {% for member in game.group.members.all %}
-                            <li><a href="/users/{{ member.id }}">
+                            <div><a href="{% url 'core:user-profile' member.id %}">
                                 <div style="word-wrap: break-word;">{{ member.email }}</div>
-                            </a></li>
+                            </a></div>
                         {% endfor %}
-                    </ul>
+                    </div>
                 </div>
             </div>
+            {% endif %}
 
             <div class="row">
                 <div class="center-block text-center">
