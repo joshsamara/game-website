@@ -5,6 +5,8 @@ from core.forms import GameForm
 from core.models import Game, Group
 from django.views import generic
 
+
+# Main page that lists all the games
 def main(request):
     games_list = Game.objects.all()
     return render(request, 'games/main.html', {
@@ -12,6 +14,7 @@ def main(request):
     })
 
 
+# Handles individual pages for games
 def specific(request, game_id):
     game = Game.objects.get(pk=game_id)
     related_games = Game.objects.filter(tags__in=game.tags.all).distinct().exclude(pk=game.id)
@@ -21,6 +24,7 @@ def specific(request, game_id):
     })
 
 
+# Form for creating a new game
 def new_game(request):
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES)
@@ -36,14 +40,7 @@ def new_game(request):
     })
 
 
-def my_games(request):
-    groups = Group.objects.filter(members__id=request.user.id)
-    games_list = Game.objects.filter(group__in=groups)
-    return render(request, 'games/main.html', {
-        'games_list': games_list
-    })
-
-
+# Page to edit a game with
 def edit(request, game_id):
     selected_game = Game.objects.get(pk=game_id)
 
@@ -67,10 +64,23 @@ def edit(request, game_id):
         'heading': 'Currently Editing ' + selected_game.name,
         'form': form
     })
+
+
+# Lists the games that the user has permissions to edit
+def my_games(request):
+    groups = Group.objects.filter(members__id=request.user.id)
+    games_list = Game.objects.filter(group__in=groups)
+    return render(request, 'games/main.html', {
+        'games_list': games_list
+    })
+
+
+# Handles searching of games
 class GameSearch(generic.ListView):
-    template_name='games/game_results.html'
+    template_name = 'games/game_results.html'
     context_object_name = 'games'
+
     def get_queryset(self):
         game_name = self.kwargs['game_name']
-        searchedGames = Game.objects.filter(name__contains=game_name)
-        return searchedGames
+        searched_games = Game.objects.filter(name__icontains=game_name)
+        return searched_games
