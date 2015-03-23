@@ -36,7 +36,7 @@ class UserGroupsView(LoginRequiredMixin, ListView):
     template_name = "user/groups.html"
 
     def get_queryset(self):
-        return self.request.user.groups.all()
+        return self.request.user.group_set.all()
 
     def get_context_data(self, **kwargs):
         context = super(UserGroupsView, self).get_context_data(**kwargs)
@@ -69,3 +69,25 @@ class GroupDetailView(DetailView):
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context["in_group"] = self.request.user in self.object.members.all()
         return context
+
+
+class GroupJoinView(LoginRequiredMixin, View):
+    model = Group
+
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        group = Group.objects.get(id=pk)
+        group.members.add(self.request.user)
+        group.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+class GroupLeaveView(View):
+    model = Group
+
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        group = Group.objects.get(id=pk)
+        group.members.remove(self.request.user)
+        group.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
