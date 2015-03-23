@@ -132,7 +132,7 @@ LOGIN_URL = 'core:login'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-if DJANGO_ENV != 'local':
+if DJANGO_ENV == 'production':
     from game_website import local_settings
     AWS_STORAGE_BUCKET_NAME = 'gamewebsitebucket'
     AWS_ACCESS_KEY_ID = local_settings.AWS_ACCESS_KEY
@@ -149,7 +149,7 @@ if DJANGO_ENV != 'local':
     STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
     MEDIAFILES_LOCATION = 'media'
     MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
-    DEFAULT_FILE_STORAGE = 'rushmanager.custom_storages.MediaStorage'
+    DEFAULT_FILE_STORAGE = 'game_website.custom_storages.MediaStorage'
 else:
     STATICFILES_LOCATION = 'static'
     STATIC_URL = "/static/"

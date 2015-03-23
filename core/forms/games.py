@@ -20,15 +20,15 @@ class GameForm(ModelForm):
             Fieldset(
                 '{{ heading }}',
                 'name',
+                'description',
                 'link',
                 HTML("""{% if form.image.value %}<img class="img-responsive" src="{{ MEDIA_URL }}{{ form.image.value }}">
                 {% endif %}"""),
                 'image',
-                'description',
-                'owner',
+                'tags',
                 'group',
                 'event_name',
-                'genre'
+                'game_file'
             ),
             FormActions(
                 Submit('save', 'Save'),

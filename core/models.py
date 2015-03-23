@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.utils import timezone
 from stdimage.models import StdImageField
+from django.core.urlresolvers import reverse
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -36,7 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return full_name.strip()
 
     def get_short_name(self):
-        "Returns the short name for the user."
+        """Returns the short name for the user."""
         return self.first_name
 
 
@@ -44,20 +45,29 @@ class Group(models.Model):
     members = models.ManyToManyField(User)
     name = models.CharField(max_length=50)
 
+    def get_absolute_url(self):
+        return reverse('core:groups-detail', kwargs={'pk': self.pk})
+
     def __unicode__(self):
         return self.name
 
 
+class GameTag(models.Model):
+    value = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.value
+
+
 class Game(models.Model):
     name = models.CharField(max_length=50)
-    link = models.URLField()
-    image = StdImageField(upload_to='game_images', variations={'thumbnail': {'width': 200, 'height': 200}})
+    image = StdImageField(upload_to='game_images', null=True, blank=True, variations={'thumbnail': {'width': 200, 'height': 200}})
+    game_file = models.FileField(blank=True, null=True)
     description = models.TextField(max_length=5000)
-    owner = models.ForeignKey(User)
-    date_published = models.DateField()
-    group = models.ForeignKey(Group, null=True)
-    event_name = models.CharField(max_length=75)
-    genre = models.CharField(max_length=50)
+    date_published = models.DateField(auto_now_add=True)
+    group = models.ForeignKey(Group, blank=True, null=True)
+    event_name = models.CharField(max_length=75, blank=True, default='')
+    tags = models.ManyToManyField(GameTag, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
