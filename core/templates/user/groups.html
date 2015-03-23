@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ page_title }}</h1>
+  </div>
+  <table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Group Name</th>
+      <th>Members</th>
+      <th>Games</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for group in object_list %}
+    <tr>
+      <td>{{ group.name }}</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>
+        <a href="{% url 'core:groups-detail' group.pk %}" class="btn btn-sm btn-primary"><i class="fa fa-search fa-fw"></i> View</a>
+      </td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="4">No User Groups found.</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  <a href="#" class="btn btn-sm btn-success"><i class="fa fa-plus-circle fa-fw"></i> New Group</a>
+{% endblock %}

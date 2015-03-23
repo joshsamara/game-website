@@ -1,5 +1,5 @@
 from django import forms
-from core.models import User
+from core.models import User, Group
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 

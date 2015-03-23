@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create a Group{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Create Group</h1>
+  </div>
+
+  <form method="post" action="{% url 'core:groups-new' %}">{% csrf_token %}
+    {{ form | crispy }}
+    <div>
+      <button type="submit" class="btn btn-success">Create</button>
+    </div>
+   </form>
+
+{% endblock %}
