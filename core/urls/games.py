@@ -8,5 +8,5 @@ urlpatterns = patterns(
     url(r'^new/$', games.new_game, name='new'),
     url(r'^(?P<game_id>\d+)/$', games.specific, name='specific'),
     url(r'^(?P<game_id>\d+)/edit/$', games.edit, name='edit'),
-    url(r'^search/(?P<game_name>\w+)$', games.GameSearch.as_view(), name='search'),
+    url(r'^search/$', games.GameSearch.as_view(), name='search'),
 )
