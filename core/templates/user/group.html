@@ -24,8 +24,7 @@
       <td>N/A</td>
       <td>N/A</td>
       <td>
-        {# TODO: Redirect to user page #}
-        <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-search fa-fw"></i> View</a>
+        <a href="{% url 'core:user-profile' member.pk %}" class="btn btn-sm btn-primary"><i class="fa fa-search fa-fw"></i> View</a>
       </td>
     </tr>
   {% empty %}

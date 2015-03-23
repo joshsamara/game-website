@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url, include
 from django.conf.urls.static import static
-from core.views import (Home, register, Profile, UserGroupsView,
+from core.views import (Home, register, ProfileRedirectView, UserGroupsView,
                         GroupsView, GroupDetailView, GroupJoinView,
                         GroupLeaveView, GroupCreateView, ProfileView)
 
@@ -16,8 +16,8 @@ urlpatterns = patterns(
     url(r'^register/$', register, name='register'),
 
     # TODO: Separate user urls out
-    url(r'^profile/$', Profile.as_view(), name='profile'),
-    url(r'^profile/(?P<pk>\d+)/$', ProfileView.as_view(), name='profile-user'),
+    url(r'^profile/$', ProfileRedirectView.as_view(), name='profile'),
+    url(r'^profile/(?P<pk>\d+)/$', ProfileView.as_view(), name='user-profile'),
     url(r'^user/groups/$', UserGroupsView.as_view(), name='user-groups'),
     url(r'^groups/$', GroupsView.as_view(), name='groups'),
     url(r'^groups/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='groups-detail'),
