@@ -3,7 +3,7 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
   <div class="page-header" style="border: none">
-    <h1>Welcome, {{ user.first_name }} </h1>
+    <h1>Welcome, {{ object.first_name }} </h1>
   </div>
 <div class="row">
       <!--<h4>Personal</h4> -->
@@ -12,15 +12,15 @@
     <img src="http://placekitten.com/g/200/300" class="img-responsive img-rounded" alt="Responsive image">
         <dl class="dl" style="margin-top: 20px">
         <dt>Name</dt>
-        <dd>{{ user.first_name }} {{ user.last_name }}</dd>
+        <dd>{{ object.first_name }} {{ object.last_name }}</dd>
         <dt>Gender</dt>
-        <dd>{{ user.gender }}</dd>
+        <dd>{{ object.gender }}</dd>
         <dt>Birthday</dt>
-        <dd>{{ user.birthday }}</dd>
+        <dd>{{ object.birthday }}</dd>
         <dt>Date Joined</dt>
-        <dd>{{ user.date_joined }}</dd>
+        <dd>{{ object.date_joined }}</dd>
         <dt>Contact</dt>
-        <dd>{{ user.email }}</dd>
+        <dd>{{ object.email }}</dd>
     </dl>
   </div>
   <div class="col-md-8" style="border-top: solid 1px #eee; padding-top: 5px">

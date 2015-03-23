@@ -1,10 +1,10 @@
-from django.views.generic import View, ListView, DetailView, CreateView
+from django.views.generic import View, ListView, DetailView, CreateView, RedirectView
 from django.http import HttpResponseRedirect
 from core.forms import RegisterUserForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
-from core.models import Group
+from core.models import Group, User
 from . import LoginRequiredMixin
 
 
@@ -27,9 +27,24 @@ def register(request):
     })
 
 
-class Profile(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        return render(request, "user/profile.html")
+class Profile(LoginRequiredMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):    
+        return reverse('core:profile-user', kwargs={'pk': self.request.user.pk})
+
+
+class ProfileView(DetailView):
+    template_name = "user/profile.html"
+    model = User
+
+    def get_object(self):
+        pk = self.kwargs.get('pk')
+        # TODO: 404 when object not found
+        return User.objects.get(id=pk)
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(GroupProfilelView, self).get_context_data(**kwargs)
+    #     context["in_group"] = self.request.user in self.object.members.all()
+    #     return context
 
 
 class UserGroupsView(LoginRequiredMixin, ListView):
