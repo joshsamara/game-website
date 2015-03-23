@@ -1,4 +1,4 @@
-from django.views.generic import View, ListView
+from django.views.generic import View, ListView, DetailView
 from django.http import HttpResponseRedirect
 from core.forms import RegisterUserForm
 from django.shortcuts import render
@@ -44,7 +44,7 @@ class UserGroupsView(LoginRequiredMixin, ListView):
         return context
 
 
-class GroupsView(LoginRequiredMixin, ListView):
+class GroupsView(ListView):
     template_name = "user/groups.html"
 
     def get_queryset(self):
@@ -53,4 +53,19 @@ class GroupsView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(GroupsView, self).get_context_data(**kwargs)
         context["page_title"] = "Groups"
+        return context
+
+
+class GroupDetailView(DetailView):
+    template_name = "user/group.html"
+    model = Group
+
+    def get_object(self):
+        pk = self.kwargs.get('pk')
+        # TODO: 404 when object not found
+        return Group.objects.get(id=pk)
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupDetailView, self).get_context_data(**kwargs)
+        context["in_group"] = self.request.user in self.object.members.all()
         return context

@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url, include
 from django.conf.urls.static import static
 from core.views import (Home, register, Profile, UserGroupsView,
-                        GroupsView)
+                        GroupsView, GroupDetailView)
 
 # Use this file to import all other url
 from game_website import settings
@@ -18,6 +18,7 @@ urlpatterns = patterns(
     url(r'^profile/$', Profile.as_view(), name='profile'),
     url(r'^user/groups/$', UserGroupsView.as_view(), name='user-groups'),
     url(r'^groups/$', GroupsView.as_view(), name='groups'),
+    url(r'^groups/(?P<pk>\d+)$', GroupDetailView.as_view(), name='groups-detail'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': 'core:home'}, name='logout'),
