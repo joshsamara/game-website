@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.utils import timezone
 from stdimage.models import StdImageField
+from django.core.urlresolvers import reverse
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -43,6 +44,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Group(models.Model):
     members = models.ManyToManyField(User)
     name = models.CharField(max_length=50)
+
+    def get_absolute_url(self):
+        return reverse('core:groups-detail', kwargs={'pk': self.pk})
 
     def __unicode__(self):
         return self.name

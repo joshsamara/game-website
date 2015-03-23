@@ -1,4 +1,4 @@
-from django.views.generic import View, ListView, DetailView
+from django.views.generic import View, ListView, DetailView, CreateView
 from django.http import HttpResponseRedirect
 from core.forms import RegisterUserForm
 from django.shortcuts import render
@@ -82,7 +82,7 @@ class GroupJoinView(LoginRequiredMixin, View):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-class GroupLeaveView(View):
+class GroupLeaveView(LoginRequiredMixin, View):
     model = Group
 
     def get(self, request, *args, **kwargs):
@@ -91,3 +91,9 @@ class GroupLeaveView(View):
         group.members.remove(self.request.user)
         group.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+class GroupCreateView(LoginRequiredMixin, CreateView):
+    model = Group
+    fields = ['name']
+    template_name = "user/new_group.html"
