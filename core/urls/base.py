@@ -12,7 +12,7 @@ urlpatterns = patterns(
     # url(r'^blog/', include('blog.urls')),
     '',
     url(r'^$', Home.as_view(), name='home'),
-    url(r'^games/', include('core.urls.games')),
+    url(r'^games/', include('core.urls.games', namespace="games")),
     url(r'^register/$', register, name='register'),
 
     # TODO: Separate user urls out

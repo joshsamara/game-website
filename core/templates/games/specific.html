@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+    <a href="{% url 'core:games:main' %}">&laquo; Back To Games Page</a>
     <div class="row">
 
 
@@ -44,7 +45,7 @@
 
             <div class="row">
                 <div class="center-block" style="padding-top: 10px">
-                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games_edit' game.id %}">Edit
+                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games:edit' game.id %}">Edit
                         Game</a>
                 </div>
             </div>
@@ -103,7 +104,7 @@
                                  style="display: block;">
 
                             <div class="caption text-center">
-                                <a href="{% url 'core:games_specific' related_game.id %}">
+                                <a href="{% url 'core:games:specific' related_game.id %}">
                                     {{ related_game.name }}</a>
                             </div>
                         </div>

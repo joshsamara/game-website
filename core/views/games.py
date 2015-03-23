@@ -30,7 +30,7 @@ def new_game(request):
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
             game = form.save()
-            return HttpResponseRedirect(reverse('core:games_specific', args=[game.id]))
+            return HttpResponseRedirect(reverse('core:games:specific', args=[game.id]))
     else:
         form = GameForm()
     return render(request, 'games/game_form.html', {
@@ -56,7 +56,7 @@ def edit(request, game_id):
         form = GameForm(request.POST, request.FILES, instance=selected_game)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('core:games_specific', args=[game_id]))
+            return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
     else:
         form = GameForm(instance=selected_game)
     return render(request, 'games/game_form.html', {

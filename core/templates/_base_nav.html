@@ -11,10 +11,10 @@
                     Games
                     <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'core:games_main' %}">All Games</a></li>
+                    <li><a href="{% url 'core:games:main' %}">All Games</a></li>
                     <li class="divider"></li>
-                    <li><a href="{% url 'core:my_games' %}">My Games</a></li>
-                    <li><a href="{% url 'core:games_new' %}">Add Game</a></li>
+                    <li><a href="{% url 'core:games:my_games' %}">My Games</a></li>
+                    <li><a href="{% url 'core:games:new' %}">Add Game</a></li>
                 </ul>
             </li>
             <li><a href="{% url 'core:groups' %}">Groups</a></li>
