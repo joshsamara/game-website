@@ -64,22 +64,42 @@
             </div>
 
             <div class="row">
-                <strong>
-                    Link:
-                </strong>
-                <a href="{{ game.link }}">
-                    {{ game.link }}
-                </a>
-            </div>
-
-
-            <div class="row">
-                <strong>Genre: </strong>{{ game.genre }}
+                {% if game.link %}
+                    <strong>
+                        Link:
+                    </strong>
+                    <a href="{{ game.link }}">
+                        {{ game.link }}
+                    </a>
+                {% endif %}
             </div>
 
             <div class="row">
                 <br/>
-                Brought to you by {{ game.event_name }}
+                {% if game.event_name %}
+                    Brought to you by {{ game.event_name }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Related Games</h3>
+
+        <div class="well">
+            <div class="row">
+                {% for related_game in related_games %}
+                    <div class="col-md-2 col-xs-4" >
+                        <div class="thumbnail" style="  height: 100%; width: 128px">
+                            <img src="{{ related_game.image.thumbnail.url }}" class="img-responsive img-rounded"
+                                 style="display: block;">
+
+                            <div class="caption text-center">
+                                <a href="{% url 'core:games_specific' related_game.id %}">
+                                    {{ related_game.name }}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

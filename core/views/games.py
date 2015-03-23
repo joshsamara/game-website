@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from core.forms import GameForm
 from core.models import Game, Group
-
+from django.views import generic
 
 def main(request):
     games_list = Game.objects.all()
@@ -14,8 +14,10 @@ def main(request):
 
 def specific(request, game_id):
     game = Game.objects.get(pk=game_id)
+    related_games = (game, game, game, game, game, game)
     return render(request, 'games/specific.html', {
-        'game': game
+        'game': game,
+        'related_games': related_games,
     })
 
 
@@ -65,3 +67,10 @@ def edit(request, game_id):
         'heading': 'Currently Editing ' + selected_game.name,
         'form': form
     })
+class GameSearch(generic.ListView):
+    template_name='games/game_results.html'
+    context_object_name = 'games'
+    def get_queryset(self):
+        game_name = self.kwargs['game_name']
+        searchedGames = Game.objects.filter(name__contains=game_name)
+        return searchedGames

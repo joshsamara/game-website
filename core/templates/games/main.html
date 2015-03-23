@@ -7,7 +7,7 @@
 {% block content %}
     <ul>
         {% for game in games_list %}
-            <li><a href="{% url 'core:games_specific' game.id %}">Game {{ game.id }}</a></li>
+            <li><a href="{% url 'core:games_specific' game.id %}">{{ game.name }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}
