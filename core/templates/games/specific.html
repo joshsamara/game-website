@@ -48,6 +48,13 @@
                         Game</a>
                 </div>
             </div>
+            {% if game.game_file %}
+            <div class="row">
+                <div class="center-block" style="padding-top: 10px">
+                    <a class="btn btn-default btn-xs" role="button" href="{{ game.game_file.url }}" download>Download</a>
+                </div>
+            </div>
+            {% endif %}
 
         </div>
 
