@@ -2,7 +2,35 @@
 
 {% block title %}Profile{% endblock %}
 {% block content %}
-  <div class="page-header">
-    <h1>Create an account</h1>
+  <div class="page-header" style="border: none">
+    <h1>Welcome, {{ user.first_name }} </h1>
   </div>
+<div class="row">
+      <!--<h4>Personal</h4> -->
+  <div class="col-md-4" style="border-right: solid 1px #eee; border-top: solid 1px #eee">
+    <h4 style="padding-bottom: 5px; padding-top: 5px">Personal</h4>
+    <img src="http://placekitten.com/g/200/300" class="img-responsive img-rounded" alt="Responsive image">
+        <dl class="dl" style="margin-top: 20px">
+        <dt>Name</dt>
+        <dd>{{ user.first_name }} {{ user.last_name }}</dd>
+        <dt>Gender</dt>
+        <dd>{{ user.gender }}</dd>
+        <dt>Birthday</dt>
+        <dd>{{ user.birthday }}</dd>
+        <dt>Date Joined</dt>
+        <dd>{{ user.date_joined }}</dd>
+        <dt>Contact</dt>
+        <dd>{{ user.email }}</dd>
+    </dl>
+  </div>
+  <div class="col-md-8" style="border-top: solid 1px #eee; padding-top: 5px">
+    <h4>Games</h4>
+  </div>
+</div>
+  <div class="row" style="border-top: solid 1px #eee; padding-top: 5px">
+    <h4 style="padding-left: 1.5rem">Recommended/Recently Played</h4>
+  </div>
+  <!-- <div class="row">
+  	<h4>Games</h4>
+  </div> -->
   {% endblock %}

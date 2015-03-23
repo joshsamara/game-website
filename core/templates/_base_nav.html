@@ -23,8 +23,7 @@
         {# Handle Logging in the Navabar #}
         {% if logged_in %}
             <ul class="nav navbar-nav navbar-right">
-                {# TODO: Cause this to redirect to profile page #}
-                <li><a href="#">{{ user.email }}</a></li>
+                <li><a href="{% url 'core:profile' %}">{{ user.email }}</a></li>
                 <li><a href={% url 'core:logout' %}>Logout</a></li>
             </ul>
         {% else %}
