@@ -29,8 +29,12 @@ def register(request):
 
 class ProfileRedirectView(LoginRequiredMixin, RedirectView):
     """ Redirect to the user profile page. """
+    permanent = False
+    pattern_name = 'core:user-profile'
+
     def get_redirect_url(self, *args, **kwargs):
-        return reverse('core:user-profile', kwargs={'pk': self.request.user.pk})
+        kwargs['pk'] = self.request.user.pk
+        return super(ProfileRedirectView, self).get_redirect_url(*args, **kwargs)
 
 
 class ProfileView(DetailView):
