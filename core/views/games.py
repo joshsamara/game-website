@@ -10,7 +10,8 @@ from django.views import generic
 def main(request):
     games_list = Game.objects.all()
     return render(request, 'games/main.html', {
-        'games_list': games_list
+        'games_list': games_list,
+        'title': 'All Games'
     })
 
 
@@ -30,7 +31,7 @@ def new_game(request):
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
             game = form.save()
-            return HttpResponseRedirect(reverse('core:games_specific', args=[game.id]))
+            return HttpResponseRedirect(reverse('core:games:specific', args=[game.id]))
     else:
         form = GameForm()
     return render(request, 'games/game_form.html', {
@@ -56,7 +57,7 @@ def edit(request, game_id):
         form = GameForm(request.POST, request.FILES, instance=selected_game)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('core:games_specific', args=[game_id]))
+            return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
     else:
         form = GameForm(instance=selected_game)
     return render(request, 'games/game_form.html', {
@@ -71,16 +72,23 @@ def my_games(request):
     groups = Group.objects.filter(members__id=request.user.id)
     games_list = Game.objects.filter(group__in=groups)
     return render(request, 'games/main.html', {
-        'games_list': games_list
+        'games_list': games_list,
+        'title': 'My Games'
     })
 
 
 # Handles searching of games
 class GameSearch(generic.ListView):
-    template_name = 'games/game_results.html'
+    template_name = 'games/main.html'
     context_object_name = 'games'
 
     def get_queryset(self):
-        game_name = self.kwargs['game_name']
+        game_name = self.request.GET.get('term')
         searched_games = Game.objects.filter(name__icontains=game_name)
         return searched_games
+
+    def get_context_data(self):
+        context = super(GameSearch, self).get_context_data()
+        context['games_list'] = self.object_list
+        context['title'] = 'Search Results'
+        return context
