@@ -1,0 +1,14 @@
+from .utils import BaseTestCase as TestCase
+from core.models import User
+
+
+class UserManagerTestCase(TestCase):
+    def setUp(self):
+        self.manager = User.objects
+
+    def test_create_user(self):
+        self.assertFalse(self.manager.all().exists())
+        email = 'test@email.com'
+        password = 'testpass'
+        self.manager.create_user(email, password)
+        self.assertExists(User, email=email)
