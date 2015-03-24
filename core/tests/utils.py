@@ -29,7 +29,21 @@ class CustomClient(Client):
         return user or login_successful
 
 
-class BaseViewTestCase(TestCase):
+class BaseTestCase(TestCase):
+    def assertExists(self, model, **kwargs):
+        item_qs = model.objects.filter(**kwargs)
+        self.assertEqual(len(item_qs), 1,
+                         "Multiple objects found for given params %s on model %s"
+                         % (kwargs, model))
+
+    def assertNotExists(self, model, **kwargs):
+        item_qs = model.objects.filter(**kwargs)
+        self.assertFalse(item_qs.exists(),
+                         "Object(s) found for given params %s on model %s"
+                         % (kwargs, model))
+
+
+class BaseViewTestCase(BaseTestCase):
     """ Test case with convenience methods in views. """
     # Only override client_class in the ViewTestCase
     # because only the view tests should use a client

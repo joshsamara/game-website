@@ -1,4 +1,4 @@
-from django.test import TestCase
+from .utils import BaseTestCase as TestCase
 from core.models import Group
 from django_dynamic_fixture import G
 

@@ -1,10 +1,10 @@
+from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
 from core.models import User, Group
-from .utils import BaseViewTestCase
 from django.core.urlresolvers import reverse
 
 
-class RegisterViewTestCase(BaseViewTestCase):
+class RegisterViewTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:register')
 
@@ -12,7 +12,7 @@ class RegisterViewTestCase(BaseViewTestCase):
         self.assertNoLoginRequired()
 
     def test_register_valid(self):
-        self.assertFalse(User.objects.filter(email='test@email.com').exists())
+        self.assertNotExists(User, email='test@email.com')
         response = self.client.post(self.url(), {'email': 'test@email.com',
                                                  'password1': '123',
                                                  'password2': '123'})
@@ -20,7 +20,7 @@ class RegisterViewTestCase(BaseViewTestCase):
         # Should redirect on success
         self.assertRedirects(response, reverse('core:home'))
         # Created user should exist
-        self.assertTrue(User.objects.filter(email='test@email.com').exists())
+        self.assertExists(User, email='test@email.com')
 
     def test_register_invalid_email(self):
         response = self.client.post(self.url(), {'email': 'test',
@@ -48,7 +48,7 @@ class RegisterViewTestCase(BaseViewTestCase):
         self.assertFormError(response, 'form', 'password2', "The two password fields didn't match.")
 
 
-class ProfileRedirectViewTestCase(BaseViewTestCase):
+class ProfileRedirectViewTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:profile')
 
@@ -56,7 +56,7 @@ class ProfileRedirectViewTestCase(BaseViewTestCase):
         self.assertLoginRequired()
 
 
-class ProfileViewTestCase(BaseViewTestCase):
+class ProfileViewTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:user-profile', kwargs=kwargs)
 
@@ -65,7 +65,7 @@ class ProfileViewTestCase(BaseViewTestCase):
         self.assertNoLoginRequired(pk=user.pk)
 
 
-class UserGroupsViewTestCase(BaseViewTestCase):
+class UserGroupsViewTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:user-groups')
 
@@ -73,7 +73,7 @@ class UserGroupsViewTestCase(BaseViewTestCase):
         self.assertLoginRequired()
 
 
-class GroupsViewTestCase(BaseViewTestCase):
+class GroupsViewTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:groups')
 
@@ -81,7 +81,7 @@ class GroupsViewTestCase(BaseViewTestCase):
         self.assertNoLoginRequired()
 
 
-class GroupJoinViewTestCase(BaseViewTestCase):
+class GroupJoinViewTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:groups-join', kwargs=kwargs)
 
@@ -90,7 +90,7 @@ class GroupJoinViewTestCase(BaseViewTestCase):
         self.assertLoginRequired(pk=user.pk)
 
 
-class GroupLeaveViewTestCase(BaseViewTestCase):
+class GroupLeaveViewTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:groups-leave', kwargs=kwargs)
 
@@ -99,7 +99,7 @@ class GroupLeaveViewTestCase(BaseViewTestCase):
         self.assertLoginRequired(pk=user.pk)
 
 
-class GroupCreateTestCase(BaseViewTestCase):
+class GroupCreateTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:groups-new')
 
@@ -107,18 +107,18 @@ class GroupCreateTestCase(BaseViewTestCase):
         self.assertLoginRequired()
 
     def test_create_group(self):
-        self.assertFalse(Group.objects.filter(name='TestGroup').exists())
+        self.assertNotExists(Group, name='TestGroup')
         self.client.login()
         response = self.client.post(self.url(), {'name': 'TestGroup'})
         # Created group should exist
-        self.assertTrue(Group.objects.filter(name='TestGroup').exists())
+        self.assertExists(Group, name='TestGroup')
         group = Group.objects.get(name='TestGroup')
         # Should redirect on success
         self.assertRedirects(response, reverse('core:groups-detail',
                                                kwargs={'pk': group.pk}))
 
     def test_create_invalid_group(self):
-        self.assertFalse(Group.objects.filter(name='TestGroup').exists())
+        self.assertNotExists(Group, name='TestGroup')
         self.client.login()
         response = self.client.post(self.url(), {'name': ''})
         self.assertFormError(response, 'form', 'name', 'This field is required.')
