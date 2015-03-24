@@ -1,16 +1,56 @@
+from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.test.client import Client
+from urlparse import urlparse
+from faker import Faker
+from core.models import User
+
+
+class CustomClient(Client):
+    """ Client with a convenience login method. """
+
+    def login(self, **credentials):
+        """ Login client with credentials.
+
+        If no credentials are passed, will create a random user and login.
+        If login fails, return false.
+        If login succeeds:
+            If a user was created, return the user
+            Else, return True
+        """
+        user = None
+        if not credentials:
+            fake = Faker()
+            email = fake.password()
+            passwd = fake.password()
+            User.objects.create_user(email, password=passwd)
+            credentials = {'email': email, 'password': passwd}
+        login_successful = super(CustomClient, self).login(**credentials)
+        return user or login_successful
 
 
 class BaseViewTestCase(TestCase):
+    """ Test case with convenience methods in views. """
+    # Only override client_class in the ViewTestCase
+    # because only the view tests should use a client
+    client_class = CustomClient
+    _login_url = reverse('core:login')
+
     def url(self, *args, **kwargs):
         raise NotImplementedError
 
-    def assertLoginRequired(self, *args, **kwargs):
+    def _assertLogin(self, required, *args, **kwargs):
         self.client.logout()
         response = self.client.get(self.url(*args, **kwargs))
-        self.assertEqual(response.status_code, 302)
+        if required:
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(urlparse(response.get('Location')).path,
+                             self._login_url)
+        else:
+            self.assertEqual(response.status_code, 200)
+
+    def assertLoginRequired(self, *args, **kwargs):
+        self._assertLogin(True, *args, **kwargs)
 
     def assertNoLoginRequired(self, *args, **kwargs):
-        self.client.logout()
-        response = self.client.get(self.url(*args, **kwargs))
-        self.assertEqual(response.status_code, 200)
+        self._assertLogin(False, *args, **kwargs)

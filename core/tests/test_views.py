@@ -106,18 +106,19 @@ class GroupCreateTestCase(BaseViewTestCase):
     def test_login_required(self):
         self.assertLoginRequired()
 
-    # TODO: Fix client login
-    # def test_create_group(self):
-    #     self.assertFalse(Group.objects.filter(name='TestGroup').exists())
-    #     self.client.login()
-    #     response = self.client.post(self.url(), {'name': 'TestGroup'})
-    #     # Should redirect on success
-    #     self.assertRedirects(response, reverse('core:home'))
-    #     # Created user should exist
-    #     self.assertTrue(Group.objects.filter(name='TestGroup').exists())
-    #
-    # def test_create_invalid_group(self):
-    #     self.assertFalse(Group.objects.filter(name='TestGroup').exists())
-    #     self.client.login()
-    #     response = self.client.post(self.url(), {'name': ''})
-    #     self.assertFormError(response, 'form', 'name', 'This field is required.')
+    def test_create_group(self):
+        self.assertFalse(Group.objects.filter(name='TestGroup').exists())
+        self.client.login()
+        response = self.client.post(self.url(), {'name': 'TestGroup'})
+        # Created group should exist
+        self.assertTrue(Group.objects.filter(name='TestGroup').exists())
+        group = Group.objects.get(name='TestGroup')
+        # Should redirect on success
+        self.assertRedirects(response, reverse('core:groups-detail',
+                                               kwargs={'pk': group.pk}))
+
+    def test_create_invalid_group(self):
+        self.assertFalse(Group.objects.filter(name='TestGroup').exists())
+        self.client.login()
+        response = self.client.post(self.url(), {'name': ''})
+        self.assertFormError(response, 'form', 'name', 'This field is required.')
