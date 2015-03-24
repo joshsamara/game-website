@@ -11,3 +11,5 @@ progressbar2==2.7.3
 psycopg2==2.5.4
 six==1.9.0
 Werkzeug==0.10.1
+django-dynamic-fixture==1.8.1
+coverage==3.7.1
