@@ -18,23 +18,23 @@ class CustomClient(Client):
             If a user was created, return the user
             Else, return True
         """
-        user = None
+        user = True
         if not credentials:
             fake = Faker()
-            email = fake.password()
+            email = fake.email()
             passwd = fake.password()
-            User.objects.create_user(email, password=passwd)
+            user = User.objects.create_user(email, password=passwd)
             credentials = {'email': email, 'password': passwd}
         login_successful = super(CustomClient, self).login(**credentials)
-        return user or login_successful
+        return login_successful and user
 
 
 class BaseTestCase(TestCase):
     def assertExists(self, model, **kwargs):
         item_qs = model.objects.filter(**kwargs)
         self.assertEqual(len(item_qs), 1,
-                         "Multiple objects found for given params %s on model %s"
-                         % (kwargs, model))
+                         "Found %d objects with params %s on model %s"
+                         % (len(item_qs), kwargs, model))
 
     def assertNotExists(self, model, **kwargs):
         item_qs = model.objects.filter(**kwargs)
