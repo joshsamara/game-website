@@ -31,6 +31,11 @@ class RegisterViewTestCase(TestCase):
                                                  'password1': '123',
                                                  'password2': '123'})
         self.assertFormError(response, 'form', 'email', 'This field is required.')
+        G(User, email='test@test.test')
+        response = self.client.post(self.url(), {'email': 'test@test.test',
+                                                 'password1': '123',
+                                                 'password2': '123'})
+        self.assertFormError(response, 'form', 'email', 'A user with that email already exists.')
 
     def test_register_invalid_pass(self):
         response = self.client.post(self.url(), {'email': 'test@email.com',
@@ -55,6 +60,12 @@ class ProfileRedirectViewTestCase(TestCase):
     def test_login_required(self):
         self.assertLoginRequired()
 
+    def test_redirect(self):
+        user = self.client.login()
+        response = self.client.get(self.url())
+        self.assertRedirects(response, reverse('core:user-profile',
+                                               kwargs={'pk': user.pk}))
+
 
 class ProfileViewTestCase(TestCase):
     def url(self, *args, **kwargs):
@@ -72,6 +83,16 @@ class UserGroupsViewTestCase(TestCase):
     def test_login_required(self):
         self.assertLoginRequired()
 
+    def test_get_queryset(self):
+        # Setup a User in a group first
+        user = self.client.login()
+        group = G(Group)
+        group.members.add(user)
+        group.save()
+        response = self.client.get(self.url())
+        self.assertEqual(len(response.context['object_list']), 1)
+        self.assertEqual(response.context['object_list'][0], group)
+
 
 class GroupsViewTestCase(TestCase):
     def url(self, *args, **kwargs):
@@ -86,8 +107,15 @@ class GroupJoinViewTestCase(TestCase):
         return reverse('core:groups-join', kwargs=kwargs)
 
     def test_login_required(self):
-        user = G(User)
-        self.assertLoginRequired(pk=user.pk)
+        group = G(Group)
+        self.assertLoginRequired(pk=group.pk)
+
+    def test_join_group(self):
+        user = self.client.login()
+        group = G(Group)
+        self.assertNotIn(user, group.members.all())
+        self.client.get(self.url(pk=group.pk))
+        self.assertIn(user, group.members.all())
 
 
 class GroupLeaveViewTestCase(TestCase):
@@ -97,6 +125,15 @@ class GroupLeaveViewTestCase(TestCase):
     def test_login_required(self):
         user = G(User)
         self.assertLoginRequired(pk=user.pk)
+
+    def test_leave_group(self):
+        user = self.client.login()
+        group = G(Group)
+        group.members.add(user)
+        group.save()
+        self.assertIn(user, group.members.all())
+        self.client.get(self.url(pk=group.pk))
+        self.assertNotIn(user, group.members.all())
 
 
 class GroupCreateTestCase(TestCase):
