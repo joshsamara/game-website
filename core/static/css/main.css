@@ -35,12 +35,12 @@ body {
   margin-top: 10px;
 }
 
-div.custom-colors div.rateit-hover
-{
-    background: url(star.gif) left -16px;
-}
+/*.custom-colors .rateit-hover*/
+/*{*/
+    /*background: url(star.gif) left -16px;*/
+/*}*/
 
-div.custom-colors div.rateit-selected
+.custom-colors .rateit-selected
 {
     background: url(star.gif) left -32px;
 }

@@ -115,7 +115,7 @@ def rate_games(request, game_id):
                 rating = GameRating.objects.get(user=request.user, game__pk=game_id)
                 value = rating.value
             except ObjectDoesNotExist:
-                value = 0.0
+                return HttpResponse(status=404)
             response = {
                 'value': value
             }

@@ -17,9 +17,12 @@ $.ajaxSetup({
 
 function updateTotalRatings() {
     $.get(total_ratings_url, function (data) {
-        console.log(data);
         $("#number-ratings").text(data.total_ratings);
     });
+}
+
+function resetRating() {
+    $("#gameRating").rateit('value', avg_rating).rateit('ispreset', true);
 }
 
 $(updateTotalRatings());
@@ -30,13 +33,13 @@ $.ajax(ratings_url, {
     statusCode: {
         200: function (data) {
             var response = JSON.parse(data.responseText);
-            console.log(response);
-            $("#gameRating").rateit('value', response.value)
-        },
-        401: function () {
-            $("#gameRating").rateit('value', avg_rating)
+            $("#gameRating").rateit('value', response.value).rateit('ispreset', false);
         }
     }
+}).error(function () {
+    // An error means that either the user is not
+    // authenticated or they haven't rated the game
+    resetRating();
 });
 
 $("#gameRating")
@@ -69,12 +72,12 @@ $("#gameRating")
                     204: function () {
                         // For some reason 'complete' is firing before the success, so I
                         // moved the update into here
-                        updateTotalRatings()
+                        updateTotalRatings();
                     },
                     401: function () {
                         alert('You must be logged in to rate a game!');
                     }
                 }
             }
-        )
+        ).done(resetRating());
     });
