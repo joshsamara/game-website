@@ -67,3 +67,20 @@ class Game(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class GameRating(models.Model):
+    game = models.ForeignKey(Game)
+    user = models.ForeignKey(User)
+    value = models.FloatField(choices=(
+        (.5, .5),
+        (1, 1),
+        (1.5, 1.5),
+        (2, 2),
+        (2.5, 2.5),
+        (3, 3),
+        (3.5, 3.5),
+        (4, 4),
+        (4.5, 4.5),
+        (5, 5),
+    ))

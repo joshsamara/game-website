@@ -1,4 +1,11 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static "rateit/rateit.css" %}">
+    <script type="text/javascript" src="{% static "rateit/jquery.rateit.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/jquery.cookie.js" %}"></script>
+{% endblock %}
 
 {% block title %}
     Specific Game
@@ -35,6 +42,41 @@
                     </ul>
                 </div>
             </div>
+
+            <div class="row">
+                <label for="gameRating">
+                    Rate this game:
+                </label>
+
+                <div class="rateit" id="gameRating" data-rateit-min="0"></div>
+                ({{ rating }})
+                <div>
+                    <span id="value5"></span>
+                    <span id="hover5"></span>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                var csrftoken = $.cookie('csrftoken');
+                function csrfSafeMethod(method) {
+                    // these HTTP methods do not require CSRF protection
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $("#gameRating").bind('rated', function (event, value) {
+                    var data = {
+                        'value': value
+                    };
+                    $.post("{% url 'core:games_ratings' game.id %}", JSON.stringify(data));
+                });
+            </script>
 
             <div class="row">
                 <div class="center-block text-center">

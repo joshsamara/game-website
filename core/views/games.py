@@ -1,8 +1,10 @@
+import json
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from core.forms import GameForm
-from core.models import Game, Group
+from core.models import Game, Group, GameRating, User
 from django.views import generic
 
 
@@ -17,9 +19,19 @@ def main(request):
 # Handles individual pages for games
 def specific(request, game_id):
     game = Game.objects.get(pk=game_id)
+    total_rating = 0
+    ratings = GameRating.objects.filter(game=game)
+    for rating in ratings:
+        total_rating += rating.value
+    if len(ratings) != 0:
+        rating = total_rating / len(ratings)
+    else:
+        rating = 0
+
     related_games = Game.objects.filter(tags__in=game.tags.all).distinct().exclude(pk=game.id)
     return render(request, 'games/specific.html', {
         'game': game,
+        'rating': rating,
         'related_games': related_games,
     })
 
@@ -73,6 +85,35 @@ def my_games(request):
     return render(request, 'games/main.html', {
         'games_list': games_list
     })
+
+
+def rate_games(request, game_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        add_or_update_rating(game_id, request.user.id, data['value'])
+        return HttpResponse(status=204)
+    if request.method == 'GET':
+        rating = GameRating.objects.get(user=request.user, game__pk=game_id)
+        response = {
+            'value': rating.value
+        }
+
+    return HttpResponse(status=501)
+
+
+# This will update a user's rating on a game, or create it if it doesn't exist
+# Note that this function has no sort of authentication or security on it and should
+# only be used when the information given is already verified
+def add_or_update_rating(game_id, user_id, value):
+    value += 0.0
+    user = User.objects.get(pk=user_id)
+    game = Game.objects.get(pk=game_id)
+    try:
+        current_rating = GameRating.objects.get(user=user, game=game)
+    except ObjectDoesNotExist:
+        current_rating = GameRating(user=user, game=game)
+    current_rating.value = value
+    current_rating.save()
 
 
 # Handles searching of games
