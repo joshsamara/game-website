@@ -1,5 +1,5 @@
 from .utils import BaseTestCase as TestCase
-from core.models import User, Group
+from core.models import User, Group, GameTag, Game
 from django_dynamic_fixture import G
 
 
@@ -23,5 +23,17 @@ class GroupTestCase(TestCase):
         self.assertEqual(expected_url, actual_url)
 
     def test_unicode(self):
-        group = G(Group, name='test')
-        self.assertEqual(str(group), 'test')
+        group = G(Group, name='testgroup')
+        self.assertEqual(str(group), 'testgroup')
+
+
+class GameTagTestCase(TestCase):
+    def test_unicode(self):
+        tag = G(GameTag, value='testtag')
+        self.assertEqual(str(tag), 'testtag')
+
+
+class GameTestCase(TestCase):
+    def test_unicode(self):
+        game = G(Game, name='testgame')
+        self.assertEqual(str(game), 'testgame')
