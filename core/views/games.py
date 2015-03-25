@@ -7,17 +7,20 @@ from core.forms import GameForm
 from core.models import Game, Group, GameRating, User
 from django.views import generic
 
+"""Game related views."""
 
-# Main page that lists all the games
+
 def main(request):
+    """Main page that lists all the games."""
     games_list = Game.objects.all()
     return render(request, 'games/main.html', {
-        'games_list': games_list
+        'games_list': games_list,
+        'title': 'All Games'
     })
 
 
-# Handles individual pages for games
 def specific(request, game_id):
+    """Handle individual pages for games."""
     game = Game.objects.get(pk=game_id)
     total_rating = 0
     ratings = GameRating.objects.filter(game=game)
@@ -36,13 +39,13 @@ def specific(request, game_id):
     })
 
 
-# Form for creating a new game
 def new_game(request):
+    """Form for creating a new game."""
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
             game = form.save()
-            return HttpResponseRedirect(reverse('core:games_specific', args=[game.id]))
+            return HttpResponseRedirect(reverse('core:games:specific', args=[game.id]))
     else:
         form = GameForm()
     return render(request, 'games/game_form.html', {
@@ -52,23 +55,24 @@ def new_game(request):
     })
 
 
-# Page to edit a game with
 def edit(request, game_id):
+    """Page to edit a game with."""
     selected_game = Game.objects.get(pk=game_id)
 
     permission_to_edit = False
-    for u in selected_game.group.members.all():
-        if request.user.id == u.id:
-            permission_to_edit = True
+    if selected_game.group:
+        for u in selected_game.group.members.all():
+            if request.user.id == u.id:
+                permission_to_edit = True
 
     if not permission_to_edit:
-        return HttpResponse("You don't have permission to edit this game")
+        return HttpResponse("You don't have permission to edit this game", status=403)
 
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES, instance=selected_game)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('core:games_specific', args=[game_id]))
+            return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
     else:
         form = GameForm(instance=selected_game)
     return render(request, 'games/game_form.html', {
@@ -78,12 +82,13 @@ def edit(request, game_id):
     })
 
 
-# Lists the games that the user has permissions to edit
 def my_games(request):
+    """List the games that the user has permissions to edit."""
     groups = Group.objects.filter(members__id=request.user.id)
     games_list = Game.objects.filter(group__in=groups)
     return render(request, 'games/main.html', {
-        'games_list': games_list
+        'games_list': games_list,
+        'title': 'My Games'
     })
 
 
@@ -101,10 +106,10 @@ def rate_games(request, game_id):
     return HttpResponse(status=501)
 
 
-# This will update a user's rating on a game, or create it if it doesn't exist
-# Note that this function has no sort of authentication or security on it and should
-# only be used when the information given is already verified
 def add_or_update_rating(game_id, user_id, value):
+    """ This will update a user's rating on a game, or create it if it doesn't exist
+        Note that this function has no sort of authentication or security on it and should
+        only be used when the information given is already verified"""
     value += 0.0
     user = User.objects.get(pk=user_id)
     game = Game.objects.get(pk=game_id)
@@ -116,12 +121,22 @@ def add_or_update_rating(game_id, user_id, value):
     current_rating.save()
 
 
-# Handles searching of games
 class GameSearch(generic.ListView):
-    template_name = 'games/game_results.html'
+
+    """Handle searching of games."""
+
+    template_name = 'games/main.html'
     context_object_name = 'games'
 
     def get_queryset(self):
-        game_name = self.kwargs['game_name']
+        """Search for games based on a provided term."""
+        game_name = self.request.GET.get('term', '')
         searched_games = Game.objects.filter(name__icontains=game_name)
         return searched_games
+
+    def get_context_data(self):
+        """Set the list and the page title."""
+        context = super(GameSearch, self).get_context_data()
+        context['games_list'] = self.object_list
+        context['title'] = 'Search Results'
+        return context

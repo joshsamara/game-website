@@ -15,10 +15,20 @@ install:
   - pip install -r requirements.txt
   - pip install django==$DJANGO --quiet
   - pip install psycopg2 --quiet
+  - pip install coveralls
 
 before_script:
   - psql -c "CREATE DATABASE travisdb;" -U postgres
   - DJANGO_ENV='travis' python manage.py migrate
 
 script:
-  - DJANGO_ENV='travis' python manage.py test
+  - DJANGO_ENV='travis' coverage run --source='core' manage.py test
+
+after_success:
+  - coveralls
+
+# blacklist heroku branches
+branches:
+  except:
+    - iteration-1-heroku
+    - iteration-2-heroku

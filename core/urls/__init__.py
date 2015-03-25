@@ -1,2 +1,1 @@
-from base import urlpatterns
-from games import urlpatterns
+"""Files that define urls."""

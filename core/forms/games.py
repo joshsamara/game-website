@@ -1,3 +1,4 @@
+"""Forms for games."""
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Submit, Button, Fieldset
@@ -6,6 +7,9 @@ from core.models import Game
 
 
 class GameForm(ModelForm):
+
+    """Form for game creation and editing."""
+
     class Meta:
         model = Game
         exclude = ['owner', 'date_published']
@@ -14,6 +18,7 @@ class GameForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        """Setup the form to work with crispy_forms."""
         super(GameForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -21,7 +26,6 @@ class GameForm(ModelForm):
                 '{{ heading }}',
                 'name',
                 'description',
-                'link',
                 HTML("""{% if form.image.value %}<img class="img-responsive" src="{{ MEDIA_URL }}{{ form.image.value }}">
                 {% endif %}"""),
                 'image',
