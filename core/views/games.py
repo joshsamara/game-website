@@ -94,6 +94,7 @@ def my_games(request):
 
 
 def total_ratings(request, game_id):
+    """ Returns the average rating and total number of ratings for a given game """
     if request.method == 'GET':
         rating_sum = 0
         ratings = GameRating.objects.filter(game__pk=game_id)
@@ -108,6 +109,7 @@ def total_ratings(request, game_id):
             'avg_rating': avg_rating
         }
         return JsonResponse(response)
+
 
 def rate_games(request, game_id):
     if request.user.is_authenticated():
