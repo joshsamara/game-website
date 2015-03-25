@@ -46,12 +46,13 @@ def edit(request, game_id):
     selected_game = Game.objects.get(pk=game_id)
 
     permission_to_edit = False
-    for u in selected_game.group.members.all():
-        if request.user.id == u.id:
-            permission_to_edit = True
+    if selected_game.group:
+        for u in selected_game.group.members.all():
+            if request.user.id == u.id:
+                permission_to_edit = True
 
     if not permission_to_edit:
-        return HttpResponse("You don't have permission to edit this game")
+        return HttpResponse("You don't have permission to edit this game", status=403)
 
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES, instance=selected_game)
