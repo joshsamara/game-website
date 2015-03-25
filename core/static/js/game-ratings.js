@@ -57,10 +57,9 @@ $("#gameRating")
                         alert('You must be logged in to rate a game!');
                         resetRating();
                     }
-                },
-                complete: updateTotalRatings()
+                }
             }
-        );
+        ).done(updateTotalRatings());
     })
     .bind('reset', function () {
         $.ajax(ratings_url, {
