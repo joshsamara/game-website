@@ -53,11 +53,9 @@ $("#gameRating")
                 dataType: 'application/json',
                 data: JSON.stringify(data),
                 statusCode: {
-                    201: function () {
-                        updateTotalRatings(213);
-                    },
                     401: function () {
                         alert('You must be logged in to rate a game!');
+                        resetRating();
                     }
                 },
                 complete: updateTotalRatings()
