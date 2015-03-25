@@ -1,8 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 from stdimage.models import StdImageField
 from django.core.urlresolvers import reverse
+from core.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
