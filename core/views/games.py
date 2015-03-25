@@ -13,7 +13,7 @@ from django.views import generic
 def main(request):
     """Main page that lists all the games."""
     games_list = Game.objects.all()
-    return render(request, 'games/main.html', {
+    return render(request, 'games/all_games.html', {
         'games_list': games_list,
         'title': 'All Games'
     })
@@ -86,7 +86,7 @@ def my_games(request):
     """List the games that the user has permissions to edit."""
     groups = Group.objects.filter(members__id=request.user.id)
     games_list = Game.objects.filter(group__in=groups)
-    return render(request, 'games/main.html', {
+    return render(request, 'games/all_games.html', {
         'games_list': games_list,
         'title': 'My Games'
     })
@@ -125,7 +125,7 @@ class GameSearch(generic.ListView):
 
     """Handle searching of games."""
 
-    template_name = 'games/main.html'
+    template_name = 'games/all_games.html'
     context_object_name = 'games'
 
     def get_queryset(self):
