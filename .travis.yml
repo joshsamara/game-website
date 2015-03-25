@@ -1,34 +1,32 @@
 language: python
-
 python:
-  - 2.7
-
+- 2.7
 services: postgresql
-
 env:
-  - DJANGO=1.7.4
-
+- DJANGO=1.7.4
 before_install:
-  - export DJANGO_SETTINGS_MODULE=game_website.settings
-
+- "export DJANGO_SETTINGS_MODULE=game_website.settings"
 install:
-  - pip install -r requirements.txt
-  - pip install django==$DJANGO --quiet
-  - pip install psycopg2 --quiet
-  - pip install coveralls
-
+- "pip install -r requirements.txt"
+- "pip install django==$DJANGO --quiet"
+- "pip install psycopg2 --quiet"
+- "pip install coveralls"
 before_script:
-  - psql -c "CREATE DATABASE travisdb;" -U postgres
-  - DJANGO_ENV='travis' python manage.py migrate
-
+- "psql -c 'CREATE DATABASE travisdb;' -U postgres"
+- "DJANGO_ENV='travis' python manage.py migrate"
 script:
-  - DJANGO_ENV='travis' coverage run --source='core' manage.py test
-
+- "DJANGO_ENV='travis' coverage run --source='core' manage.py test"
 after_success:
-  - coveralls
-
-# blacklist heroku branches
+- coveralls
 branches:
   except:
-    - iteration-1-heroku
-    - iteration-2-heroku
+  - iteration-1-heroku
+  - iteration-2-heroku
+deploy:
+  provider: heroku
+  api_key:
+    secure: IjUuB3sdbXpr/DVf74UhGNetHBtcFkp/ZthkZCgi4xxl+VdWqXaGHst21ZaglKPmvy/KcmfhTKGM5PQOP7+8QTzL31Wo7ecPmIfP4pOX1divTEzj68/wJSfMsY6rQug3kDOTea+ns3apc+Q+y8sH34WxxAmambssPJ29MRkRGfc=
+  app: game-website-dev
+  on:
+    repo: joshsamara/game-website
+  run: "DJANGO_ENV='heroku' python manage.py migrate"
