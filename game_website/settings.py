@@ -11,11 +11,13 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.conf import global_settings
 import os
-from django.core.urlresolvers import reverse
 
+# Directories to reference
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_DIR = os.path.join(BASE_DIR, 'game_website')
 
+# Environment used for determinng configs
+DJANGO_ENV = os.environ.setdefault('DJANGO_ENV', 'local').lower()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
@@ -25,12 +27,8 @@ SECRET_KEY = 'bk3xizz_pw95!=hl9m@3bmr(36xgrs927e3am@yuesa&4!d*k)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = []
-
-DJANGO_ENV = os.environ.setdefault('DJANGO_ENV', 'local').lower()
 
 # Application definition
 
@@ -70,53 +68,31 @@ TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + ADDI
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-# TODO: Set up individiual settings files
-if DJANGO_ENV == 'travis':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'travisdb',
-            'USER': 'postgres',
-            'PASSWORD': '',
-            'HOST': 'localhost',
-            'PORT': '',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'gamesite',
+        'USER': 'gameadmin',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'gamesite',
-            'USER': 'gameadmin',
-            'PASSWORD': 'password',
-            'HOST': 'localhost',
-            'PORT': '',
-        }
-    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
-AUTH_USER_MODEL = 'core.User'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "core", "static"),
@@ -129,29 +105,14 @@ TEMPLATE_DIRS = (
 )
 
 LOGIN_URL = 'core:login'
-
+AUTH_USER_MODEL = 'core.User'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-if DJANGO_ENV == 'production':
-    from game_website import local_settings
-    AWS_STORAGE_BUCKET_NAME = 'gamewebsitebucket'
-    AWS_ACCESS_KEY_ID = local_settings.AWS_ACCESS_KEY
-    AWS_SECRET_ACCESS_KEY = local_settings.AWS_SECRET_KEY
-    AWS_S3_HOST = 's3-us-west-2.amazonaws.com'
-    # Tell django-storages that when coming up with the URL for an item in S3 storage, keep
-    # it simple - just use this domain plus the path. (If this isn't set, things get complicated).
-    # This controls how the `static` template tag from `staticfiles` gets expanded, if you're using it.
-    # We also use it in the next setting.
-    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-
-    STATICFILES_LOCATION = 'static'
-    STATICFILES_STORAGE = 'game_website.custom_storages.StaticStorage'
-    STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
-    MEDIAFILES_LOCATION = 'media'
-    MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
-    DEFAULT_FILE_STORAGE = 'game_website.custom_storages.MediaStorage'
-else:
-    STATICFILES_LOCATION = 'static'
-    STATIC_URL = "/static/"
-    MEDIAFILES_LOCATION = 'media'
-    MEDIA_URL = "/media/"
+try:
+    # Import any additional config files
+    config = __import__('game_website.config.%s' % DJANGO_ENV, globals(), locals(), ['*'])
+    lcl = locals()
+    lcl.update({k: getattr(config, k) for k in dir(config) if not k.startswith('__')})
+except ImportError:
+    # No additional config file was found
+    pass
