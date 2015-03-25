@@ -1,4 +1,6 @@
 # Game Database Website
+![Build Status](https://img.shields.io/travis/joshsamara/game-website.svg)
+![Code Coverage](https://img.shields.io/coveralls/joshsamara/game-website.svg)
 ## Setup
 **Requirements**
 
