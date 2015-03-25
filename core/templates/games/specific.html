@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+    <a href="{% url 'core:games:main' %}">&laquo; Back To Games Page</a>
     <div class="row">
 
 
@@ -23,18 +24,20 @@
                 </div>
             </div>
 
+            {% if game.group %}
             <div class="row">
                 <div class="text-center">
                     <strong>Game Authors</strong>
-                    <ul>
+                    <div class="text-centered">
                         {% for member in game.group.members.all %}
-                            <li><a href="/users/{{ member.id }}">
+                            <div><a href="{% url 'core:user-profile' member.id %}">
                                 <div style="word-wrap: break-word;">{{ member.email }}</div>
-                            </a></li>
+                            </a></div>
                         {% endfor %}
-                    </ul>
+                    </div>
                 </div>
             </div>
+            {% endif %}
 
             <div class="row">
                 <div class="center-block text-center">
@@ -44,7 +47,7 @@
 
             <div class="row">
                 <div class="center-block" style="padding-top: 10px">
-                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games_edit' game.id %}">Edit
+                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games:edit' game.id %}">Edit
                         Game</a>
                 </div>
             </div>
@@ -103,7 +106,7 @@
                                  style="display: block;">
 
                             <div class="caption text-center">
-                                <a href="{% url 'core:games_specific' related_game.id %}">
+                                <a href="{% url 'core:games:specific' related_game.id %}">
                                     {{ related_game.name }}</a>
                             </div>
                         </div>

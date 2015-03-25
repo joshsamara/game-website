@@ -30,3 +30,7 @@ body {
   display: table;
   margin: 0 auto;
 }
+
+.top10 {
+  margin-top: 10px;
+}
