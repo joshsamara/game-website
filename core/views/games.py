@@ -1,7 +1,7 @@
 import json
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 from core.forms import GameForm
 from core.models import Game, Group, GameRating, User
@@ -95,12 +95,19 @@ def my_games(request):
 
 def total_ratings(request, game_id):
     if request.method == 'GET':
+        rating_sum = 0
         ratings = GameRating.objects.filter(game__pk=game_id)
+        for rating in ratings:
+            rating_sum += rating.value
+        if len(ratings) != 0:
+            avg_rating = rating_sum / len(ratings)
+        else:
+            avg_rating = 0
         response = {
-            'total_ratings': len(ratings)
+            'total_ratings': len(ratings),
+            'avg_rating': avg_rating
         }
-        return HttpResponse(json.dumps(response), content_type="application/json")
-
+        return JsonResponse(response)
 
 def rate_games(request, game_id):
     if request.user.is_authenticated():
@@ -119,7 +126,7 @@ def rate_games(request, game_id):
             response = {
                 'value': value
             }
-            return HttpResponse(json.dumps(response), content_type="application/json")
+            return JsonResponse(response)
 
         if request.method == 'DELETE':
             try:

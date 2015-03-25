@@ -22,20 +22,17 @@ function updateTotalRatings() {
 }
 
 function resetRating() {
-    $("#gameRating").rateit('value', avg_rating).rateit('ispreset', true);
+    $.get(total_ratings_url, function (data) {
+        $("#gameRating").rateit('value', data.avg_rating).rateit('ispreset', true);
+    });
 }
-
-$(updateTotalRatings());
 
 $.ajax(ratings_url, {
     type: 'GET',
-    dataType: 'application/json',
-    statusCode: {
-        200: function (data) {
-            var response = JSON.parse(data.responseText);
-            $("#gameRating").rateit('value', response.value).rateit('ispreset', false);
-        }
-    }
+    dataType: 'json'
+}).success(function (data) {
+    console.log(data);
+    $("#gameRating").rateit('value', data.value).rateit('ispreset', false);
 }).error(function () {
     // An error means that either the user is not
     // authenticated or they haven't rated the game
@@ -50,8 +47,8 @@ $("#gameRating")
 
         $.ajax(ratings_url, {
                 type: 'PUT',
-                dataType: 'application/json',
                 data: JSON.stringify(data),
+                success: updateTotalRatings(),
                 statusCode: {
                     401: function () {
                         alert('You must be logged in to rate a game!');
@@ -64,17 +61,15 @@ $("#gameRating")
     .bind('reset', function () {
         $.ajax(ratings_url, {
                 type: 'DELETE',
-                dataType: 'application/json',
+                dataType: 'json',
                 statusCode: {
-                    204: function () {
-                        // For some reason 'complete' is firing before the success, so I
-                        // moved the update into here
-                        updateTotalRatings();
-                    },
                     401: function () {
                         alert('You must be logged in to rate a game!');
                     }
                 }
             }
-        ).done(resetRating());
+        ).done(function () {
+                resetRating();
+                updateTotalRatings();
+            });
     });
