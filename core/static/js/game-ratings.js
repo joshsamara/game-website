@@ -15,23 +15,66 @@ $.ajaxSetup({
     }
 });
 
-$("#gameRating").bind('rated', function (event, value) {
-    var data = {
-        'value': value
-    };
+function updateTotalRatings() {
+    $.get(total_ratings_url, function (data) {
+        console.log(data);
+        $("#number-ratings").text(data.total_ratings);
+    });
+}
 
-    $.ajax(ratings_url, {
-            type: 'PUT',
-            dataType: 'application/json',
-            data: JSON.stringify(data),
-            statusCode: {
-                204: function (response) {
-                    alert('204');
+$(updateTotalRatings());
+
+$.ajax(ratings_url, {
+    type: 'GET',
+    dataType: 'application/json',
+    statusCode: {
+        200: function (data) {
+            var response = JSON.parse(data.responseText);
+            console.log(response);
+            $("#gameRating").rateit('value', response.value)
+        },
+        401: function () {
+            $("#gameRating").rateit('value', avg_rating)
+        }
+    }
+});
+
+$("#gameRating")
+    .bind('rated', function (event, value) {
+        var data = {
+            'value': value
+        };
+
+        $.ajax(ratings_url, {
+                type: 'PUT',
+                dataType: 'application/json',
+                data: JSON.stringify(data),
+                statusCode: {
+                    201: function () {
+                        updateTotalRatings(213);
+                    },
+                    401: function () {
+                        alert('You must be logged in to rate a game!');
+                    }
                 },
-                401: function (response) {
-                    alert('You must be logged in to rate a game!');
+                complete: updateTotalRatings()
+            }
+        );
+    })
+    .bind('reset', function () {
+        $.ajax(ratings_url, {
+                type: 'DELETE',
+                dataType: 'application/json',
+                statusCode: {
+                    204: function () {
+                        // For some reason 'complete' is firing before the success, so I
+                        // moved the update into here
+                        updateTotalRatings()
+                    },
+                    401: function () {
+                        alert('You must be logged in to rate a game!');
+                    }
                 }
             }
-        }
-    )
-});
+        )
+    });

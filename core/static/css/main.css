@@ -34,3 +34,13 @@ body {
 .top10 {
   margin-top: 10px;
 }
+
+div.custom-colors div.rateit-hover
+{
+    background: url(star.gif) left -16px;
+}
+
+div.custom-colors div.rateit-selected
+{
+    background: url(star.gif) left -32px;
+}

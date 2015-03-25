@@ -27,14 +27,15 @@ def specific(request, game_id):
     for rating in ratings:
         total_rating += rating.value
     if len(ratings) != 0:
-        rating = total_rating / len(ratings)
+        avg_rating = total_rating / len(ratings)
     else:
-        rating = 0
+        avg_rating = 0
 
     related_games = Game.objects.filter(tags__in=game.tags.all).distinct().exclude(pk=game.id)
     return render(request, 'games/specific.html', {
         'game': game,
-        'rating': rating,
+        'avg_rating': avg_rating,
+        'total_ratings': len(ratings),
         'related_games': related_games,
     })
 
@@ -92,18 +93,43 @@ def my_games(request):
     })
 
 
+def total_ratings(request, game_id):
+    if request.method == 'GET':
+        ratings = GameRating.objects.filter(game__pk=game_id)
+        response = {
+            'total_ratings': len(ratings)
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
 def rate_games(request, game_id):
     if request.user.is_authenticated():
+
         if request.method == 'PUT':
             data = json.loads(request.body)
-            add_or_update_rating(game_id, request.user.id, data['value'])
-            return HttpResponse(status=204)
+            response = add_or_update_rating(game_id, request.user.id, data['value'])
+            return HttpResponse(status=response)
+
         if request.method == 'GET':
-            rating = GameRating.objects.get(user=request.user, game__pk=game_id)
+            try:
+                rating = GameRating.objects.get(user=request.user, game__pk=game_id)
+                value = rating.value
+            except ObjectDoesNotExist:
+                value = 0.0
             response = {
-                'value': rating.value
+                'value': value
             }
+            return HttpResponse(json.dumps(response), content_type="application/json")
+
+        if request.method == 'DELETE':
+            try:
+                current_rating = GameRating.objects.get(user=request.user, game__pk=game_id)
+                current_rating.delete()
+                return HttpResponse(status=204)
+            except ObjectDoesNotExist:
+                return HttpResponse(status=404)
         return HttpResponse(status=501)
+
     else:
         return HttpResponse('Unauthorized', status=401)
 
@@ -111,20 +137,25 @@ def rate_games(request, game_id):
 def add_or_update_rating(game_id, user_id, value):
     """ This will update a user's rating on a game, or create it if it doesn't exist
         Note that this function has no sort of authentication or security on it and should
-        only be used when the information given is already verified"""
+        only be used when the information given is already verified
+
+        Returns 200 if the rating was updated, or 201 if it was created
+    """
     value += 0.0
     user = User.objects.get(pk=user_id)
     game = Game.objects.get(pk=game_id)
     try:
         current_rating = GameRating.objects.get(user=user, game=game)
+        response = 204
     except ObjectDoesNotExist:
         current_rating = GameRating(user=user, game=game)
+        response = 201
     current_rating.value = value
     current_rating.save()
+    return response
 
 
 class GameSearch(generic.ListView):
-
     """Handle searching of games."""
 
     template_name = 'games/all_games.html'
