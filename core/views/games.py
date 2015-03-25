@@ -93,17 +93,19 @@ def my_games(request):
 
 
 def rate_games(request, game_id):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        add_or_update_rating(game_id, request.user.id, data['value'])
-        return HttpResponse(status=204)
-    if request.method == 'GET':
-        rating = GameRating.objects.get(user=request.user, game__pk=game_id)
-        response = {
-            'value': rating.value
-        }
-
-    return HttpResponse(status=501)
+    if request.user.is_authenticated():
+        if request.method == 'PUT':
+            data = json.loads(request.body)
+            add_or_update_rating(game_id, request.user.id, data['value'])
+            return HttpResponse(status=204)
+        if request.method == 'GET':
+            rating = GameRating.objects.get(user=request.user, game__pk=game_id)
+            response = {
+                'value': rating.value
+            }
+        return HttpResponse(status=501)
+    else:
+        return HttpResponse('Unauthorized', status=401)
 
 
 def add_or_update_rating(game_id, user_id, value):
