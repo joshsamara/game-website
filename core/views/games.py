@@ -1,3 +1,4 @@
+"""Game related views."""
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
@@ -6,8 +7,8 @@ from core.models import Game, Group
 from django.views import generic
 
 
-# Main page that lists all the games
 def main(request):
+    """Main page that lists all the games."""
     games_list = Game.objects.all()
     return render(request, 'games/main.html', {
         'games_list': games_list,
@@ -15,8 +16,8 @@ def main(request):
     })
 
 
-# Handles individual pages for games
 def specific(request, game_id):
+    """Handle individual pages for games."""
     game = Game.objects.get(pk=game_id)
     related_games = Game.objects.filter(tags__in=game.tags.all).distinct().exclude(pk=game.id)
     return render(request, 'games/specific.html', {
@@ -25,8 +26,8 @@ def specific(request, game_id):
     })
 
 
-# Form for creating a new game
 def new_game(request):
+    """Form for creating a new game."""
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
@@ -41,8 +42,8 @@ def new_game(request):
     })
 
 
-# Page to edit a game with
 def edit(request, game_id):
+    """Page to edit a game with."""
     selected_game = Game.objects.get(pk=game_id)
 
     permission_to_edit = False
@@ -68,8 +69,8 @@ def edit(request, game_id):
     })
 
 
-# Lists the games that the user has permissions to edit
 def my_games(request):
+    """List the games that the user has permissions to edit."""
     groups = Group.objects.filter(members__id=request.user.id)
     games_list = Game.objects.filter(group__in=groups)
     return render(request, 'games/main.html', {
@@ -78,17 +79,21 @@ def my_games(request):
     })
 
 
-# Handles searching of games
 class GameSearch(generic.ListView):
+
+    """Handle searching of games."""
+
     template_name = 'games/main.html'
     context_object_name = 'games'
 
     def get_queryset(self):
+        """Search for games based on a provided term."""
         game_name = self.request.GET.get('term', '')
         searched_games = Game.objects.filter(name__icontains=game_name)
         return searched_games
 
     def get_context_data(self):
+        """Set the list and the page title."""
         context = super(GameSearch, self).get_context_data()
         context['games_list'] = self.object_list
         context['title'] = 'Search Results'
