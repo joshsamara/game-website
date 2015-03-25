@@ -26,3 +26,9 @@ script:
 
 after_success:
   - coveralls
+
+# blacklist heroku branches
+branches:
+  except:
+    - iteration-1-heroku
+    - iteration-2-heroku
