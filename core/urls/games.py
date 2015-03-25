@@ -1,3 +1,4 @@
+"""URLs for game actions."""
 from django.conf.urls import patterns, url
 from core.views import games
 

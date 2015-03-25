@@ -1,3 +1,4 @@
+"""Main URL file, include other URLs here."""
 from django.conf.urls import patterns, url, include
 from django.conf.urls.static import static
 from core.views import (Home, register, ProfileRedirectView, UserGroupsView,
