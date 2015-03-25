@@ -24,6 +24,7 @@ function updateTotalRatings() {
 }
 
 function resetRating() {
+    console.log('fire')
     $.get(total_ratings_url, function (data) {
         $("#gameRating").rateit('value', data.avg_rating).rateit('ispreset', true);
     });
@@ -58,7 +59,7 @@ $("#gameRating")
                     }
                 }
             }
-        ).done(updateTotalRatings());
+        ).always(updateTotalRatings());
     })
     .bind('reset', function () {
         $.ajax(ratings_url, {
@@ -70,8 +71,8 @@ $("#gameRating")
                     }
                 }
             }
-        ).done(function () {
-                resetRating();
+        ).always(function () {
                 updateTotalRatings();
+                resetRating();
             });
     });
