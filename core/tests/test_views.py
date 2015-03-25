@@ -1,6 +1,6 @@
 from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
-from core.models import User, Group
+from core.models import User, Group, Game
 from django.core.urlresolvers import reverse
 
 
@@ -159,3 +159,113 @@ class GroupCreateTestCase(TestCase):
         self.client.login()
         response = self.client.post(self.url(), {'name': ''})
         self.assertFormError(response, 'form', 'name', 'This field is required.')
+
+
+class GameMainTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:main')
+
+    def test_no_login_required(self):
+        self.assertNoLoginRequired()
+
+
+class MyGamesTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:my_games')
+
+    def test_no_login_required(self):
+        self.assertNoLoginRequired()
+
+
+class NewGameTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:new')
+
+    def test_no_login_required(self):
+        self.assertNoLoginRequired()
+
+    def test_create_game(self):
+        self.assertNotExists(Game, name='test')
+        response = self.client.post(self.url(), {'name': 'test',
+                                                 'description': 'desc'})
+
+        self.assertExists(Game, name='test')
+        game = Game.objects.get(name='test')
+        # Should redirect on success
+        self.assertRedirects(response, reverse('core:games:specific',
+                                               kwargs={'game_id': game.id}))
+
+    def test_create_invalid_game(self):
+        self.assertNotExists(Game, name='test')
+        response = self.client.post(self.url(), {'name': '',
+                                                 'description': 'desc'})
+
+        self.assertFormError(response, 'form', 'name', 'This field is required.')
+        response = self.client.post(self.url(), {'name': 'test'})
+        self.assertFormError(response, 'form', 'description', 'This field is required.')
+
+
+class GameSpecificTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:specific', kwargs=kwargs)
+
+    def test_no_login_required(self):
+        game = G(Game)
+        self.assertNoLoginRequired(game_id=game.id)
+
+
+class GameEditTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:edit', kwargs=kwargs)
+
+    def test_login_required(self):
+        game = G(Game)
+        self.assertLoginRequired(game_id=game.id)
+
+    def test_unable_to_edit(self):
+        self.client.login()
+        game = G(Game, name="old")
+        response = self.client.post(self.url(game_id=game.id), {'name': 'new',
+                                                                'description': 'desc'})
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response._container[0], "You don't have permission to edit this game")
+        self.assertEqual(Game.objects.get(id=game.id).name, "old")
+
+    def test_edit(self):
+        # Setup a game that the user can edit
+        user = self.client.login()
+        game = G(Game, name="old")
+        group = G(Group)
+        game.group = group
+        group.members.add(user)
+        game.save()
+        group.save()
+        self.assertNotExists(Game, name="new")
+        # Edit the game
+        response = self.client.post(self.url(game_id=game.id), {'name': 'new',
+                                                                'description': 'desc'})
+        self.assertRedirects(response, reverse('core:games:specific',
+                                               kwargs={'game_id': game.id}))
+        self.assertEqual(Game.objects.get(id=game.id).name, "new")
+
+    def test_edit_form(self):
+        # Setup a game that the user can edit
+        user = self.client.login()
+        game = G(Game, name="old")
+        group = G(Group)
+        game.group = group
+        group.members.add(user)
+        game.save()
+        group.save()
+        # Go to edit page
+        response = self.client.get(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('games/game_form.html')
+
+
+class GameSearchTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:search')
+
+    def test_no_login_required(self):
+        self.assertNoLoginRequired()

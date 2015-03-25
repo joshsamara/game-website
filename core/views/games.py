@@ -46,12 +46,13 @@ def edit(request, game_id):
     selected_game = Game.objects.get(pk=game_id)
 
     permission_to_edit = False
-    for u in selected_game.group.members.all():
-        if request.user.id == u.id:
-            permission_to_edit = True
+    if selected_game.group:
+        for u in selected_game.group.members.all():
+            if request.user.id == u.id:
+                permission_to_edit = True
 
     if not permission_to_edit:
-        return HttpResponse("You don't have permission to edit this game")
+        return HttpResponse("You don't have permission to edit this game", status=403)
 
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES, instance=selected_game)
@@ -83,7 +84,7 @@ class GameSearch(generic.ListView):
     context_object_name = 'games'
 
     def get_queryset(self):
-        game_name = self.request.GET.get('term')
+        game_name = self.request.GET.get('term', '')
         searched_games = Game.objects.filter(name__icontains=game_name)
         return searched_games
 
