@@ -1,3 +1,4 @@
+"""All database models for this application."""
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
@@ -7,6 +8,13 @@ from core.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+
+    """
+    User for this site.
+
+    Requires only an email and password.
+    """
+
     GENDER_CHOICES = (('M', 'Male'),
                       ('F', 'Female'),
                       ('O', 'Other'),)
@@ -31,22 +39,24 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'users'
 
     def get_full_name(self):
-        """
-        Returns the first_name plus the last_name, with a space in between.
-        """
+        """Return the first_name plus the last_name, with a space in between."""
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
 
     def get_short_name(self):
-        """Returns the short name for the user."""
+        """Return the short name for the user."""
         return self.first_name
 
 
 class Group(models.Model):
+
+    """Groups that can consist of Users."""
+
     members = models.ManyToManyField(User)
     name = models.CharField(max_length=50)
 
     def get_absolute_url(self):
+        """Detail page for a group."""
         return reverse('core:groups-detail', kwargs={'pk': self.pk})
 
     def __unicode__(self):
@@ -54,6 +64,9 @@ class Group(models.Model):
 
 
 class GameTag(models.Model):
+
+    """Tags to label Games."""
+
     value = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -61,8 +74,12 @@ class GameTag(models.Model):
 
 
 class Game(models.Model):
+
+    """Game object."""
+
     name = models.CharField(max_length=50)
-    image = StdImageField(upload_to='game_images', null=True, blank=True, variations={'thumbnail': {'width': 200, 'height': 200}})
+    image = StdImageField(upload_to='game_images', null=True, blank=True,
+                          variations={'thumbnail': {'width': 200, 'height': 200}})
     game_file = models.FileField(blank=True, null=True)
     description = models.TextField(max_length=5000)
     date_published = models.DateField(auto_now_add=True)
