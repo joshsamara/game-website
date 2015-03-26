@@ -1,7 +1,8 @@
 from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
-from core.models import User, Group, Game
+from core.models import User, Group, Game, GameRating
 from django.core.urlresolvers import reverse
+import json
 
 
 class RegisterViewTestCase(TestCase):
@@ -211,6 +212,8 @@ class GameSpecificTestCase(TestCase):
 
     def test_no_login_required(self):
         game = G(Game)
+        user = G(User)
+        G(GameRating, user=user, game=game)
         self.assertNoLoginRequired(game_id=game.id)
 
 
@@ -269,3 +272,82 @@ class GameSearchTestCase(TestCase):
 
     def test_no_login_required(self):
         self.assertNoLoginRequired()
+
+
+class TotalRatingsTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:total_ratings', kwargs=kwargs)
+
+    def test_no_login_required(self):
+        game = G(Game)
+        user = G(User)
+        G(GameRating, user=user, game=game)
+        self.assertNoLoginRequired(game_id=game.id)
+
+    def test_works_no_ratings(self):
+        game = G(Game)
+        response = self.client.get(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 200)
+
+
+class RateGamesTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:ratings', kwargs=kwargs)
+
+    def test_login_required(self):
+        game = G(Game)
+        self.assertLoginRequired(game_id=game.id)
+
+    def test_create_rating(self):
+        game = G(Game)
+        user = self.client.login()
+        self.assertNotExists(GameRating, user=user)
+        response = self.client.put(self.url(game_id=game.id),
+                                   data=json.dumps({"value": 1}))
+        self.assertEqual(response.status_code, 201)
+        self.assertExists(GameRating, user=user)
+        self.assertEqual(GameRating.objects.get().value, 1)
+
+    def test_update_rating(self):
+        game = G(Game)
+        user = self.client.login()
+        G(GameRating, user=user, game=game, value=1)
+        response = self.client.put(self.url(game_id=game.id),
+                                   data=json.dumps({"value": 4}))
+        self.assertEqual(response.status_code, 204)
+        self.assertExists(GameRating, user=user)
+        self.assertEqual(GameRating.objects.get().value, 4)
+
+    def test_get_rating(self):
+        game = G(Game)
+        user = self.client.login()
+        G(GameRating, user=user, game=game, value=2)
+        response = self.client.get(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)["value"], 2)
+
+    def test_get_nonexistant_rating(self):
+        game = G(Game)
+        self.client.login()
+        response = self.client.get(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_rating(self):
+        game = G(Game)
+        user = self.client.login()
+        rating = G(GameRating, user=user, game=game, value=2)
+        response = self.client.delete(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 204)
+        self.assertNotExists(GameRating, id=rating.id)
+
+    def test_delete_nonexistant_rating(self):
+        game = G(Game)
+        self.client.login()
+        response = self.client.delete(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 404)
+
+    def test_post(self):
+        game = G(Game)
+        self.client.login()
+        response = self.client.post(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 405)

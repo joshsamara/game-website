@@ -69,7 +69,7 @@ class BaseViewTestCase(BaseTestCase):
         self.client.logout()
         response = self.client.get(self.url(*args, **kwargs))
         if required:
-            self.assertIn(response.status_code, [302, 403])
+            self.assertIn(response.status_code, [302, 401, 403])
             if response.status_code == 302:
                 # If it's redirecting, should be to the login page
                 self.assertEqual(urlparse(response.get('Location')).path,

@@ -6,6 +6,7 @@ from django.shortcuts import render
 from core.forms import GameForm
 from core.models import Game, Group, GameRating, User
 from django.views import generic
+from django.shortcuts import get_object_or_404
 
 """Game related views."""
 
@@ -21,7 +22,7 @@ def main(request):
 
 def specific(request, game_id):
     """Handle individual pages for games."""
-    game = Game.objects.get(pk=game_id)
+    game = get_object_or_404(Game, id=game_id)
     total_rating = 0
     ratings = GameRating.objects.filter(game=game)
     for rating in ratings:
@@ -137,7 +138,7 @@ def rate_games(request, game_id):
                 return HttpResponse(status=204)
             except ObjectDoesNotExist:
                 return HttpResponse(status=404)
-        return HttpResponse(status=501)
+        return HttpResponse(status=405)
 
     else:
         return HttpResponse('Unauthorized', status=401)
