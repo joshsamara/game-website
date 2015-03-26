@@ -1,3 +1,4 @@
+"""Game related views."""
 import json
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
@@ -7,8 +8,6 @@ from core.forms import GameForm
 from core.models import Game, Group, GameRating, User
 from django.views import generic
 from django.shortcuts import get_object_or_404
-
-"""Game related views."""
 
 
 def main(request):
@@ -95,7 +94,7 @@ def my_games(request):
 
 
 def total_ratings(request, game_id):
-    """ Returns the average rating and total number of ratings for a given game """
+    """Return the average rating and total number of ratings for a given game."""
     if request.method == 'GET':
         rating_sum = 0
         ratings = GameRating.objects.filter(game__pk=game_id)
@@ -113,6 +112,7 @@ def total_ratings(request, game_id):
 
 
 def rate_games(request, game_id):
+    """Add/update/delete a game rating."""
     if request.user.is_authenticated():
 
         if request.method == 'PUT':
@@ -145,11 +145,11 @@ def rate_games(request, game_id):
 
 
 def add_or_update_rating(game_id, user_id, value):
-    """ This will update a user's rating on a game, or create it if it doesn't exist
-        Note that this function has no sort of authentication or security on it and should
-        only be used when the information given is already verified
+    """Update a user's rating on a game, or create it if it doesn't exist.
 
-        Returns 200 if the rating was updated, or 201 if it was created
+    Note that this function has no sort of authentication or security on it and should
+    only be used when the information given is already verified
+    Returns 200 if the rating was updated, or 201 if it was created
     """
     value += 0.0
     user = User.objects.get(pk=user_id)
@@ -166,6 +166,7 @@ def add_or_update_rating(game_id, user_id, value):
 
 
 class GameSearch(generic.ListView):
+
     """Handle searching of games."""
 
     template_name = 'games/all_games.html'
