@@ -1,5 +1,6 @@
 """Configuration for the admin site."""
 from django.contrib import admin
+from django_comments import Comment
 from core.models import Game, Group, GameTag, User, GameRating
 
 # Register your models here.

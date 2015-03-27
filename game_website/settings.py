@@ -42,8 +42,12 @@ INSTALLED_APPS = (
     'django_extensions',
     'core',
     'stdimage',
-    'crispy_forms'
+    'crispy_forms',
+    'django.contrib.sites',
+    'django_comments',
 )
+
+SITE_ID = 1
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

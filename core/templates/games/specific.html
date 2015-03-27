@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load comments %}
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static "css/rateit.css" %}">
@@ -123,6 +124,12 @@
                 {% endif %}
             </div>
         </div>
+    </div>
+    <div class="row">
+        {% get_comment_count for game as comment_count %} <br>
+        <p>{{ comment_count }} comments have been posted.</p>
+        {% render_comment_list for game %} <br>
+        {% render_comment_form for game %} <br>
     </div>
     <div class="row">
         <h3>Related Games</h3>

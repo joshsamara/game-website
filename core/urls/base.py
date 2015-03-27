@@ -16,6 +16,8 @@ urlpatterns = patterns(
     url(r'^games/', include('core.urls.games', namespace="games")),
     url(r'^register/$', register, name='register'),
 
+    url(r'^comments/', include('django_comments.urls')),
+
     # TODO: Separate user urls out
     url(r'^profile/$', ProfileRedirectView.as_view(), name='profile'),
     url(r'^profile/(?P<pk>\d+)/$', ProfileView.as_view(), name='user-profile'),
