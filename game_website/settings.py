@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'stdimage',
     'crispy_forms',
     'django.contrib.sites',
-    'django_comments',
+    'django_comments_fork',
 )
 
 SITE_ID = 1
@@ -107,6 +107,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_DIR, 'templates'),
     os.path.join(BASE_DIR, 'core', 'templates'),
     os.path.join(BASE_DIR, '..', 'core', 'templates'),
+    os.path.join(BASE_DIR, 'django_comments_fork', 'templates'),
 )
 
 LOGIN_URL = 'core:login'

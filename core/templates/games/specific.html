@@ -80,6 +80,7 @@
                     <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games:edit' game.id %}">Edit
                         Game</a>
                 </div>
+                asd
             </div>
 
             {% if game.game_file %}
@@ -126,10 +127,16 @@
         </div>
     </div>
     <div class="row">
-        {% get_comment_count for game as comment_count %} <br>
-        <p>{{ comment_count }} comments have been posted.</p>
-        {% render_comment_list for game %} <br>
-        {% render_comment_form for game %} <br>
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            {% get_comment_count for game as comment_count %} <br>
+
+            <p>{{ comment_count }} comments have been posted.</p>
+            {% render_comment_list for game %} <br>
+            {% if user.is_authenticated %}
+                {% render_comment_form for game %} <br>
+            {% endif %}
+        </div>
     </div>
     <div class="row">
         <h3>Related Games</h3>

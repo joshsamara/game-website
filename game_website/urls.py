@@ -8,4 +8,6 @@ urlpatterns = patterns(
     # We'll use core as our default app, so we won't have a url prefix
     url(r'^', include('core.urls.base', namespace="core")),
     url(r'^admin/', include(admin.site.urls), name="admin"),
+    url(r'^comments/', include('django_comments_fork.urls')),
+
 )

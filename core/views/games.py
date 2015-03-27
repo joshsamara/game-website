@@ -1,13 +1,15 @@
 """Game related views."""
 import json
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
-from core.forms import GameForm
-from core.models import Game, Group, GameRating, User
 from django.views import generic
 from django.shortcuts import get_object_or_404
+
+from core.forms import GameForm
+from core.models import Game, Group, GameRating, User
 
 
 def main(request):
