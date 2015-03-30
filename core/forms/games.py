@@ -21,6 +21,7 @@ class GameForm(forms.ModelForm):
         """Setup the form to work with crispy_forms."""
         super(GameForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_id = 'game-form'
         self.helper.layout = Layout(
             Fieldset(
                 '{{ heading }}',
@@ -35,7 +36,8 @@ class GameForm(forms.ModelForm):
                 'game_file'
             ),
             FormActions(
-                Submit('save', 'Save'),
+                # Submit('save', 'Save'),
+                Button('submit', 'Submit'),
                 Button('cancel', 'Cancel', onclick='history.go(-1);', css_class="btn-default")
             )
         )

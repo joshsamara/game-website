@@ -1,36 +1,21 @@
 from __future__ import absolute_import
+from crispy_forms.utils import render_crispy_form
 
-from django import http
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
-from django.http import HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.template.loader import render_to_string
+from django.http import JsonResponse
 from django.utils.html import escape
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 
-import django_comments_fork
-from django_comments_fork import signals
-from django_comments_fork.views.utils import next_redirect, confirmation_view
-
-class CommentPostBadRequest(http.HttpResponseBadRequest):
-    """
-    Response returned when a comment post is invalid. If ``DEBUG`` is on a
-    nice-ish error message will be displayed (for debugging purposes), but in
-    production mode a simple opaque 400 page will be displayed.
-    """
-    def __init__(self, why):
-        super(CommentPostBadRequest, self).__init__()
-        if settings.DEBUG:
-            self.content = render_to_string("comments/400-debug.html", {"why": why})
+import django_comments
+from django_comments import signals
+from django_comments.views.comments import CommentPostBadRequest
 
 
 @csrf_protect
 @require_POST
-def post_comment(request, next=None, using=None):
+def game_comment_post(request, next=None, using=None):
     """
     Post a comment.
 
@@ -59,52 +44,34 @@ def post_comment(request, next=None, using=None):
     except AttributeError:
         return CommentPostBadRequest(
             "The given content-type %r does not resolve to a valid model." % \
-                escape(ctype))
+            escape(ctype))
     except ObjectDoesNotExist:
         return CommentPostBadRequest(
             "No object matching content-type %r and object PK %r exists." % \
-                (escape(ctype), escape(object_pk)))
+            (escape(ctype), escape(object_pk)))
     except (ValueError, ValidationError) as e:
         return CommentPostBadRequest(
             "Attempting go get content-type %r and object PK %r exists raised %s" % \
-                (escape(ctype), escape(object_pk), e.__class__.__name__))
+            (escape(ctype), escape(object_pk), e.__class__.__name__))
 
     # Do we want to preview the comment?
     preview = "preview" in data
 
     # Construct the comment form
-    form = django_comments_fork.get_form()(target, data=data)
+    form = django_comments.get_form()(target, data=data)
 
     # Check security information
     if form.security_errors():
         return CommentPostBadRequest(
             "The comment form failed security verification: %s" % \
-                escape(str(form.security_errors())))
+            escape(str(form.security_errors())))
 
     # If there are errors or if we requested a preview show the comment
-    # if form.errors or preview:
-    #     template_list = [
-    #         # These first two exist for purely historical reasons.
-    #         # Django v1.0 and v1.1 allowed the underscore format for
-    #         # preview templates, so we have to preserve that format.
-    #         "comments/%s_%s_preview.html" % (model._meta.app_label, model._meta.module_name),
-    #         "comments/%s_preview.html" % model._meta.app_label,
-    #         # Now the usual directory based template hierarchy.
-    #         "comments/%s/%s/preview.html" % (model._meta.app_label, model._meta.module_name),
-    #         "comments/%s/preview.html" % model._meta.app_label,
-    #         "comments/preview.html",
-    #     ]
-    #     return render_to_response(
-    #         template_list, {
-    #             "comment": form.data.get("comment", ""),
-    #             "form": form,
-    #             "next": data.get("next", next),
-    #         },
-    #         RequestContext(request, {})
-    #     )
-
-    if not form.is_valid():
-        return HttpResponse(status=204)
+    if form.errors or preview:
+        return JsonResponse({
+            'form_html': render_crispy_form(form),
+            'success': False,
+        })
 
     # Otherwise create the comment
     comment = form.get_comment_object()
@@ -132,10 +99,6 @@ def post_comment(request, next=None, using=None):
         request=request
     )
 
-    return next_redirect(request, fallback=next or 'comments-comment-done',
-        c=comment._get_pk_val())
-
-comment_done = confirmation_view(
-    template="comments/posted.html",
-    doc="""Display a "comment was posted" success page."""
-)
+    return JsonResponse({
+        'success': True,
+    })
