@@ -186,6 +186,7 @@ class GameSearch(generic.ListView):
         context['games_list'] = self.object_list
         context['title'] = 'Search Results'
         return context
+    
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             json_request = []
