@@ -1,1 +1,1 @@
-web: DJANGO_ENV='travis' gunicorn game_website.wsgi --log-file -
+web: DJANGO_ENV='heroku' gunicorn game_website.wsgi --log-file -
