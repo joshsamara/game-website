@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.conf import global_settings
+import dj_database_url
 import os
 
 # Directories to reference
@@ -68,16 +69,19 @@ TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + ADDI
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'gamesite',
-        'USER': 'gameadmin',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '',
+if DJANGO_ENV == 'heroku':
+    DATABASES = {'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'gamesite',
+            'USER': 'gameadmin',
+            'PASSWORD': 'password',
+            'HOST': 'localhost',
+            'PORT': '',
+        }
     }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
