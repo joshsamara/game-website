@@ -66,8 +66,9 @@
 </nav>
 
 <script>
-$("#searchGames").autocomplete({
+alert(document.getElementById($("#searchGames").autocomplete({
     source: "/games/search",
     minLength: 2, 
-})
+})).value)
+debugger;
 </script>
