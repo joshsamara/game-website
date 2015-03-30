@@ -8,6 +8,8 @@ from core.forms import GameForm
 from core.models import Game, Group, GameRating, User
 from django.views import generic
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.core import serializers
 
 
 def main(request):
@@ -172,7 +174,7 @@ class GameSearch(generic.ListView):
     template_name = 'games/all_games.html'
     context_object_name = 'games'
 
-    def get_queryset(self):
+    def get_queryset(self): 
         """Search for games based on a provided term."""
         game_name = self.request.GET.get('term', '')
         searched_games = Game.objects.filter(name__icontains=game_name)
@@ -184,3 +186,13 @@ class GameSearch(generic.ListView):
         context['games_list'] = self.object_list
         context['title'] = 'Search Results'
         return context
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            json_request = []
+            my_data = self.get_queryset()
+            for game in my_data:
+                autocomplete = {'label': game.name, 'value': game.name}
+                json_request.append(autocomplete)
+            return HttpResponse(json.dumps(json_request))
+        else:
+            return super(GameSearch, self).get(self, request, *args, **kwargs)
