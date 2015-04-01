@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from crispy_forms.utils import render_crispy_form
+from django.contrib.auth.decorators import login_required
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
@@ -15,6 +16,7 @@ from django_comments.views.comments import CommentPostBadRequest
 
 @csrf_protect
 @require_POST
+@login_required
 def game_comment_post(request, next=None, using=None):
     """
     Post a comment.
