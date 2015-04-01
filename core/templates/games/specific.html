@@ -17,81 +17,7 @@
     <div class="row">
 
         {#### SIDEBAR ####}
-        <div class="col-md-2" style="padding-right: 25px">
-
-            <div class="row">
-                <div class="center-block text-center">
-                    <h1>{{ game.name }}</h1>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="center-block">
-                    <img src="{{ game.image.thumbnail.url }}" class="img-responsive img-rounded">
-                </div>
-            </div>
-
-            {% if game.group %}
-                <div class="row">
-                    <div class="text-center">
-                        <strong>Game Authors</strong>
-
-                        <div class="text-centered">
-                            {% for member in game.group.members.all %}
-                                <div><a href="{% url 'core:user-profile' member.id %}">
-                                    <div style="word-wrap: break-word;">{{ member.email }}</div>
-                                </a></div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-
-            <br>
-
-            <div class="row text-center">
-                <label for="gameRating">
-                    Rate this game:
-                </label>
-
-                <div class="rateit custom-colors" id="gameRating" data-rateit-min="0"></div>
-                (<span id="number-ratings">{{ total_ratings }}</span>)
-
-            </div>
-            <script>
-                {# This script is used to pass django variables to game-ratings.js #}
-                ratings_url = "{% url 'core:games:ratings' game.id %}";
-                total_ratings_url = "{% url 'core:games:total_ratings' game.id %}";
-                avg_rating = ({{ avg_rating }})
-            </script>
-            <script type="text/javascript" src="{% static "js/game-ratings.js" %}"></script>
-
-            <br>
-
-            <div class="row">
-                <div class="center-block text-center">
-                    Published {{ game.date_published }}
-                </div>
-            </div>
-
-            {# TODO: Hide edit button if user does not have permission to edit #}
-            <div class="row">
-                <div class="center-block" style="padding-top: 10px">
-                    <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games:edit' game.id %}">Edit
-                        Game</a>
-                </div>
-            </div>
-
-            {% if game.game_file %}
-                <div class="row">
-                    <div class="center-block" style="padding-top: 10px">
-                        <a class="btn btn-default btn-xs" role="button" href="{{ game.game_file.url }}" download>Download</a>
-                    </div>
-                </div>
-            {% endif %}
-
-        </div>
-
+        {% include "games/specific_game_sidebar.html" %}
 
         {#### MAIN COLUMN ####}
         <div class="col-md-10" style="padding-left: 25px">
@@ -125,15 +51,13 @@
             </div>
         </div>
     </div>
+    <br>
     <div class="row">
-        <div class="col-md-3"></div>
+        <div class="col-md-2"></div>
         <div class="col-md-6">
-            {% get_comment_count for game as comment_count %} <br>
-
-            <p>{{ comment_count }} comments have been posted.</p>
-            {% render_comment_list for game %} <br>
+            {% render_comment_list for game %}<br>
             {% if user.is_authenticated %}
-                {% render_comment_form for game %} <br>
+                {% render_comment_form for game %}<br>
             {% endif %}
         </div>
     </div>

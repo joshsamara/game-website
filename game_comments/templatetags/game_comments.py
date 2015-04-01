@@ -13,4 +13,4 @@ def post_comment_form_target():
 
         <form action="{% comment_form_target %}" method="post">
     """
-    return reverse('game_comment_post')
+    return reverse('game_comments:post')
