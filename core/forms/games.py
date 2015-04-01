@@ -37,7 +37,7 @@ class GameForm(forms.ModelForm):
             ),
             FormActions(
                 # Submit('save', 'Save'),
-                Button('submit', 'Submit'),
+                Submit('submit', 'Submit'),
                 Button('cancel', 'Cancel', onclick='history.go(-1);', css_class="btn-default")
             )
         )

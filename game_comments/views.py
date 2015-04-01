@@ -19,8 +19,7 @@ def game_comment_post(request, next=None, using=None):
     """
     Post a comment.
 
-    HTTP POST is required. If ``POST['submit'] == "preview"`` or if there are
-    errors a preview template, ``comments/preview.html``, will be rendered.
+    Modified version of the default post view for django_comments
     """
     # Fill out some initial data fields from an authenticated user, if present
     data = request.POST.copy()

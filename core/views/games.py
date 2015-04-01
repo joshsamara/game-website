@@ -50,17 +50,9 @@ def new_game(request):
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
             game = form.save()
-            return JsonResponse({
-                'success': True
-            })
-            # return HttpResponseRedirect(reverse('core:games:specific', args=[game.id]))
-        else:
-            return JsonResponse({
-                'form_html': render_crispy_form(form),
-                'success': False,
-            })
+            return HttpResponseRedirect(reverse('core:games:specific', args=[game.id]))
     else:
-        form = CommentForm()
+        form = GameForm()
     return render(request, 'games/game_form.html', {
         'title': 'New Game',
         'heading': 'Creating New Game',
