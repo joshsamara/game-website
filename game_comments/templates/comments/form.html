@@ -1,0 +1,48 @@
+{% load comments i18n %}
+{% load game_comments %}
+<form method="post">
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+    <script type="text/javascript">
+        function postForm() {
+            comment_form = $("form:gt(0)");
+            console.log('post');
+            var errors = $('.errorlist');
+            console.log(errors);
+            errors.remove();
+
+            $.ajax({
+                type: "POST",
+                url: '{% post_comment_form_target %}',
+                data: comment_form.serialize(),
+                success: function (data) {
+                    console.log('success');
+                    if (!(data['success'])) {
+                        // Here we replace the form, for the
+                        comment_form.replaceWith(data['form_html']);
+                        $('#game-form').append(csrf);
+                        addOnClick();
+                        console.log('no good')
+                    }
+                    else {
+                        // Here you can show the user a success message or do whatever you need
+                        comment_form.find('.success-message').show();
+                        location.reload();
+                    }
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+
+        function addOnClick() {
+            $("#button-id-post").unbind('click').click(postForm);
+        }
+
+        var comment_form = $("form:gt(0)");
+        var form_backup = comment_form.clone();
+        var csrf = $("input[name='csrfmiddlewaretoken']");
+        $(addOnClick())
+    </script>
+</form>

@@ -1,48 +1,48 @@
-
 {% extends 'base.html' %}
 {% block content %}
-<div class="page-header">
-  <h1>{{ title }}</h1>
-</div>
-  <div class="row text-right">
-    <a href="{% url 'core:games:new' %}" class="btn btn-sm btn-success"><i class="fa fa-plus-circle fa-fw"></i> Upload New Game</a>
-  </div>
-<div class="top10">
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>Image</th>
-        <th>Game</th>
-        <th>Description</th>
-        <th>Group</th>
-        <th>Link</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for game in games_list %}
-    <tr>
-      <td class="text-center">
-        {% if game.image %}
-          <img src="{{ game.image.thumbnail.url }}"
-          class="img-responsive img-rounded"
-          style="display: inline-block;">
-        {% else %}
-          <i class='fa fa-gamepad fa-5x'></i>
-        {% endif %}
-      </td>
-      <td><strong class='text-capitalized'>{{ game.name }}</strong></td>
-      <td>{{ game.description }}</td>
-      <td>{{ game.group }}</td>
-      <td>
-        <a class="btn btn-primary" href="{% url 'core:games:specific' game_id=game.pk %}">View Game</a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="5">No Games Found.</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
- </div>
+    <div class="page-header">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="row text-right">
+        <a href="{% url 'core:games:new' %}" class="btn btn-sm btn-success"><i class="fa fa-plus-circle fa-fw"></i>
+            Upload New Game</a>
+    </div>
+    <div class="top10">
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>Game</th>
+                <th>Description</th>
+                <th>Group</th>
+                <th>Link</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for game in games_list %}
+                <tr>
+                    <td class="text-center">
+                        {% if game.image %}
+                            <img src="{{ game.image.thumbnail.url }}"
+                                 class="img-responsive img-rounded"
+                                 style="display: inline-block;">
+                        {% else %}
+                            <i class='fa fa-gamepad fa-5x'></i>
+                        {% endif %}
+                    </td>
+                    <td><strong class='text-capitalized'>{{ game.name }}</strong></td>
+                    <td>{{ game.description }}</td>
+                    <td>{{ game.group }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{% url 'core:games:specific' game_id=game.pk %}">View Game</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No Games Found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

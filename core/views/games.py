@@ -1,13 +1,17 @@
 """Game related views."""
 import json
+from crispy_forms.utils import render_crispy_form
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
-from core.forms import GameForm
-from core.models import Game, Group, GameRating, User
 from django.views import generic
 from django.shortcuts import get_object_or_404
+from django_comments import CommentForm
+from core.forms import GameForm
+
+from core.models import Game, Group, GameRating, User
 
 
 def main(request):
@@ -52,7 +56,7 @@ def new_game(request):
     return render(request, 'games/game_form.html', {
         'title': 'New Game',
         'heading': 'Creating New Game',
-        'form': form
+        'form': form,
     })
 
 
@@ -166,7 +170,6 @@ def add_or_update_rating(game_id, user_id, value):
 
 
 class GameSearch(generic.ListView):
-
     """Handle searching of games."""
 
     template_name = 'games/all_games.html'
