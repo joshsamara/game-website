@@ -5,7 +5,7 @@ from core.forms import RegisterUserForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
-from core.models import Group, User
+from core.models import Group, User, Game
 from . import LoginRequiredMixin
 
 
@@ -49,11 +49,12 @@ class ProfileView(DetailView):
     template_name = "user/profile.html"
     model = User
 
-    def get_object(self):
-        """Get the user's pk for the page."""
-        pk = self.kwargs.get('pk')
-        # TODO: 404 when object not found
-        return User.objects.get(id=pk)
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        user = User.objects.get(id=self.kwargs.get('pk'))
+        groups = Group.objects.filter(members=user)
+        context['games_list'] = Game.objects.filter(group__in=groups)
+        return context
 
 
 class UserGroupsView(LoginRequiredMixin, ListView):
@@ -97,8 +98,10 @@ class GroupDetailView(DetailView):
     template_name = "user/group.html"
     model = Group
 
-    def get_object(self):
-        """Get the specific group."""
+    def get_object(self, **kwargs):
+        """Get the specific group.
+        :param **kwargs:
+        """
         pk = self.kwargs.get('pk')
         # TODO: 404 when object not found
         return Group.objects.get(id=pk)

@@ -2,31 +2,71 @@
 
 {% block title %}Profile{% endblock %}
 {% block content %}
-  <div class="page-header" style="border: none">
-      <h1>Profile: {% if object.first_name %}{{ object.first_name }}{% else %}{{ object.email }}{% endif %}</h1>
-  </div>
-  <div class="row">
-      <div class="col-md-4" style="border-right: solid 1px #eee; border-top: solid 1px #eee">
-          <h4 style="padding-bottom: 5px; padding-top: 5px">Personal</h4>
-          <img src="http://placekitten.com/g/200/300" class="img-responsive img-rounded" alt="Responsive image">
-          <dl class="dl" style="margin-top: 20px">
-              <dt>Name</dt>
-              <dd>{{ object.first_name }} {{ object.last_name }}</dd>
-              <dt>Gender</dt>
-              <dd>{{ object.gender }}</dd>
-              <dt>Birthday</dt>
-              <dd>{{ object.birthday }}</dd>
-              <dt>Date Joined</dt>
-              <dd>{{ object.date_joined }}</dd>
-              <dt>Contact</dt>
-              <dd>{{ object.email }}</dd>
-          </dl>
-      </div>
-      <div class="col-md-8" style="border-top: solid 1px #eee; padding-top: 5px">
-          <h4>Games</h4>
-      </div>
-  </div>
-  <div class="row" style="border-top: solid 1px #eee; padding-top: 5px">
-      <h4 style="padding-left: 1.5rem">Recommended/Recently Played</h4>
-  </div>
+    <div class="page-header" style="border: none">
+        <h1>Profile: {% if object.first_name %}{{ object.first_name }}{% else %}{{ object.email }}{% endif %}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-4" style="border-right: solid 1px #eee; border-top: solid 1px #eee">
+            <h4 style="padding-bottom: 5px; padding-top: 5px">Personal</h4>
+            <img src="http://placekitten.com/g/200/300" class="img-responsive img-rounded" alt="Responsive image">
+            <dl class="dl" style="margin-top: 20px">
+                <dt>Name</dt>
+                <dd>{{ object.first_name }} {{ object.last_name }}</dd>
+                <dt>Gender</dt>
+                <dd>{{ object.gender }}</dd>
+                <dt>Birthday</dt>
+                <dd>{{ object.birthday }}</dd>
+                <dt>Date Joined</dt>
+                <dd>{{ object.date_joined }}</dd>
+                <dt>Contact</dt>
+                <dd>{{ object.email }}</dd>
+            </dl>
+        </div>
+        <div class="col-md-8" style="border-top: solid 1px #eee; padding-top: 5px">
+            <h4>Games</h4>
+
+            <div class="top10">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Game</th>
+                        <th>Description</th>
+                        <th>Group</th>
+                        <th>Link</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for game in games_list %}
+                        <tr>
+                            <td class="text-center">
+                                {% if game.image %}
+                                    <img src="{{ game.image.thumbnail.url }}"
+                                         class="img-responsive img-rounded"
+                                         style="display: inline-block;">
+                                {% else %}
+                                    <i class='fa fa-gamepad fa-5x'></i>
+                                {% endif %}
+                            </td>
+                            <td><strong class='text-capitalized'>{{ game.name }}</strong></td>
+                            <td>{{ game.description }}</td>
+                            <td>{{ game.group }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{% url 'core:games:specific' game_id=game.pk %}">View
+                                    Game</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No Games Found.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="border-top: solid 1px #eee; padding-top: 5px">
+        <h4 style="padding-left: 1.5rem">Recommended/Recently Played</h4>
+    </div>
 {% endblock %}
