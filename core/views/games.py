@@ -1,5 +1,6 @@
 """Game related views."""
 import json
+import random
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
@@ -193,8 +194,12 @@ class GameAPI(generic.View):
             games = Game.objects.all()
         else:
             games = Game.objects.filter(name__icontains=game_name)
-        games = games.values_list('name', 'image', 'description')
+        # Don't support more than 20 on this page
+        games = games.values_list('name', 'image', 'description')[:20]
         game_list = []
         for name, image, description in games:
             game_list.append({'name': name, 'image': image, 'description': description})
+
+        if not game_name:
+            random.shuffle(game_list)
         return JsonResponse(game_list, safe=False)
