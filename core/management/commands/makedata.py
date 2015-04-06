@@ -41,12 +41,12 @@ class Command(NoArgsCommand):
         game_dict = {"name": ' '.join(fake.sentence().split(' ')[:2]).title(),
                      "description": fake.paragraph(),
                      "image": None,
-                     "date_published": fake.date_time_this_year(),
                      "group": group,
                      "event_name": fake.word().capitalize()}
         g = Game(**game_dict)
         g.save()
         g.tags = tags
+        g.date_published = fake.date_time()
         g.save()
         return g
 
