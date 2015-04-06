@@ -188,6 +188,44 @@ class GameSearch(generic.ListView):
 
 
 class GameAPI(generic.View):
+
+    def _get_games(self, name, featured=False, top=False, recent=False):
+        """
+        Get games based on the arguments provided.
+
+        Filter takes precedence in argument order.
+        param:name: name to filter on
+        param:featured: get featured games
+        param:top: get top games
+        param:recent: get recently uploaded games
+
+        No name will grab 21 random games.
+        """
+        randomize = False
+        if name:
+            games = Game.objects.all()
+            max_count = 21
+        elif featured:
+            games = Game.objects.filter(featured=True)
+            max_count = 3
+        elif top:
+            games = Game.objects.all_by_rating()
+            max_count = 3
+        elif recent:
+            games = Game.objects.order_by('-date_published').all()
+            max_count = 3
+        else:
+            games = Game.objects.all()
+            max_count = 21
+            randomize = True
+
+        size = len(games)
+        games = [(game.pk, game.name, str(game.image), game.description) for game in games]
+        if randomize:
+            return random.sample(games, min(size, max_count))
+        else:
+            return games[:min(size, max_count)]
+
     def get(self, request, *args, **kwargs):
 
         # Add quick url formattings for games, use a single reverse
@@ -199,20 +237,16 @@ class GameAPI(generic.View):
             """Reverse for a game in a faster way."""
             return reverse_template + '/%d/' % game_id
 
+        # Get query params
         game_name = self.request.GET.get('term', '')
         featured = self.request.GET.get('featured')
-        general_search = not (game_name or featured)
-        games = None
-        if general_search:
-            games = Game.objects.all()
-        elif featured:
-            games = Game.objects.filter(featured=True)
-        elif not games:
-            # If we haven't searched yet or there are no featued
-            games = Game.objects.filter(name__icontains=game_name)
+        top = self.request.GET.get('top')
+        recent = self.request.GET.get('recent')
 
-        # Don't support more than 20 on this page
-        games = games.values_list('pk', 'name', 'image', 'description')[:20]
+        # Get list
+        games = self._get_games(game_name, featured, top, recent)
+
+        # Format our JSON response
         game_list = []
 
         # Format our data to be sent back to the JS
@@ -221,9 +255,5 @@ class GameAPI(generic.View):
                               'image': image,
                               'description': description,
                               'url': quick_reverse(pk)})
-
-        if general_search:
-            # Randomize the default results
-            random.shuffle(game_list)
 
         return JsonResponse(game_list, safe=False)

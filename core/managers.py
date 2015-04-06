@@ -1,5 +1,6 @@
 """Custom managers for models."""
 from django.contrib.auth.models import BaseUserManager
+from django.db.models import Manager
 from django.utils import timezone
 
 
@@ -31,3 +32,9 @@ class UserManager(BaseUserManager):
         """Create a superuser."""
         return self._create_user(email, password, True, True,
                                  **extra_fields)
+
+
+class GameManager(Manager):
+    def all_by_rating(self, descending=True):
+        all_games = self.all()
+        return sorted(all_games, key=lambda g: g.average_rating, reverse=descending)
