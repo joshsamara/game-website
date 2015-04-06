@@ -29,7 +29,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=1,
                               blank=True,
                               choices=GENDER_CHOICES)
-    public = models.BooleanField(default=False)
+    public = models.BooleanField(default=True,
+                                 help_text='Determines whether or not your profile is open to the public')
 
     USERNAME_FIELD = 'email'
     objects = UserManager()
@@ -79,7 +80,7 @@ class Game(models.Model):
                           variations={'thumbnail': {'width': 200, 'height': 200}})
     game_file = models.FileField(blank=True, null=True)
     description = models.TextField(max_length=5000)
-    date_published = models.DateTimeField(auto_now_add=True)
+    date_published = models.DateField(auto_now_add=True)
     group = models.ForeignKey(Group, blank=True, null=True)
     event_name = models.CharField(max_length=75, blank=True, default='')
     tags = models.ManyToManyField(GameTag, null=True, blank=True)

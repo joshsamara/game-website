@@ -69,6 +69,7 @@ class ProfileView(DetailView):
         user = User.objects.get(id=self.kwargs.get('pk'))
         groups = Group.objects.filter(members=user)
         context['games_list'] = Game.objects.filter(group__in=groups)
+        context['show_edit'] = user is self.request.user
         return context
 
 

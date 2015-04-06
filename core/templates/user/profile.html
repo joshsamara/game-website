@@ -28,11 +28,15 @@
                     <dt>Contact</dt>
                     <dd>{{ object.email }}</dd>
                 </dl>
+            {% else %}
+                <p>This user's information is hidden</p>
             {% endif %}
 
-            <a class="btn btn-default btn-xs" role="button" href="{% url 'core:profile:edit' %}">
-                Edit Profile
-            </a>
+            {% if show_edit %}
+                <a class="btn btn-default btn-xs" role="button" href="{% url 'core:profile:edit' %}">
+                    Edit Profile
+                </a>
+            {% endif %}
         </div>
         <div class="col-md-9" style="border-top: solid 1px #eee; padding-top: 5px">
             <h4>Games</h4>
