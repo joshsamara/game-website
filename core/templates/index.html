@@ -11,18 +11,21 @@
     <input type="text" ng-model="search_term" ng-model-options="{ debounce: 100 }" ng-change="search()"/>
     <button class="btn" ng-click="pop()"> </button>
     <h1>Term: {{ search_term }}</h1>
-    <div ng-repeat="game in games">
-      <a href="#">
-        <div class="col-md-4 game-square" ng-animate="'animate'">
-          <div class="header text-block">
-            <p>{{game.name}}</p>
+    <div class="results">
+      <div ng-repeat="game in games">
+        <a href="#">
+          <div class="col-md-4 game-square" ng-animate="'animate'">
+            <div class="header text-block">
+              <p>{{game.name}}</p>
+            </div>
+            <img ng-if="game.image" src="/media/{{game.image}}" />
+            <div class="foot text-block">
+              <p>{{game.description | summarize }}</p>
+            </div>
           </div>
-          <img ng-if="game.image" src="/media/{{game.image}}" />
-          <div class="foot text-block">
-            <p>{{game.description | summarize }}</p>
-          </div>
-        </div>
-       </a>
+        </a>
+      </div>
+      <div class="text-center" ng-show="!games.length"><h1>No Games found!</h1></div>
     </div>
   </div>
 </div>

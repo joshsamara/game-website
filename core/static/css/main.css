@@ -40,6 +40,14 @@ body {
     background: url(star.gif) left -32px;
 }
 
+/* Home page styles */
+.results {
+  padding: 5px;
+  border: 1px solid black;
+  overflow: auto;
+  border-radius: 5px;
+}
+
 .game-square {
   border: 2px solid white;
   height: 210px;
