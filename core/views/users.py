@@ -1,7 +1,8 @@
 """User related views."""
+from django.contrib.auth.decorators import login_required
 from django.views.generic import View, ListView, DetailView, CreateView, RedirectView
 from django.http import HttpResponseRedirect
-from core.forms import RegisterUserForm
+from core.forms import RegisterUserForm, EditUserForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
@@ -29,12 +30,27 @@ def register(request):
     })
 
 
-class ProfileRedirectView(LoginRequiredMixin, RedirectView):
+@login_required
+def edit(request):
+    """Edit a user account."""
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('core:profile:base'))
+    else:
+        form = EditUserForm(instance=request.user)
 
+    return render(request, "user/edit_profile.html", {
+        'form': form,
+    })
+
+
+class ProfileRedirectView(LoginRequiredMixin, RedirectView):
     """Redirect to the user profile page."""
 
     permanent = False
-    pattern_name = 'core:user-profile'
+    pattern_name = 'core:profile:user-profile'
 
     def get_redirect_url(self, *args, **kwargs):
         """Redirect to the user's page."""
@@ -43,7 +59,6 @@ class ProfileRedirectView(LoginRequiredMixin, RedirectView):
 
 
 class ProfileView(DetailView):
-
     """Display the user profile page."""
 
     template_name = "user/profile.html"
@@ -58,7 +73,6 @@ class ProfileView(DetailView):
 
 
 class UserGroupsView(LoginRequiredMixin, ListView):
-
     """Display a list of user's groups."""
 
     template_name = "user/groups.html"
@@ -75,7 +89,6 @@ class UserGroupsView(LoginRequiredMixin, ListView):
 
 
 class GroupsView(ListView):
-
     """Display a list of ALL groups."""
 
     template_name = "user/groups.html"
@@ -92,7 +105,6 @@ class GroupsView(ListView):
 
 
 class GroupDetailView(DetailView):
-
     """Display a single group."""
 
     template_name = "user/group.html"
@@ -114,7 +126,6 @@ class GroupDetailView(DetailView):
 
 
 class GroupJoinView(LoginRequiredMixin, View):
-
     """Allow a user to join a given group."""
 
     model = Group
@@ -129,7 +140,6 @@ class GroupJoinView(LoginRequiredMixin, View):
 
 
 class GroupLeaveView(LoginRequiredMixin, View):
-
     """Allow a user to leave a given group."""
 
     model = Group
@@ -144,7 +154,6 @@ class GroupLeaveView(LoginRequiredMixin, View):
 
 
 class GroupCreateView(LoginRequiredMixin, CreateView):
-
     """Create a group."""
 
     model = Group

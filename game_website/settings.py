@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django_comments',
     'game_comments',
+    'widget_tweaks',
 )
 
 COMMENTS_APP = 'game_comments'

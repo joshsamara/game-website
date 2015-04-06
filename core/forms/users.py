@@ -1,12 +1,12 @@
 """Forms for users."""
 from django import forms
-from core.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
+from core.models import User
+
 
 class RegisterUserForm(forms.ModelForm):
-
     """A form that creates a user from the given email and password."""
 
     error_messages = {
@@ -62,3 +62,17 @@ class RegisterUserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class EditUserForm(forms.ModelForm):
+    """Form to allow users to edit their profiles"""
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'gender', 'public', 'birthday']
+
+    def __init__(self, *args, **kwargs):
+        """Setup the form to work with crispy_forms."""
+        super(EditUserForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Submit'))

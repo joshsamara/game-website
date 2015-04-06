@@ -19,13 +19,13 @@ class User(AbstractBaseUser, PermissionsMixin):
                       ('F', 'Female'),
                       ('O', 'Other'),)
     email = models.EmailField(blank=False, unique=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=30, blank=True)
     is_staff = models.BooleanField(default=False,
                                    help_text='Designates whether the user can log into this admin '
                                    'site.')
-    date_joined = models.DateTimeField(default=timezone.now, blank=True)
-    birthday = models.DateField(null=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    birthday = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1,
                               choices=GENDER_CHOICES,
                               blank=True)
@@ -82,7 +82,7 @@ class Game(models.Model):
                           variations={'thumbnail': {'width': 200, 'height': 200}})
     game_file = models.FileField(blank=True, null=True)
     description = models.TextField(max_length=5000)
-    date_published = models.DateField(auto_now_add=True)
+    date_published = models.DateTimeField(auto_now_add=True)
     group = models.ForeignKey(Group, blank=True, null=True)
     event_name = models.CharField(max_length=75, blank=True, default='')
     tags = models.ManyToManyField(GameTag, null=True, blank=True)
