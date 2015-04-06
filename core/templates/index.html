@@ -2,13 +2,17 @@
 {% load staticfiles %}
 
 {% block content %}
-<style type="text/css">
-</style>
 
 {% verbatim %}
 <div ng-app="HomePage">
   <div ng-controller="ListController" class="container" ng-cloak>
-    <input type="text" ng-model="search_term" ng-model-options="{ debounce: 100 }" ng-change="search()"/>
+      <input class="form-control"
+      type="text"
+      placeholder="Enter search text."
+      ng-model="search_term"
+      ng-model-options="{ debounce: 100 }"
+      ng-change="search()"/>
+
     <button class="btn" ng-click="pop()"> </button>
     <h1>Term: {{ search_term }}</h1>
     <div class="results">
