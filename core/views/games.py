@@ -200,9 +200,15 @@ class GameAPI(generic.View):
             return reverse_template + '/%d/' % game_id
 
         game_name = self.request.GET.get('term', '')
-        if not game_name:
+        featured = self.request.GET.get('featured')
+        general_search = not (game_name or featured)
+        games = None
+        if general_search:
             games = Game.objects.all()
-        else:
+        elif featured:
+            games = Game.objects.filter(featured=True)
+        elif not games:
+            # If we haven't searched yet or there are no featued
             games = Game.objects.filter(name__icontains=game_name)
 
         # Don't support more than 20 on this page
@@ -216,7 +222,7 @@ class GameAPI(generic.View):
                               'description': description,
                               'url': quick_reverse(pk)})
 
-        if not game_name:
+        if general_search:
             # Randomize the default results
             random.shuffle(game_list)
 

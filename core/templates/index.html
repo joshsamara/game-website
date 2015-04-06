@@ -6,6 +6,25 @@
 {% verbatim %}
 <div ng-app="HomePage">
   <div ng-controller="ListController" class="container" ng-cloak>
+
+    <h1 class="page-header">Featured Games</h1>
+    <div class="results featured well">
+      <div ng-repeat="game in featured" class="animate">
+        <a ng-href="{{game.url}}">
+          <div class="col-md-4 game-square">
+            <div class="header text-block">
+              <p ng-bind="game.name">Loading...</p>
+            </div>
+            <img ng-if="game.image" ng-src="/media/{{game.image}}" />
+            <div class="foot text-block">
+              <p ng-bind="(game.description | summarize)"></p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <h1 class="page-header">Game Search</h1>
     <div class="well">
       <label>Search for a game:</label>
       <input class="form-control"

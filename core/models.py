@@ -86,6 +86,7 @@ class Game(models.Model):
     group = models.ForeignKey(Group, blank=True, null=True)
     event_name = models.CharField(max_length=75, blank=True, default='')
     tags = models.ManyToManyField(GameTag, null=True, blank=True)
+    featured = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
