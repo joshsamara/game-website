@@ -12,4 +12,5 @@ urlpatterns = patterns(
     url(r'^(?P<game_id>\d+)/ratings/$', games.rate_games, name='ratings'),
     url(r'^(?P<game_id>\d+)/ratings/total/$', games.total_ratings, name='total_ratings'),
     url(r'^search/$', games.GameSearch.as_view(), name='search'),
+    url(r'^api/$', games.GameAPI.as_view(), name='api'),
 )

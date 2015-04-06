@@ -184,3 +184,17 @@ class GameSearch(generic.ListView):
         context['games_list'] = self.object_list
         context['title'] = 'Search Results'
         return context
+
+
+class GameAPI(generic.View):
+    def get(self, request, *args, **kwargs):
+        game_name = self.request.GET.get('term', '')
+        if not game_name:
+            games = Game.objects.all()
+        else:
+            games = Game.objects.filter(name__icontains=game_name)
+        games = games.values_list('name', 'image', 'description')
+        game_list = []
+        for name, image, description in games:
+            game_list.append({'name': name, 'image': image, 'description': description})
+        return JsonResponse(game_list, safe=False)
