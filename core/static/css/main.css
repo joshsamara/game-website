@@ -91,11 +91,25 @@ body {
 
 .animate.ng-enter
 {
-  -webkit-transition: 1s;
-  transition: 1s;
+  -webkit-transition: 0.5s linear all;
+  transition: 0.5s linear all;
   opacity: 0;
 }
 
 .animate.ng-enter-active {
   opacity: 1;
+}
+
+.animate-none {
+    opacity: 1;
+}
+
+.animate-none.ng-hide {
+    opacity: 0;
+}
+
+.animate-none.ng-hide-add,
+.animate-none.ng-hide-remove {
+    -webkit-transition: 0.5s linear all;
+    transition: 0.5s linear all;
 }
