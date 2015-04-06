@@ -189,17 +189,35 @@ class GameSearch(generic.ListView):
 
 class GameAPI(generic.View):
     def get(self, request, *args, **kwargs):
+
+        # Add quick url formattings for games, use a single reverse
+        # search as reference
+        reverse_template = reverse('core:games:specific',
+                                   kwargs={'game_id': 1}).replace('/1/', '')
+
+        def quick_reverse(game_id):
+            """Reverse for a game in a faster way."""
+            return reverse_template + '/%d/' % game_id
+
         game_name = self.request.GET.get('term', '')
         if not game_name:
             games = Game.objects.all()
         else:
             games = Game.objects.filter(name__icontains=game_name)
+
         # Don't support more than 20 on this page
-        games = games.values_list('name', 'image', 'description')[:20]
+        games = games.values_list('pk', 'name', 'image', 'description')[:20]
         game_list = []
-        for name, image, description in games:
-            game_list.append({'name': name, 'image': image, 'description': description})
+
+        # Format our data to be sent back to the JS
+        for pk, name, image, description in games:
+            game_list.append({'name': name,
+                              'image': image,
+                              'description': description,
+                              'url': quick_reverse(pk)})
 
         if not game_name:
+            # Randomize the default results
             random.shuffle(game_list)
+
         return JsonResponse(game_list, safe=False)

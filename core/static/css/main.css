@@ -48,6 +48,10 @@ body {
   border-radius: 5px;
 }
 
+.game-square:hover {
+  background-color: #777;
+}
+
 .game-square {
   border: 2px solid white;
   height: 210px;

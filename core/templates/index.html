@@ -8,7 +8,7 @@
   <div ng-controller="ListController" class="container" ng-cloak>
       <input class="form-control"
       type="text"
-      placeholder="Enter search text."
+      placeholder="Enter search text"
       ng-model="search_term"
       ng-model-options="{ debounce: 100 }"
       ng-change="search()"/>
@@ -17,14 +17,14 @@
     <h1>Term: {{ search_term }}</h1>
     <div class="results">
       <div ng-repeat="game in games">
-        <a href="#">
+        <a ng-href="{{game.url}}">
           <div class="col-md-4 game-square" ng-animate="'animate'">
             <div class="header text-block">
-              <p>{{game.name}}</p>
+              <p ng-bind="game.name">Loading...</p>
             </div>
-            <img ng-if="game.image" src="/media/{{game.image}}" />
+            <img ng-if="game.image" ng-src="/media/{{game.image}}" />
             <div class="foot text-block">
-              <p>{{game.description | summarize }}</p>
+              <p ng-bind="(game.description | summarize)"></p>
             </div>
           </div>
         </a>
