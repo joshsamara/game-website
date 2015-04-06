@@ -8,14 +8,14 @@ from core.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-
     """
     User for this site.
 
     Requires only an email and password.
     """
 
-    GENDER_CHOICES = (('M', 'Male'),
+    GENDER_CHOICES = (('', 'Prefer not to disclose'),
+                      ('M', 'Male'),
                       ('F', 'Female'),
                       ('O', 'Other'),)
     email = models.EmailField(blank=False, unique=True)
@@ -23,12 +23,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30, blank=True)
     is_staff = models.BooleanField(default=False,
                                    help_text='Designates whether the user can log into this admin '
-                                   'site.')
+                                             'site.')
     date_joined = models.DateTimeField(auto_now_add=True)
     birthday = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1,
-                              choices=GENDER_CHOICES,
-                              blank=True)
+                              blank=True,
+                              choices=GENDER_CHOICES)
     public = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
@@ -49,7 +49,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Group(models.Model):
-
     """Groups that can consist of Users."""
 
     members = models.ManyToManyField(User)
@@ -64,7 +63,6 @@ class Group(models.Model):
 
 
 class GameTag(models.Model):
-
     """Tags to label Games."""
 
     value = models.CharField(max_length=50)
@@ -74,7 +72,6 @@ class GameTag(models.Model):
 
 
 class Game(models.Model):
-
     """Game object."""
 
     name = models.CharField(max_length=50)

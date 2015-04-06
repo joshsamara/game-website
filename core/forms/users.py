@@ -2,11 +2,12 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.forms import ModelForm, RadioSelect, Select
 
 from core.models import User
 
 
-class RegisterUserForm(forms.ModelForm):
+class RegisterUserForm(ModelForm):
     """A form that creates a user from the given email and password."""
 
     error_messages = {
@@ -64,12 +65,15 @@ class RegisterUserForm(forms.ModelForm):
         return user
 
 
-class EditUserForm(forms.ModelForm):
+class EditUserForm(ModelForm):
     """Form to allow users to edit their profiles"""
 
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'gender', 'public', 'birthday']
+        widgets = {
+            'gender': RadioSelect()
+        }
 
     def __init__(self, *args, **kwargs):
         """Setup the form to work with crispy_forms."""
