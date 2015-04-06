@@ -1,4 +1,4 @@
-var app = angular.module("HomePage", [])
+var app = angular.module("HomePage", ['ngAnimate'])
 
 app.controller("ListController", function($scope, $http){
   function search(term){

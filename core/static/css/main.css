@@ -43,9 +43,9 @@ body {
 /* Home page styles */
 .results {
   padding: 5px;
-  border: 1px solid black;
+  border: 1px solid #CCC;
   overflow: auto;
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 .game-square:hover {
@@ -58,6 +58,7 @@ body {
   text-align: center;
   background-color: #BBB;
   border-radius: 10px;
+  overflow: hidden;
 }
 
 .game-square .text-block{
@@ -66,6 +67,8 @@ body {
   width: 100%;
   margin-left: -15px;
   border-radius: 5px;
+  overflow: hidden;
+  padding: 2px;
 }
 
 .game-square .header {
@@ -84,4 +87,15 @@ body {
 .game-square img {
   z-index: -1;
   max-height: 200px;
+}
+
+.animate.ng-enter
+{
+  -webkit-transition: 1s;
+  transition: 1s;
+  opacity: 0;
+}
+
+.animate.ng-enter-active {
+  opacity: 1;
 }
