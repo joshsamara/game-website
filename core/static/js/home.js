@@ -13,10 +13,6 @@ app.controller("ListController", function($scope, $http){
     search($scope.search_term);
   }
 
-  $scope.pop = function(){
-    $scope.games.pop()
-  }
-
 })
 
 app.filter('summarize', function () {

@@ -6,15 +6,16 @@
 {% verbatim %}
 <div ng-app="HomePage">
   <div ng-controller="ListController" class="container" ng-cloak>
+    <div class="well">
+      <label>Search for a game:</label>
       <input class="form-control"
       type="text"
       placeholder="Enter search text"
       ng-model="search_term"
       ng-model-options="{ debounce: 300 }"
       ng-change="search()"/>
+    </div>
 
-    <button class="btn" ng-click="pop()"> </button>
-    <h1>Term: {{ search_term }}</h1>
     <div class="results">
       <div ng-repeat="game in games" class="animate">
         <a ng-href="{{game.url}}">
