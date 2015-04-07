@@ -42,6 +42,7 @@ body {
 
 /* Home page styles */
 .results {
+  min-height: 222px;
   padding: 5px;
   border: 1px solid #CCC;
   overflow: auto;
@@ -89,8 +90,11 @@ body {
   max-height: 200px;
 }
 
-.animate.ng-enter
-{
+.no-results {
+  padding-top: 50px;
+}
+
+.animate.ng-enter {
   -webkit-transition: 0.5s linear all;
   transition: 0.5s linear all;
   opacity: 0;

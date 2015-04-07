@@ -22,6 +22,43 @@
           </div>
         </a>
       </div>
+      <div class="no-results text-center" ng-show="featured && !featured.length" ng-cloak><h1>No Featured Games!</h1></div>
+    </div>
+
+    <h1 class="page-header">Most Recent</h1>
+    <div class="results featured well">
+      <div ng-repeat="game in recent" class="animate">
+        <a ng-href="{{game.url}}">
+          <div class="col-md-4 game-square">
+            <div class="header text-block">
+              <p ng-bind="game.name">Loading...</p>
+            </div>
+            <img ng-if="game.image" ng-src="/media/{{game.image}}" />
+            <div class="foot text-block">
+              <p ng-bind="(game.description | summarize)"></p>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="no-results text-center" ng-show="recent && !recent.length" ng-cloak><h1>No Games Found!</h1></div>
+    </div>
+
+    <h1 class="page-header">Top Games</h1>
+    <div class="results featured well">
+      <div ng-repeat="game in top_games" class="animate">
+        <a ng-href="{{game.url}}">
+          <div class="col-md-4 game-square">
+            <div class="header text-block">
+              <p ng-bind="game.name">Loading...</p>
+            </div>
+            <img ng-if="game.image" ng-src="/media/{{game.image}}" />
+            <div class="foot text-block">
+              <p ng-bind="(game.description | summarize)"></p>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="no-results text-center" ng-show="top_games && !top_games.length" ng-cloak><h1>No Games Found!</h1></div>
     </div>
 
     <h1 class="page-header">Game Search</h1>
@@ -49,7 +86,7 @@
           </div>
         </a>
       </div>
-      <div class="text-center animate-none" ng-show="!games.length"><h1>No Games found!</h1></div>
+      <div class="no-results text-center animate-none" ng-show="games && !games.length" ng-cloak><h1>No Games found!</h1></div>
     </div>
   </div>
 </div>
