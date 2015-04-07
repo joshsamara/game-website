@@ -3,7 +3,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Submit, Button, Fieldset
 from django import forms
-from django.forms import Textarea
+from django.forms import Textarea, CheckboxSelectMultiple
 from core.models import Game
 
 
@@ -14,13 +14,14 @@ class GameForm(forms.ModelForm):
         model = Game
         exclude = ['owner', 'date_published']
         widgets = {
-            'description': Textarea(attrs={'cols': 100, 'rows': 15})
+            'description': Textarea(attrs={'cols': 100, 'rows': 15}),
+            'tags': CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
         """Setup the form to work with crispy_forms."""
         super(GameForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
+        self.helper = FormHelper(self)
         self.helper.form_id = 'game-form'
         self.helper.layout = Layout(
             Fieldset(
@@ -36,7 +37,6 @@ class GameForm(forms.ModelForm):
                 'game_file'
             ),
             FormActions(
-                # Submit('save', 'Save'),
                 Submit('submit', 'Submit'),
                 Button('cancel', 'Cancel', onclick='history.go(-1);', css_class="btn-default")
             )

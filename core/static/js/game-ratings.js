@@ -24,7 +24,6 @@ function updateTotalRatings() {
 }
 
 function resetRating() {
-    console.log('fire')
     $.get(total_ratings_url, function (data) {
         $("#gameRating").rateit('value', data.avg_rating).rateit('ispreset', true);
     });

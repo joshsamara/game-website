@@ -57,7 +57,7 @@ class RegisterViewTestCase(TestCase):
 
 class ProfileRedirectViewTestCase(TestCase):
     def url(self, *args, **kwargs):
-        return reverse('core:profile')
+        return reverse('core:profile:base')
 
     def test_login_required(self):
         self.assertLoginRequired()
@@ -65,13 +65,13 @@ class ProfileRedirectViewTestCase(TestCase):
     def test_redirect(self):
         user = self.client.login()
         response = self.client.get(self.url())
-        self.assertRedirects(response, reverse('core:user-profile',
+        self.assertRedirects(response, reverse('core:profile:user-profile',
                                                kwargs={'pk': user.pk}))
 
 
 class ProfileViewTestCase(TestCase):
     def url(self, *args, **kwargs):
-        return reverse('core:user-profile', kwargs=kwargs)
+        return reverse('core:profile:user-profile', kwargs=kwargs)
 
     def test_no_login_required(self):
         user = G(User)

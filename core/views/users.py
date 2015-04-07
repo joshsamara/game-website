@@ -1,11 +1,12 @@
 """User related views."""
+from django.contrib.auth.decorators import login_required
 from django.views.generic import View, ListView, DetailView, CreateView, RedirectView
 from django.http import HttpResponseRedirect
-from core.forms import RegisterUserForm
+from core.forms import RegisterUserForm, EditUserForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
-from core.models import Group, User
+from core.models import Group, User, Game
 from . import LoginRequiredMixin
 
 
@@ -29,12 +30,42 @@ def register(request):
     })
 
 
-class ProfileRedirectView(LoginRequiredMixin, RedirectView):
+@login_required
+def edit(request):
+    """Edit a user account."""
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('core:profile:base'))
+    else:
+        form = EditUserForm(instance=request.user)
 
+    return render(request, "user/edit_profile.html", {
+        'form': form,
+    })
+
+@login_required
+def change_password(request):
+    """Edit a user password."""
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('core:profile:base'))
+    else:
+        form = EditUserForm(instance=request.user)
+
+    return render(request, "user/../templates/registration/change_password.html", {
+        'form': form,
+    })
+
+
+class ProfileRedirectView(LoginRequiredMixin, RedirectView):
     """Redirect to the user profile page."""
 
     permanent = False
-    pattern_name = 'core:user-profile'
+    pattern_name = 'core:profile:user-profile'
 
     def get_redirect_url(self, *args, **kwargs):
         """Redirect to the user's page."""
@@ -43,21 +74,21 @@ class ProfileRedirectView(LoginRequiredMixin, RedirectView):
 
 
 class ProfileView(DetailView):
-
     """Display the user profile page."""
 
     template_name = "user/profile.html"
     model = User
 
-    def get_object(self):
-        """Get the user's pk for the page."""
-        pk = self.kwargs.get('pk')
-        # TODO: 404 when object not found
-        return User.objects.get(id=pk)
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        user = User.objects.get(id=self.kwargs.get('pk'))
+        groups = Group.objects.filter(members=user)
+        context['games_list'] = Game.objects.filter(group__in=groups)
+        context['show_edit'] = user.pk is self.request.user.pk
+        return context
 
 
 class UserGroupsView(LoginRequiredMixin, ListView):
-
     """Display a list of user's groups."""
 
     template_name = "user/groups.html"
@@ -74,7 +105,6 @@ class UserGroupsView(LoginRequiredMixin, ListView):
 
 
 class GroupsView(ListView):
-
     """Display a list of ALL groups."""
 
     template_name = "user/groups.html"
@@ -91,14 +121,15 @@ class GroupsView(ListView):
 
 
 class GroupDetailView(DetailView):
-
     """Display a single group."""
 
     template_name = "user/group.html"
     model = Group
 
-    def get_object(self):
-        """Get the specific group."""
+    def get_object(self, **kwargs):
+        """Get the specific group.
+        :param **kwargs:
+        """
         pk = self.kwargs.get('pk')
         # TODO: 404 when object not found
         return Group.objects.get(id=pk)
@@ -111,7 +142,6 @@ class GroupDetailView(DetailView):
 
 
 class GroupJoinView(LoginRequiredMixin, View):
-
     """Allow a user to join a given group."""
 
     model = Group
@@ -126,7 +156,6 @@ class GroupJoinView(LoginRequiredMixin, View):
 
 
 class GroupLeaveView(LoginRequiredMixin, View):
-
     """Allow a user to leave a given group."""
 
     model = Group
@@ -141,7 +170,6 @@ class GroupLeaveView(LoginRequiredMixin, View):
 
 
 class GroupCreateView(LoginRequiredMixin, CreateView):
-
     """Create a group."""
 
     model = Group
