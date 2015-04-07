@@ -9,6 +9,11 @@ body {
     margin-bottom: 60px;
 }
 
+table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
 .container .text-muted {
     margin: 20px 0;
 }
