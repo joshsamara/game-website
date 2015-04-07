@@ -1,9 +1,9 @@
 """Main URL file, include other URLs here."""
 from django.conf.urls import patterns, url, include
 from django.conf.urls.static import static
-from core.views import (Home, register, ProfileRedirectView, UserGroupsView,
+from core.views import (Home, register, UserGroupsView,
                         GroupsView, GroupDetailView, GroupJoinView,
-                        GroupLeaveView, GroupCreateView, ProfileView)
+                        GroupLeaveView, GroupCreateView)
 
 # Use this file to import all other url
 from game_website import settings

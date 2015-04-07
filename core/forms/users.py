@@ -1,9 +1,12 @@
 """Forms for users."""
+from collections import OrderedDict
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.forms import SetPasswordForm
-from django.forms import ModelForm, RadioSelect, DateField
+from django.forms import ModelForm, RadioSelect
+from django.utils.translation import ugettext_lazy as _
+
 
 from core.models import User
 
@@ -83,10 +86,13 @@ class EditUserForm(ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
-class PasswordChangeForm(SetPasswordForm):
+class CustomPasswordChangeForm(SetPasswordForm):
     """
     A form that lets a user change their password by entering their old
     password.
+
+    A slightly modified version of Django's default PasswordChangeForm
+    set up for Crispy Forms
     """
     error_messages = dict(SetPasswordForm.error_messages, **{
         'password_incorrect': _("Your old password was entered incorrectly. "
@@ -107,7 +113,13 @@ class PasswordChangeForm(SetPasswordForm):
             )
         return old_password
 
-PasswordChangeForm.base_fields = OrderedDict(
-    (k, PasswordChangeForm.base_fields[k])
+    def __init__(self, *args, **kwargs):
+        """Setup the form to work with crispy_forms."""
+        super(CustomPasswordChangeForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+CustomPasswordChangeForm.base_fields = OrderedDict(
+    (k, CustomPasswordChangeForm.base_fields[k])
     for k in ['old_password', 'new_password1', 'new_password2']
 )
