@@ -12,6 +12,16 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'js/jquery-ui/jquery-ui.min.css' %}">
+    <script src="{% static 'js/jquery-ui/external/jquery/jquery.js' %}"></script>
+    <script src="{% static 'js/jquery-ui/jquery-ui.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.dateinput').datepicker();
+            console.log('asdfas')
+        });
+    </script>
 
     {# Put anything else you want to load in the head block #}
     {% block head %}

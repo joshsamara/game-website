@@ -8,9 +8,8 @@ from django_comments import CommentForm
 class GameCommentForm(CommentForm):
     def __init__(self, *args, **kwargs):
         """Setup the form to work with crispy_forms."""
-        super(CommentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'comment-form'
+        self.helper.form_id = 'comment_form'
         self.helper.layout = Layout(
             Fieldset(
                 '',
@@ -24,3 +23,4 @@ class GameCommentForm(CommentForm):
                 Button('post', 'Post'),
             )
         )
+        super(CommentForm, self).__init__(*args, **kwargs)

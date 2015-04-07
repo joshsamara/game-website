@@ -45,6 +45,21 @@ def edit(request):
         'form': form,
     })
 
+@login_required
+def change_password(request):
+    """Edit a user password."""
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('core:profile:base'))
+    else:
+        form = EditUserForm(instance=request.user)
+
+    return render(request, "user/../templates/registration/change_password.html", {
+        'form': form,
+    })
+
 
 class ProfileRedirectView(LoginRequiredMixin, RedirectView):
     """Redirect to the user profile page."""
@@ -69,7 +84,7 @@ class ProfileView(DetailView):
         user = User.objects.get(id=self.kwargs.get('pk'))
         groups = Group.objects.filter(members=user)
         context['games_list'] = Game.objects.filter(group__in=groups)
-        context['show_edit'] = user is self.request.user
+        context['show_edit'] = user.pk is self.request.user.pk
         return context
 
 

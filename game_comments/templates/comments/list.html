@@ -1,11 +1,11 @@
-<dl id="comments">
+<dl id="comments" xmlns="http://www.w3.org/1999/html">
     {% for comment in comment_list %}
         <div class="panel panel-default">
             <div class="panel-heading">
-                    {{ comment.submit_date }} - {{ comment.name }}
+                {{ comment.submit_date }} - {{ comment.name }}
             </div>
             <div class="panel-body">
-                    <p>{{ comment.comment }}</p>
+                <p>{{ comment.comment }}</p>
             </div>
         </div>
     {% endfor %}

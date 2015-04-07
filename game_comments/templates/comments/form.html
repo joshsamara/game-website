@@ -5,10 +5,9 @@
     {% crispy form %}
     <script type="text/javascript">
         function postForm() {
+            // TODO: not use a super ghetto way to get the form
             comment_form = $("form:gt(0)");
-            console.log('post');
             var errors = $('.errorlist');
-            console.log(errors);
             errors.remove();
 
             $.ajax({
@@ -16,13 +15,11 @@
                 url: '{% post_comment_form_target %}',
                 data: comment_form.serialize(),
                 success: function (data) {
-                    console.log('success');
                     if (!(data['success'])) {
                         // Here we replace the form, for the
                         comment_form.replaceWith(data['form_html']);
                         $('#game-form').append(csrf);
                         addOnClick();
-                        console.log('no good')
                     }
                     else {
                         // Here you can show the user a success message or do whatever you need
@@ -31,7 +28,7 @@
                     }
                 },
                 error: function () {
-                    console.log('error');
+                    console.log('An error has occurred');
                 }
             });
         }
