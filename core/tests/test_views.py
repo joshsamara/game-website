@@ -2,6 +2,7 @@ from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
 from core.models import User, Group, Game, GameRating
 from django.core.urlresolvers import reverse
+from datetime import datetime
 import json
 
 
@@ -351,3 +352,63 @@ class RateGamesTestCase(TestCase):
         self.client.login()
         response = self.client.post(self.url(game_id=game.id))
         self.assertEqual(response.status_code, 405)
+
+
+class GamesAPITestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:games:api')
+
+    def test_no_login_required(self):
+        self.assertNoLoginRequired()
+
+    def test_get_name(self):
+        g1 = G(Game, name='hello')
+
+        # Make a second non-featured game
+        G(Game, name='bye')
+        response = self.client.get(self.url(), {'term': 'hel'})
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data[0]['name'], g1.name)
+
+    def test_get_featured(self):
+        g1 = G(Game, featured=True)
+
+        # Make a second non-featured game
+        G(Game, featured=False)
+        response = self.client.get(self.url(), {'featured': True})
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data[0]['name'], g1.name)
+
+    def test_get_top_rated(self):
+        g1 = G(Game)
+        G(GameRating, game=g1, value=5)
+
+        # Make a second lower-rated game
+        g2 = G(Game)
+        G(GameRating, game=g2, value=1)
+
+        response = self.client.get(self.url(), {'top': True})
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 2)
+        self.assertEqual(response_data[0]['name'], g1.name)
+        self.assertEqual(response_data[1]['name'], g2.name)
+
+    def test_get_recent(self):
+        # Game 1 will be older
+        g1 = G(Game)
+        g1.date_published = datetime(2013, 5, 2)
+        g1.save()
+
+        g2 = G(Game)
+
+        response = self.client.get(self.url(), {'recent': True})
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 2)
+        self.assertEqual(response_data[0]['name'], g2.name)
+        self.assertEqual(response_data[1]['name'], g1.name)
