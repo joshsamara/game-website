@@ -34,7 +34,6 @@ $.ajax(ratings_url, {
     type: 'GET',
     dataType: 'json'
 }).success(function (data) {
-    console.log(data);
     $("#gameRating").rateit('value', data.value).rateit('ispreset', false);
 }).error(function () {
     // An error means that either the user is not

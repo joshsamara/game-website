@@ -42,8 +42,15 @@ INSTALLED_APPS = (
     'django_extensions',
     'core',
     'stdimage',
-    'crispy_forms'
+    'crispy_forms',
+    'django.contrib.sites',
+    'django_comments',
+    'game_comments',
 )
+
+COMMENTS_APP = 'game_comments'
+
+SITE_ID = 1
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -103,6 +110,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_DIR, 'templates'),
     os.path.join(BASE_DIR, 'core', 'templates'),
     os.path.join(BASE_DIR, '..', 'core', 'templates'),
+    os.path.join(BASE_DIR, 'game_comments', 'templates'),
 )
 
 LOGIN_URL = 'core:login'

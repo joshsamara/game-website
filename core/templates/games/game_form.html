@@ -5,8 +5,38 @@
 {% endblock %}
 
 {% block content %}
-    {% csrf_token %}
     {% load crispy_forms_tags %}
     {% crispy form %}
     <br/><br/>
+{#    <script type="text/javascript">#}
+{#        var game_form = '#game-form';#}
+{#        var csrf = $( "input[name='csrfmiddlewaretoken']" )[0];#}
+{##}
+{#        function postForm() {#}
+{#            console.log('posted');#}
+{#            $.ajax({#}
+{#                type: "POST",#}
+{#                data: $(game_form).serialize(),#}
+{#                success: function (data) {#}
+{#                    console.log('success');#}
+{#                    if (!(data['success'])) {#}
+{#                        // Here we replace the form, for the#}
+{#                        $(game_form).replaceWith(data['form_html']);#}
+{#                        $('#button-id-submit').on('click', postForm);#}
+{#                        $('#game-form').append(csrf);#}
+{#                    }#}
+{#                    else {#}
+{#                        // Here you can show the user a success message or do whatever you need#}
+{#                        console.log('wowoeoaew');#}
+{#                        $(game_form).find('.success-message').show();#}
+{#                    }#}
+{#                },#}
+{#                error: function () {#}
+{#                    $(game_form).find('.error-message').show()#}
+{#                }#}
+{#            });#}
+{#        }#}
+{##}
+{#        $('#button-id-submit').on('click', postForm);#}
+{#    </script>#}
 {% endblock %}

@@ -1,0 +1,12 @@
+<dl id="comments">
+    {% for comment in comment_list %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                    {{ comment.submit_date }} - {{ comment.name }}
+            </div>
+            <div class="panel-body">
+                    <p>{{ comment.comment }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</dl>
