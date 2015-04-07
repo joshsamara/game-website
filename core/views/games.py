@@ -1,14 +1,12 @@
 """Game related views."""
 import json
-from crispy_forms.utils import render_crispy_form
-
+import random
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import generic
 from django.shortcuts import get_object_or_404
-from django_comments import CommentForm
 from core.forms import GameForm
 
 from core.models import Game, Group, GameRating, User
@@ -187,3 +185,75 @@ class GameSearch(generic.ListView):
         context['games_list'] = self.object_list
         context['title'] = 'Search Results'
         return context
+
+
+class GameAPI(generic.View):
+
+    def _get_games(self, name, featured=False, top=False, recent=False):
+        """
+        Get games based on the arguments provided.
+
+        Filter takes precedence in argument order.
+        param:name: name to filter on
+        param:featured: get featured games
+        param:top: get top games
+        param:recent: get recently uploaded games
+
+        No name will grab 21 random games.
+        """
+        randomize = False
+        if name:
+            games = Game.objects.filter(name__icontains=name)
+            max_count = 21
+        elif featured:
+            games = Game.objects.filter(featured=True)
+            max_count = 3
+        elif top:
+            games = Game.objects.all_by_rating()
+            max_count = 3
+        elif recent:
+            games = Game.objects.order_by('-date_published').all()
+            max_count = 3
+        else:
+            games = Game.objects.all()
+            max_count = 21
+            randomize = True
+
+        size = len(games)
+        games = [(game.pk, game.name, str(game.image), game.description) for game in games]
+        if randomize:
+            return random.sample(games, min(size, max_count))
+        else:
+            return games[:min(size, max_count)]
+
+    def get(self, request, *args, **kwargs):
+
+        # Add quick url formattings for games, use a single reverse
+        # search as reference
+        reverse_template = reverse('core:games:specific',
+                                   kwargs={'game_id': 1}).replace('/1/', '')
+
+        def quick_reverse(game_id):
+            """Reverse for a game in a faster way."""
+            return reverse_template + '/%d/' % game_id
+
+        # Get query params
+        game_name = self.request.GET.get('term', '')
+        featured = self.request.GET.get('featured')
+        top = self.request.GET.get('top')
+        recent = self.request.GET.get('recent')
+
+        # Get list
+        games = self._get_games(game_name, featured, top, recent)
+
+        # Format our JSON response
+        game_list = []
+
+        # Format our data to be sent back to the JS
+        for pk, name, image, description in games:
+            game_list.append({'name': name,
+                              'image': image,
+                              'description': description,
+                              'url': quick_reverse(pk)})
+
+        return JsonResponse(game_list, safe=False)

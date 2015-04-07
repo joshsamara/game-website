@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 from stdimage.models import StdImageField
 from django.core.urlresolvers import reverse
-from core.managers import UserManager
+from core.managers import UserManager, GameManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -86,6 +86,18 @@ class Game(models.Model):
     group = models.ForeignKey(Group, blank=True, null=True)
     event_name = models.CharField(max_length=75, blank=True, default='')
     tags = models.ManyToManyField(GameTag, null=True, blank=True)
+    featured = models.BooleanField(default=False)
+
+    objects = GameManager()
+
+    @property
+    def average_rating(self):
+        ratings = zip(*self.gamerating_set.all().values_list('value'))
+        if ratings:
+            ratings = ratings[0]
+            return sum(ratings) / len(ratings)
+        else:
+            return None
 
     def __unicode__(self):
         return self.name
