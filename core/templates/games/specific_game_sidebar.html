@@ -27,7 +27,13 @@
             <div class="text-centered">
                 {% for member in game.group.members.all %}
                     <div><a href="{% url 'core:profile:user-profile' member.id %}">
-                        <div style="word-wrap: break-word;">{{ member.email }}</div>
+                        <div style="word-wrap: break-word;">
+                            {% if member.fist_name or member.last_name %}
+                                {{ member.first_name }} {{ member.last_name }}
+                            {% else %}
+                                {{ member.email }}
+                            {% endif %}
+                        </div>
                     </a></div>
                 {% endfor %}
             </div>
