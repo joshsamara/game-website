@@ -115,7 +115,9 @@ class Game(models.Model):
     @property
     def total_ratings(self):
         ratings = zip(*self.gamerating_set.all().values_list('value'))
-        return len(ratings[0])
+        if len(ratings) != 0:
+            return len(ratings[0])
+        return 0
 
     def __unicode__(self):
         return self.name
