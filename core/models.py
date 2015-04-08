@@ -104,6 +104,13 @@ class Game(models.Model):
     objects = GameManager()
 
     @property
+    def small_description(self):
+        if len(self.description) > 300:
+            return self.description[:300] + '...'
+        else:
+            return self.description
+
+    @property
     def average_rating(self):
         ratings = zip(*self.gamerating_set.all().values_list('value'))
         if ratings:
