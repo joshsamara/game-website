@@ -66,6 +66,10 @@ class Group(models.Model):
     members = models.ManyToManyField(User)
     name = models.CharField(max_length=50)
 
+    def get_games(self):
+        games = Game.objects.filter(group=self)
+        return games
+
     def get_absolute_url(self):
         """Detail page for a group."""
         return reverse('core:groups-detail', kwargs={'pk': self.pk})
@@ -107,6 +111,11 @@ class Game(models.Model):
             return sum(ratings) / len(ratings)
         else:
             return None
+
+    @property
+    def total_ratings(self):
+        ratings = zip(*self.gamerating_set.all().values_list('value'))
+        return len(ratings[0])
 
     def __unicode__(self):
         return self.name

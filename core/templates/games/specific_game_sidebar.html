@@ -45,14 +45,14 @@
     </label>
 
     <div class="rateit custom-colors" id="gameRating" data-rateit-min="0"></div>
-    (<span id="number-ratings">{{ total_ratings }}</span>)
+    (<span id="number-ratings">{{ game.total_ratings }}</span>)
 
 </div>
 <script>
     {# This script is used to pass django variables to game-ratings.js #}
     ratings_url = "{% url 'core:games:ratings' game.id %}";
     total_ratings_url = "{% url 'core:games:total_ratings' game.id %}";
-    avg_rating = ({{ avg_rating }})
+    avg_rating = ({{ game.average_rating }})
 </script>
 <script type="text/javascript" src="{% static "js/game-ratings.js" %}"></script>
 

@@ -25,20 +25,10 @@ def main(request):
 def specific(request, game_id):
     """Handle individual pages for games."""
     game = get_object_or_404(Game, id=game_id)
-    total_rating = 0
-    ratings = GameRating.objects.filter(game=game)
-    for rating in ratings:
-        total_rating += rating.value
-    if len(ratings) != 0:
-        avg_rating = total_rating / len(ratings)
-    else:
-        avg_rating = 0
 
     related_games = Game.objects.filter(tags__in=game.tags.all).distinct().exclude(pk=game.id)
     return render(request, 'games/specific.html', {
         'game': game,
-        'avg_rating': avg_rating,
-        'total_ratings': len(ratings),
         'related_games': related_games,
     })
 
@@ -99,17 +89,10 @@ def my_games(request):
 def total_ratings(request, game_id):
     """Return the average rating and total number of ratings for a given game."""
     if request.method == 'GET':
-        rating_sum = 0
-        ratings = GameRating.objects.filter(game__pk=game_id)
-        for rating in ratings:
-            rating_sum += rating.value
-        if len(ratings) != 0:
-            avg_rating = rating_sum / len(ratings)
-        else:
-            avg_rating = 0
+        game = Game.objects.get(pk=game_id)
         response = {
-            'total_ratings': len(ratings),
-            'avg_rating': avg_rating
+            'total_ratings': game.total_ratings,
+            'avg_rating': game.average_rating
         }
         return JsonResponse(response)
 
