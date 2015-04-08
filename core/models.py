@@ -7,6 +7,8 @@ from django.core.urlresolvers import reverse
 from core.managers import GameManager
 from core.managers import UserManager
 
+class MyFile(models.Model):
+    file = models.FileField(blank=True, null=True)
 
 class User(AbstractBaseUser, PermissionsMixin):
     """
@@ -93,14 +95,13 @@ class Game(models.Model):
     name = models.CharField(max_length=50)
     image = StdImageField(upload_to='game_images', null=True, blank=True,
                           variations={'thumbnail': {'width': 200, 'height': 200}})
-    game_file = models.FileField(blank=True, null=True)
+    game_file = models.ManyToManyField(MyFile)
     description = models.TextField(max_length=5000)
     date_published = models.DateField(auto_now_add=True)
     group = models.ForeignKey(Group, blank=True, null=True)
     event_name = models.CharField(max_length=75, blank=True, default='')
     tags = models.ManyToManyField(GameTag, null=True, blank=True)
     featured = models.BooleanField(default=False)
-
     objects = GameManager()
 
     @property
@@ -138,3 +139,4 @@ class GameRating(models.Model):
         (4.5, 4.5),
         (5, 5),
     ))
+
