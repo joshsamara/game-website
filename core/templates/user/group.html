@@ -3,40 +3,43 @@
 {% block title %}{{ group.name }}{% endblock %}
 
 {% block content %}
-  <a href="{% url 'core:groups' %}">&laquo; Back To Groups Page</a>
-  <div class="page-header">
-    <h1>Group: {{ group.name }}</h1>
-  </div>
-  <h4>Group Members</h4>
-  <table class="table table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>Member Name</th>
-      <th>TBD</th>
-      <th>TBD</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for member in group.members.all %}
-    <tr {% if member.email == user.email %}class="success"{% endif %}>
-      <td>{{ member.email }}</td>
-      <td>N/A</td>
-      <td>N/A</td>
-      <td>
-        <a href="{% url 'core:user-profile' member.pk %}" class="btn btn-sm btn-primary"><i class="fa fa-search fa-fw"></i> View</a>
-      </td>
-    </tr>
-  {% empty %}
-    <tr>
-      <td colspan="4">No members found.</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-  </table>
-  {% if in_group %}
-    <a href="{% url 'core:groups-leave' group.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-minus fa-fw"></i> Leave Group</a>
-  {% else %}
-    <a href="{% url 'core:groups-join' group.pk %}" class="btn btn-sm btn-success"><i class="fa fa-plus fa-fw"></i> Join Group</a>
-  {% endif %}
+    <a href="{% url 'core:groups' %}">&laquo; Back To Groups Page</a>
+    <div class="page-header">
+        <h1>Group: {{ group.name }}</h1>
+    </div>
+    <h4>Group Members</h4>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Member Name</th>
+            <th>TBD</th>
+            <th>TBD</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for member in group.members.all %}
+            <tr {% if member.email == user.email %}class="success"{% endif %}>
+                <td>{{ member.get_name }}</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>
+                    <a href="{% url 'core:profile:user-profile' member.pk %}" class="btn btn-sm btn-primary"><i
+                            class="fa fa-search fa-fw"></i> View</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">No members found.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if in_group %}
+        <a href="{% url 'core:groups-leave' group.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-minus fa-fw"></i>
+            Leave Group</a>
+    {% else %}
+        <a href="{% url 'core:groups-join' group.pk %}" class="btn btn-sm btn-success"><i class="fa fa-plus fa-fw"></i>
+            Join Group</a>
+    {% endif %}
 {% endblock %}
