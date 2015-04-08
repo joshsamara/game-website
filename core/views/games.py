@@ -52,7 +52,6 @@ def new_game(request):
 def edit(request, game_id):
     """Page to edit a game with."""
     selected_game = Game.objects.get(pk=game_id)
-
     permission_to_edit = False
     if selected_game.group:
         for u in selected_game.group.members.all():
@@ -72,7 +71,7 @@ def edit(request, game_id):
     return render(request, 'games/game_form.html', {
         'title': 'Edit Game',
         'heading': 'Currently Editing ' + selected_game.name,
-        'form': form
+        'form': form,
     })
 
 
