@@ -13,6 +13,21 @@ class UserTestCase(TestCase):
         user = G(User, first_name='test')
         self.assertEqual('test', user.get_short_name())
 
+    def test_display_name_anon(self):
+        user = G(User, first_name='test', last_name='last', public=False)
+        expected = 'Anonymous'
+        self.assertEqual(expected, user.display_name)
+
+    def test_dsplay_name_first_last(self):
+        user = G(User, first_name='test', last_name='last', public=True)
+        expected = user.get_full_name()
+        self.assertEqual(expected, user.display_name)
+
+    def test_display_name_email(self):
+        user = G(User, first_name='', last_name='', public=True)
+        expected = user.email
+        self.assertEqual(expected, user.display_name)
+
 
 class GroupTestCase(TestCase):
     def test_get_absolute_url(self):
@@ -26,6 +41,12 @@ class GroupTestCase(TestCase):
         group = G(Group, name='testgroup')
         self.assertEqual(str(group), 'testgroup')
 
+    def test_get_games(self):
+        group = G(Group, name='testgroup')
+        self.assertEqual(list(group.get_games()), [])
+        game = G(Game, group=group)
+        self.assertEqual(list(group.get_games()), [game])
+
 
 class GameTagTestCase(TestCase):
     def test_unicode(self):
@@ -37,3 +58,10 @@ class GameTestCase(TestCase):
     def test_unicode(self):
         game = G(Game, name='testgame')
         self.assertEqual(str(game), 'testgame')
+
+    def test_small_description(self):
+        game = G(Game, description='test')
+        self.assertEqual(game.small_description, game.description)
+        game.description = "x" * 5000
+        game.save()
+        self.assertEqual(game.small_description, ("x" * 300) + "...")

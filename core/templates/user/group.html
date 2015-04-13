@@ -20,7 +20,7 @@
         <tbody>
         {% for member in group.members.all %}
             <tr {% if member.email == user.email %}class="success"{% endif %}>
-                <td>{{ member.get_name }}</td>
+                <td>{{ member.display_name }}</td>
                 <td>N/A</td>
                 <td>N/A</td>
                 <td>

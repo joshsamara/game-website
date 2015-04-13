@@ -27,7 +27,7 @@
                 {% for member in game.group.members.all %}
                     <div><a href="{% url 'core:profile:user-profile' member.id %}">
                         <div style="word-wrap: break-word;">
-                            {{ member.get_name }}
+                            {{ member.display_name }}
                         </div>
                     </a></div>
                 {% endfor %}

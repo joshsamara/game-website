@@ -3,7 +3,7 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
     <div class="page-header" style="border: none">
-        <h1>Profile: {{ object.get_name }}</h1>
+        <h1>Profile: {{ object.display_name }}</h1>
     </div>
     <div class="row">
         <div class="col-md-3" style="border-right: solid 1px #eee; border-top: solid 1px #eee">
@@ -13,7 +13,7 @@
                 <dl class="dl" style="margin-top: 20px">
                     {% if object.fist_name or object.last_name %}
                         <dt>Name</dt>
-                        <dd>{{ object.get_name }}</dd>
+                        <dd>{{ object.display_name }}</dd>
                     {% endif %}
                     {% if object.gender %}
                         <dt>Gender</dt>
