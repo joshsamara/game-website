@@ -101,7 +101,7 @@ class Game(models.Model):
     image = StdImageField(upload_to='game_images', null=True, blank=True,
                           variations={'thumbnail': {'width': 200, 'height': 200}})
     game_file = models.ManyToManyField(MyFile, blank=True, null=True)
-    description = models.TextField(max_length=5000)
+    description = models.TextField(max_length=5000, null=True)
     date_published = models.DateField(auto_now_add=True)
     group = models.ForeignKey(Group, blank=True, null=True)
     event_name = models.CharField(max_length=75, blank=True, default='')
