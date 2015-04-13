@@ -1,8 +1,11 @@
 from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
-from core.models import User, Group, Game, GameRating
+from core.models import User, Group, Game, GameRating, MyFile
 from django.core.urlresolvers import reverse
 from datetime import datetime
+from django.forms import FileField
+
+from django.test.client import RequestFactory
 import json
 
 
@@ -188,8 +191,7 @@ class NewGameTestCase(TestCase):
 
     def test_create_game(self):
         self.assertNotExists(Game, name='test')
-        response = self.client.post(self.url(), {'name': 'test',
-                                                 'description': 'desc'})
+        response = self.client.post(self.url(), {'name': 'test', 'description': 'desc'})
 
         self.assertExists(Game, name='test')
         game = Game.objects.get(name='test')
@@ -206,6 +208,15 @@ class NewGameTestCase(TestCase):
         response = self.client.post(self.url(), {'name': 'test'})
         self.assertFormError(response, 'form', 'description', 'This field is required.')
 
+    def test_new_game_with_file(self):
+        import tempfile
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write("hello")
+            fp.seek(0)
+            response = self.client.post(self.url(), {'name': 'test', 'description': 'desc', 'my_game_file': fp, 'game_version': '2'})
+
+        print response 
+        self.assertExists(Game, name='test')
 
 class GameSpecificTestCase(TestCase):
     def url(self, *args, **kwargs):

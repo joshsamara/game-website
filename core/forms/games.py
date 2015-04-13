@@ -5,11 +5,13 @@ from crispy_forms.layout import Layout, HTML, Submit, Button, Fieldset
 from django import forms
 from django.forms import Textarea, CheckboxSelectMultiple
 from core.models import Game
+from core.models import MyFile
 
 
 class GameForm(forms.ModelForm):
     """Form for game creation and editing."""
-
+    my_game_file = forms.FileField(required=False)
+    game_version = forms.IntegerField(min_value=1, required=False)
     class Meta:
         model = Game
         exclude = ['owner', 'date_published']
@@ -34,10 +36,20 @@ class GameForm(forms.ModelForm):
                 'tags',
                 'group',
                 'event_name',
-                'game_file'
+                'game_version',
+                'my_game_file'
             ),
             FormActions(
                 Submit('submit', 'Submit'),
                 Button('cancel', 'Cancel', onclick='history.go(-1);', css_class="btn-default")
             )
         )
+    def save(self, commit=True):
+        game = super(GameForm, self).save(commit=False)
+        game.save()
+        my_file = self.cleaned_data['my_game_file']
+        if my_file:
+            my_file = MyFile(name=self.cleaned_data['game_version'], game_file = my_file)
+            my_file.save()
+            game.game_file.add(my_file)
+        return game
