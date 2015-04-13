@@ -54,16 +54,6 @@ def new_game(request):
 def edit(request, game_id):
     """Page to edit a game with."""
     selected_game = Game.objects.get(pk=game_id)
-<<<<<<< HEAD
-    permission_to_edit = False
-    if selected_game.group:
-        for u in selected_game.group.members.all():
-            if request.user.id == u.id:
-                permission_to_edit = True
-
-    if not permission_to_edit:
-        return HttpResponse("You don't have permission to edit this game", status=403)
-=======
     if not request.user.can_edit_game(selected_game):
             return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
 
@@ -72,7 +62,6 @@ def edit(request, game_id):
         return JsonResponse({
             'url': reverse('core:home')
         })
->>>>>>> master
 
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES, instance=selected_game)
