@@ -32,20 +32,36 @@
         {# Handle Logging in the Navabar #}
         {% if logged_in %}
             <ul class="nav navbar-nav navbar-right">
-                {% if user.unread_notifications %}
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        {% if user.has_unread_notifications %}
                             <i class="fa fa-flag-o" style="color: red"></i>
-                            <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            {% for notification in user.unread_notifications %}
+                        {% else %}
+                            <i class="fa fa-flag-o"></i>
+                        {% endif %}
+
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        {% for notification in user.notifications %}
+                            {% if not notification.read %}
                                 <li>
-                                    <a href="{{ notification.link }}" style="border-bottom: solid 1px #eee;">{{ notification.description }}</a>
+                                    <a href="{{ notification.link }}">{{ notification.description }}</a>
                                 </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                {% endif %}
+                            {% else %}
+                                <li class="disabled">
+                                    <a href="{{ notification.link }}">{{ notification.description }}</a>
+                                </li>
+                            {% endif %}
+                            {% if not forloop.last %}
+                                <li class="divider"></li>
+                            {% endif %}
+                        {% empty %}
+                            <li>
+                                You have no notifications!
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-expanded="false">{{ user.email }}<span class="caret"></span></a>

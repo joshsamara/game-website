@@ -51,9 +51,15 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.email
 
     @property
-    def unread_notifications(self):
+    def has_unread_notifications(self):
         notifications = UserNotification.objects.filter(user=self, read=False)
+        return len(notifications) is not 0
+
+    @property
+    def notifications(self):
+        notifications = UserNotification.objects.filter(user=self).order_by('read')[:5]
         return notifications
+
 
     def get_full_name(self):
         """Return the first_name plus the last_name, with a space in between."""
