@@ -265,6 +265,20 @@ class GameEditTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('games/game_form.html')
 
+    def test_delete_game(self):
+        # Setup a game that the user can edit
+        user = self.client.login()
+        game = G(Game)
+        group = G(Group)
+        game.group = group
+        group.members.add(user)
+        game.save()
+        group.save()
+        # Go to edit page
+        response = self.client.delete(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotExists(Game, id=game.id)
+
 
 class GameSearchTestCase(TestCase):
     def url(self, *args, **kwargs):
