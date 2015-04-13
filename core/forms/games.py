@@ -48,7 +48,8 @@ class GameForm(forms.ModelForm):
         game = super(GameForm, self).save(commit=False)
         game.save()
         my_file = self.cleaned_data['my_game_file']
-        my_file = MyFile(name=self.cleaned_data['game_version'], game_file = my_file)
-        my_file.save()
-        game.game_file.add(my_file)
+        if my_file:
+            my_file = MyFile(name=self.cleaned_data['game_version'], game_file = my_file)
+            my_file.save()
+            game.game_file.add(my_file)
         return game

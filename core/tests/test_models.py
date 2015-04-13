@@ -1,5 +1,5 @@
 from .utils import BaseTestCase as TestCase
-from core.models import User, Group, GameTag, Game
+from core.models import User, Group, GameTag, Game, MyFile
 from django_dynamic_fixture import G
 
 
@@ -57,7 +57,9 @@ class GameTagTestCase(TestCase):
 class GameTestCase(TestCase):
     def test_unicode(self):
         game = G(Game, name='testgame')
+        my_file = G(MyFile, name='testFile')
         self.assertEqual(str(game), 'testgame')
+        self.assertEqual(str(my_file), 'testFile')
 
     def test_small_description(self):
         game = G(Game, description='test')
