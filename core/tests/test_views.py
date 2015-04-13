@@ -231,8 +231,7 @@ class GameEditTestCase(TestCase):
         game = G(Game, name="old")
         response = self.client.post(self.url(game_id=game.id), {'name': 'new',
                                                                 'description': 'desc'})
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response._container[0], "You don't have permission to edit this game")
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(Game.objects.get(id=game.id).name, "old")
 
     def test_edit(self):
@@ -331,7 +330,7 @@ class RateGamesTestCase(TestCase):
         game = G(Game)
         self.client.login()
         response = self.client.get(self.url(game_id=game.id))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
 
     def test_delete_rating(self):
         game = G(Game)
