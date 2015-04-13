@@ -96,6 +96,14 @@ class Group(models.Model):
         """Detail page for a group."""
         return reverse('core:groups-detail', kwargs={'pk': self.pk})
 
+    def push_notification(self, description, url):
+        for user in self.members.all():
+            notification = UserNotification()
+            notification.user = user
+            notification.description = description
+            notification.redirect_url = url
+            notification.save()
+
     def __unicode__(self):
         return self.name
 
@@ -147,6 +155,10 @@ class Game(models.Model):
         if len(ratings) != 0:
             return len(ratings[0])
         return 0
+
+    def push_notification(self):
+        return self.group.push_notification(description='Somebody commented on a game of yours!',
+                                            url=reverse('core:games:specific', kwargs={'game_id': self.pk}))
 
     def __unicode__(self):
         return self.name

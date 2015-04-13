@@ -100,6 +100,7 @@ def game_comment_post(request, next=None, using=None):
         request=request
     )
 
+    target.push_notification()
     return JsonResponse({
         'success': True,
     })
