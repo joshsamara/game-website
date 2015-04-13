@@ -1,6 +1,5 @@
 {% load staticfiles %}
 
-
 <div class="row">
     <div class="center-block text-center">
         <h1>{{ game.name }}</h1>
@@ -73,7 +72,6 @@
 {% endif %}
 
 {% if user in game.group.members.all %}
-
     <div class="row">
         <div class="center-block" style="padding-top: 10px">
             <a class="btn btn-default btn-xs" role="button" href="{% url 'core:games:edit' game.id %}">

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Edit Game
+{% endblock %}
+
+{% block head %}
+    <script type="text/javascript" src="{% static "js/jquery.cookie.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+    <br>
+    <button class="btn btn-danger" onclick="deleteGame()">DELETE GAME</button>
+    <br/>
+    <script>
+        var csrftoken = $.cookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        function deleteGame() {
+            $.ajax({
+                type: 'DELETE',
+                success: function (result) {
+                    window.location.replace(result.url);
+                },
+                error: function (result) {
+                    console.log('error');
+                }
+            })
+        }
+    </script>
+{% endblock %}

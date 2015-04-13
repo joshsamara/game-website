@@ -59,6 +59,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Return the short name for the user."""
         return self.first_name
 
+    def can_edit_game(self, game):
+        return self in game.group.members.all()
+
 
 class Group(models.Model):
     """Groups that can consist of Users."""
@@ -117,7 +120,7 @@ class Game(models.Model):
             ratings = ratings[0]
             return sum(ratings) / len(ratings)
         else:
-            return None
+            return 0
 
     @property
     def total_ratings(self):

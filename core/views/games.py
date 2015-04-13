@@ -1,6 +1,7 @@
 """Game related views."""
 import json
 import random
+from django.contrib.auth.decorators import login_required
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
@@ -49,18 +50,18 @@ def new_game(request):
     })
 
 
+@login_required
 def edit(request, game_id):
     """Page to edit a game with."""
     selected_game = Game.objects.get(pk=game_id)
+    if not request.user.can_edit_game(selected_game):
+            return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
 
-    permission_to_edit = False
-    if selected_game.group:
-        for u in selected_game.group.members.all():
-            if request.user.id == u.id:
-                permission_to_edit = True
-
-    if not permission_to_edit:
-        return HttpResponse("You don't have permission to edit this game", status=403)
+    if request.method == 'DELETE':
+        selected_game.delete()
+        return JsonResponse({
+            'url': reverse('core:home')
+        })
 
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES, instance=selected_game)
@@ -69,8 +70,7 @@ def edit(request, game_id):
             return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
     else:
         form = GameForm(instance=selected_game)
-    return render(request, 'games/game_form.html', {
-        'title': 'Edit Game',
+    return render(request, 'games/edit_game.html', {
         'heading': 'Currently Editing ' + selected_game.name,
         'form': form
     })
@@ -111,7 +111,7 @@ def rate_games(request, game_id):
                 rating = GameRating.objects.get(user=request.user, game__pk=game_id)
                 value = rating.value
             except ObjectDoesNotExist:
-                return HttpResponse(status=404)
+                value = 0
             response = {
                 'value': value
             }
@@ -172,7 +172,6 @@ class GameSearch(generic.ListView):
 
 
 class GameAPI(generic.View):
-
     def _get_games(self, name, featured=False, top=False, recent=False):
         """
         Get games based on the arguments provided.
