@@ -3,6 +3,7 @@ import json
 import random
 from django.contrib.auth.decorators import login_required
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
@@ -233,9 +234,11 @@ class GameAPI(generic.View):
         game_list = []
 
         # Format our data to be sent back to the JS
+        media_url = settings.MEDIA_URL
         for pk, name, image, description in games:
             game_list.append({'name': name,
-                              'image': image,
+                              'has_image': bool(image),
+                              'image': media_url + image,
                               'description': description,
                               'url': quick_reverse(pk)})
 
