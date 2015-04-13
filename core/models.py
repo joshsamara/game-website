@@ -41,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'users'
 
     @property
-    def get_name(self):
+    def display_name(self):
         """Return the name that should be displayed to the public"""
         if not self.public:
             return 'Anonymous'
