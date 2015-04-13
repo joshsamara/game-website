@@ -50,6 +50,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return self.email
 
+    @property
+    def unread_notifications(self):
+        notifications = UserNotification.objects.filter(user=self, read=False)
+        return notifications
+
     def get_full_name(self):
         """Return the first_name plus the last_name, with a space in between."""
         full_name = '%s %s' % (self.first_name, self.last_name)
@@ -61,6 +66,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def can_edit_game(self, game):
         return self in game.group.members.all()
+
+
+class UserNotification(models.Model):
+    redirect_url = models.URLField()
+    user = models.ForeignKey(User)
+    description = models.CharField(max_length=256)
+    read = models.BooleanField(default=False)
+
+    @property
+    def link(self):
+        return reverse('core:profile:notifications', kwargs={'notification_id': self.pk})
+
+    def __unicode__(self):
+        return self.description
 
 
 class Group(models.Model):

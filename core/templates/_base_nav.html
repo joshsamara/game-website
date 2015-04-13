@@ -17,7 +17,8 @@
                     <li><a href="{% url 'core:games:new' %}">Add Game</a></li>
                 </ul>
             </li>
-            <li class="{% if navbar_active == 'groups' %}active{% endif %}"><a href="{% url 'core:groups' %}">Groups</a></li>
+            <li class="{% if navbar_active == 'groups' %}active{% endif %}"><a href="{% url 'core:groups' %}">Groups</a>
+            </li>
         </ul>
 
 
@@ -32,12 +33,28 @@
         {# Handle Logging in the Navabar #}
         {% if logged_in %}
             <ul class="nav navbar-nav navbar-right">
+                {% if user.unread_notifications %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                            <i class="fa fa-flag-o" style="color: red"></i>
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            {% for notification in user.unread_notifications %}
+                                <li>
+                                    <a href="{{ notification.link }}" style="border-bottom: solid 1px #eee;">{{ notification.description }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
                 <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ user.email }}<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'core:profile:base' %}"><i class="fa fa-user fa-fw"></i> Profile</a></li>
-                    <li><a href="{% url 'core:user-groups' %}"><i class="fa fa-users fa-fw"></i> Groups</a></li>
-                </ul>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-expanded="false">{{ user.email }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{% url 'core:profile:base' %}"><i class="fa fa-user fa-fw"></i> Profile</a></li>
+                        <li><a href="{% url 'core:user-groups' %}"><i class="fa fa-users fa-fw"></i> Groups</a></li>
+                    </ul>
+                </li>
                 <li><a href={% url 'core:logout' %}>Logout</a></li>
             </ul>
         {% else %}
