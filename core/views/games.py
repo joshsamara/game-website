@@ -72,6 +72,7 @@ def edit(request, game_id):
         'title': 'Edit Game',
         'heading': 'Currently Editing ' + selected_game.name,
         'form': form,
+        'game':selected_game,
     })
 
 

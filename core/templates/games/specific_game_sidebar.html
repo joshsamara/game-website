@@ -67,7 +67,12 @@
 {% if game.game_file %}
     <div class="row">
         <div class="center-block" style="padding-top: 10px">
-            <a class="btn btn-default btn-xs" role="button" href="{{ game.game_file.url }}" download>Download</a>
+        <h5> Versions</h5>
+        <ul>
+        {% for game in game.game_file.all %}
+          <li><a href="{{ game.game_file.url }}" download> {{game.name}}</a></li>
+        {% endfor %}
+        </ul>
         </div>
     </div>
 {% endif %}
