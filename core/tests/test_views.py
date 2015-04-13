@@ -3,6 +3,9 @@ from django_dynamic_fixture import G
 from core.models import User, Group, Game, GameRating, MyFile
 from django.core.urlresolvers import reverse
 from datetime import datetime
+from django.forms import FileField
+
+from django.test.client import RequestFactory
 import json
 
 
@@ -207,9 +210,12 @@ class NewGameTestCase(TestCase):
 
     def test_new_game_with_file(self):
         import tempfile
-        f =  tempfile.NamedTemporaryFile()
-        f.write('abc')
-        self.client.post(self.url(), {'name': 'test', 'description': 'desc', 'my_game_file': f, 'version': '2'}, format='multipart')
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write("hello")
+            fp.seek(0)
+            response = self.client.post(self.url(), {'name': 'test', 'description': 'desc', 'my_game_file': fp, 'game_version': '2'})
+
+        print response 
         self.assertExists(Game, name='test')
 
 class GameSpecificTestCase(TestCase):
