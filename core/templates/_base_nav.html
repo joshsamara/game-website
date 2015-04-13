@@ -48,8 +48,8 @@
                                     <a href="{{ notification.link }}">{{ notification.description }}</a>
                                 </li>
                             {% else %}
-                                <li class="disabled">
-                                    <a href="{{ notification.link }}">{{ notification.description }}</a>
+                                <li>
+                                    <a href="{{ notification.link }}" style="color: darkgrey">{{ notification.description }}</a>
                                 </li>
                             {% endif %}
                             {% if not forloop.last %}

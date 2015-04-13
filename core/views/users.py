@@ -135,9 +135,9 @@ class GroupJoinView(LoginRequiredMixin, View):
         """Add the logged in user to this group."""
         pk = self.kwargs.get('pk')
         group = Group.objects.get(id=pk)
-        group.members.add(self.request.user)
         group.push_notification('A new user has joined your group!',
                                 reverse('core:groups-detail', kwargs={'pk': pk}))
+        group.members.add(self.request.user)
         group.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
