@@ -10,8 +10,8 @@ from core.models import MyFile
 
 class GameForm(forms.ModelForm):
     """Form for game creation and editing."""
-    my_game_file = forms.FileField(required=True)
-    game_version = forms.IntegerField(min_value=1)
+    my_game_file = forms.FileField(required=False)
+    game_version = forms.IntegerField(min_value=1, required=False)
     class Meta:
         model = Game
         exclude = ['owner', 'date_published']
