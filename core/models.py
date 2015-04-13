@@ -45,7 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'users'
 
     @property
-    def get_name(self):
+    def display_name(self):
         """Return the name that should be displayed to the public"""
         if not self.public:
             return 'Anonymous'
@@ -62,6 +62,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         """Return the short name for the user."""
         return self.first_name
+
+    def can_edit_game(self, game):
+        return self in game.group.members.all()
 
 
 class Group(models.Model):
@@ -107,13 +110,20 @@ class Game(models.Model):
     objects = GameManager()
 
     @property
+    def small_description(self):
+        if len(self.description) > 300:
+            return self.description[:300] + '...'
+        else:
+            return self.description
+
+    @property
     def average_rating(self):
         ratings = zip(*self.gamerating_set.all().values_list('value'))
         if ratings:
             ratings = ratings[0]
             return sum(ratings) / len(ratings)
         else:
-            return None
+            return 0
 
     @property
     def total_ratings(self):

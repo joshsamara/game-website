@@ -231,8 +231,7 @@ class GameEditTestCase(TestCase):
         game = G(Game, name="old")
         response = self.client.post(self.url(game_id=game.id), {'name': 'new',
                                                                 'description': 'desc'})
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response._container[0], "You don't have permission to edit this game")
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(Game.objects.get(id=game.id).name, "old")
 
     def test_edit(self):
@@ -331,7 +330,7 @@ class RateGamesTestCase(TestCase):
         game = G(Game)
         self.client.login()
         response = self.client.get(self.url(game_id=game.id))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
 
     def test_delete_rating(self):
         game = G(Game)
@@ -412,3 +411,103 @@ class GamesAPITestCase(TestCase):
         self.assertEqual(len(response_data), 2)
         self.assertEqual(response_data[0]['name'], g2.name)
         self.assertEqual(response_data[1]['name'], g1.name)
+
+
+class EditProfileViewTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:profile:edit')
+
+    def test_login_required(self):
+        self.assertLoginRequired()
+
+    def test_get_logged_in(self):
+        self.client.login()
+        response = self.client.get(self.url())
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_valid(self):
+        # Setup a basic user
+        user = self.client.login()
+        user.first_name = ""
+        user.last_name = ""
+        user.gender = ""
+        user.public = False
+        user.save()
+
+        # Update the user
+        response = self.client.post(self.url(), {'first_name': 'test_first',
+                                                 'last_name': 'test_last',
+                                                 'gender': 'M',
+                                                 'public': True})
+        # Should redirect on success
+        redirect_url = reverse('core:profile:base')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=302)
+
+        # Have to re-get the updated users
+        user = User.objects.get(pk=user.pk)
+
+        # Make sure we updated
+        self.assertEqual(user.first_name, 'test_first')
+        self.assertEqual(user.last_name, 'test_last')
+        self.assertEqual(user.gender, 'M')
+        self.assertEqual(user.public, True)
+
+
+class ChangePasswordViewTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:profile:password_change')
+
+    def test_login_required(self):
+        self.assertLoginRequired()
+
+    def test_get_logged_in(self):
+        self.client.login()
+        response = self.client.get(self.url())
+        self.assertEqual(response.status_code, 200)
+
+    def test_change_valid(self):
+        # Make a user
+        username = "test@email.com"
+        old_pw = '123'
+        new_pw = '321'
+        User.objects.create_user(username, password=old_pw)
+        # Login as the user
+        self.assertTrue(self.client.login(username=username, password=old_pw))
+        # Change the user's password
+        response = self.client.post(self.url(), {'old_password': old_pw,
+                                                 'new_password1': new_pw,
+                                                 'new_password2': new_pw})
+        # Will redirect back to the profile page on success
+        redirect_url = reverse('core:profile:base')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=302)
+        # Login with the new pw
+        self.client.logout()
+        self.assertFalse(self.client.login(username=username, password=old_pw))
+        self.assertTrue(self.client.login(username=username, password=new_pw))
+
+    def test_change_invalid(self):
+        # Make a user
+        username = "test@email.com"
+        old_pw = '123'
+        new_pw = '321'
+        User.objects.create_user(username, password=old_pw)
+        # Login as the user
+        self.assertTrue(self.client.login(username=username, password=old_pw))
+        # Enter differentv values for pw
+        self.client.post(self.url(), {'old_password': old_pw,
+                                      'new_password1': new_pw,
+                                      'new_password2': 'different'})
+        # This won't change password
+        self.client.logout()
+        self.assertFalse(self.client.login(username=username, password=new_pw))
+        self.assertTrue(self.client.login(username=username, password=old_pw))
+        # Enter wrong old password
+        self.client.post(self.url(), {'old_password': 'not-old',
+                                      'new_password1': new_pw,
+                                      'new_password2': new_pw})
+        # This won't change password
+        self.client.logout()
+        self.assertFalse(self.client.login(username=username, password=new_pw))
+        self.assertTrue(self.client.login(username=username, password=old_pw))

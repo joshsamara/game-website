@@ -1,7 +1,6 @@
 /**
  * This file handles the AJAX required to use the star ratings
  */
-
 var csrftoken = $.cookie('csrftoken');
 
 function csrfSafeMethod(method) {

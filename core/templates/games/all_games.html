@@ -31,7 +31,7 @@
                         {% endif %}
                     </td>
                     <td><strong class='text-capitalized'>{{ game.name }}</strong></td>
-                    <td>{{ game.description }}</td>
+                    <td>{{ game.small_description }}</td>
                     <td>{{ game.group }}</td>
                     <td>
                         <a class="btn btn-primary" href="{% url 'core:games:specific' game_id=game.pk %}">View Game</a>
