@@ -5,6 +5,7 @@ from django.test.client import Client
 from urlparse import urlparse
 from faker import Faker
 from core.models import User
+from uuid import uuid4
 
 
 class CustomClient(Client):
@@ -24,7 +25,7 @@ class CustomClient(Client):
         user = True
         if not credentials:
             fake = Faker()
-            email = fake.email()
+            email = uuid4().hex[:8] + fake.email()
             passwd = fake.password()
             user = User.objects.create_user(email, password=passwd)
             credentials = {'email': email, 'password': passwd}
