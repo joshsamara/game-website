@@ -10,7 +10,7 @@ from core.managers import UserManager
 
 class MyFile(models.Model):
     game_file = models.FileField(blank=True, null=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True)
 
     def __unicode__(self):
         return self.name
