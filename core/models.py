@@ -7,11 +7,15 @@ from django.core.urlresolvers import reverse
 from core.managers import GameManager
 from core.managers import UserManager
 
+
 class MyFile(models.Model):
     game_file = models.FileField(blank=True, null=True)
-    name = models.CharField(max_length = 100)
+    name = models.CharField(max_length=100)
+
     def __unicode__(self):
         return self.name
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     """
     User for this site.
@@ -165,8 +169,9 @@ class Game(models.Model):
         return 0
 
     def push_notification(self):
-        return self.group.push_notification(description='Somebody commented on a game of yours!',
-                                            url=reverse('core:games:specific', kwargs={'game_id': self.pk}))
+        if self.group:
+            return self.group.push_notification(description='Somebody commented on a game of yours!',
+                                                url=reverse('core:games:specific', kwargs={'game_id': self.pk}))
 
     def __unicode__(self):
         return self.name
