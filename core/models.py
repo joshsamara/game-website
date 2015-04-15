@@ -54,6 +54,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return self.email
 
+    @property
+    def has_unread_notifications(self):
+        notifications = UserNotification.objects.filter(user=self, read=False)
+        return len(notifications) is not 0
+
+    @property
+    def notifications(self):
+        notifications = UserNotification.objects.filter(user=self).order_by('read')[:5]
+        return notifications
+
     def get_full_name(self):
         """Return the first_name plus the last_name, with a space in between."""
         full_name = '%s %s' % (self.first_name, self.last_name)
@@ -65,6 +75,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def can_edit_game(self, game):
         return self in game.group.members.all()
+
+
+class UserNotification(models.Model):
+    redirect_url = models.URLField()
+    user = models.ForeignKey(User)
+    description = models.CharField(max_length=256)
+    read = models.BooleanField(default=False)
+
+    @property
+    def link(self):
+        return reverse('core:profile:notifications', kwargs={'notification_id': self.pk})
+
+    def __unicode__(self):
+        return self.description
 
 
 class Group(models.Model):
@@ -80,6 +104,14 @@ class Group(models.Model):
     def get_absolute_url(self):
         """Detail page for a group."""
         return reverse('core:groups-detail', kwargs={'pk': self.pk})
+
+    def push_notification(self, description, url):
+        for user in self.members.all():
+            notification = UserNotification()
+            notification.user = user
+            notification.description = description
+            notification.redirect_url = url
+            notification.save()
 
     def __unicode__(self):
         return self.name
@@ -131,6 +163,10 @@ class Game(models.Model):
         if len(ratings) != 0:
             return len(ratings[0])
         return 0
+
+    def push_notification(self):
+        return self.group.push_notification(description='Somebody commented on a game of yours!',
+                                            url=reverse('core:games:specific', kwargs={'game_id': self.pk}))
 
     def __unicode__(self):
         return self.name
