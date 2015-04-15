@@ -18,7 +18,6 @@
                     if (!(data['success'])) {
                         // Here we replace the form, for the
                         comment_form.replaceWith(data['form_html']);
-                        $('#game-form').append(csrf);
                         addOnClick();
                     }
                     else {
@@ -39,7 +38,6 @@
 
         var comment_form = $("form:gt(0)");
         var form_backup = comment_form.clone();
-        var csrf = $("input[name='csrfmiddlewaretoken']");
         $(addOnClick())
     </script>
 </form>
