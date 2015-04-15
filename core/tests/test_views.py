@@ -1,11 +1,8 @@
 from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
-from core.models import User, Group, Game, GameRating, MyFile
+from core.models import User, Group, Game, GameRating, UserNotification
 from django.core.urlresolvers import reverse
 from datetime import datetime
-from django.forms import FileField
-
-from django.test.client import RequestFactory
 import json
 
 
@@ -213,10 +210,9 @@ class NewGameTestCase(TestCase):
         with tempfile.NamedTemporaryFile() as fp:
             fp.write("hello")
             fp.seek(0)
-            response = self.client.post(self.url(), {'name': 'test', 'description': 'desc', 'my_game_file': fp, 'game_version': '2'})
-
-        print response 
+            self.client.post(self.url(), {'name': 'test', 'description': 'desc', 'my_game_file': fp, 'game_version': '2'})
         self.assertExists(Game, name='test')
+
 
 class GameSpecificTestCase(TestCase):
     def url(self, *args, **kwargs):
@@ -536,3 +532,25 @@ class ChangePasswordViewTestCase(TestCase):
         self.client.logout()
         self.assertFalse(self.client.login(username=username, password=new_pw))
         self.assertTrue(self.client.login(username=username, password=old_pw))
+
+
+class UserNotificationViewTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:profile:notifications', kwargs=kwargs)
+
+    def test_login_required(self):
+        notification = G(UserNotification)
+        self.assertLoginRequired(notification_id=notification.pk)
+
+    def test_valid_notification(self):
+        user = self.client.login()
+        notification = G(UserNotification, user=user)
+        response = self.client.get(self.url(notification_id=notification.pk))
+        self.assertRedirects(response, notification.redirect_url)
+
+    def test_invalid_notification(self):
+        self.client.login()
+        different_user = G(User)
+        notification = G(UserNotification, user=different_user)
+        response = self.client.get(self.url(notification_id=notification.pk))
+        self.assertEqual(response.status_code, 403)

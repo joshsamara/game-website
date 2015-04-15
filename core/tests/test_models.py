@@ -1,6 +1,7 @@
 from .utils import BaseTestCase as TestCase
-from core.models import User, Group, GameTag, Game, MyFile
+from core.models import User, Group, GameTag, Game, MyFile, UserNotification
 from django_dynamic_fixture import G
+from django.core.urlresolvers import reverse
 
 
 class UserTestCase(TestCase):
@@ -47,6 +48,14 @@ class GroupTestCase(TestCase):
         game = G(Game, group=group)
         self.assertEqual(list(group.get_games()), [game])
 
+    def test_push_notification(self):
+        user = G(User)
+        group = G(Group)
+        group.members = [user]
+        self.assertNotExists(UserNotification, user=user)
+        group.push_notification('123', 'abc')
+        self.assertExists(UserNotification, user=user)
+
 
 class GameTagTestCase(TestCase):
     def test_unicode(self):
@@ -67,3 +76,25 @@ class GameTestCase(TestCase):
         game.description = "x" * 5000
         game.save()
         self.assertEqual(game.small_description, ("x" * 300) + "...")
+
+    def test_push_notification(self):
+        game = G(Game)
+        user = G(User)
+        group = G(Group)
+        group.members = [user]
+        game.group = group
+        self.assertNotExists(UserNotification, user=user)
+        game.push_notification()
+        self.assertExists(UserNotification, user=user)
+
+
+class UserNotificationTestCase(TestCase):
+    def test_link(self):
+        notification = G(UserNotification)
+        expected = reverse('core:profile:notifications',
+                           kwargs={'notification_id': notification.pk})
+        self.assertEqual(notification.link, expected)
+
+    def test_unicode(self):
+        notification = G(UserNotification, description="Abc")
+        self.assertEqual(str(notification), "Abc")

@@ -192,4 +192,3 @@ class GameRating(models.Model):
         (4.5, 4.5),
         (5, 5),
     ))
-

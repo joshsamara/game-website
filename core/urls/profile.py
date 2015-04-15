@@ -15,5 +15,6 @@ urlpatterns = patterns(
             'post_change_redirect': 'core:profile:base'
         },
         name='password_change'),
-    url(r'^notifications/(?P<notification_id>\d+)/$', notifications.base, name='notifications')
+    url(r'^notifications/(?P<notification_id>\d+)/$',
+        notifications.base, name='notifications')
 )
