@@ -34,15 +34,24 @@ def specific(request, game_id):
     })
 
 
+@login_required
 def new_game(request):
     """Form for creating a new game."""
+    def preprocess_form(form):
+        form.fields.get('group').queryset = request.user.group_set.all()
+
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
             game = form.save()
             return HttpResponseRedirect(reverse('core:games:specific', args=[game.id]))
     else:
-        form = GameForm()
+        if not request.user.group_set.count():
+            return render(request, 'games/group_required.html')
+        else:
+            form = GameForm()
+
+    preprocess_form(form)
     return render(request, 'games/game_form.html', {
         'title': 'New Game',
         'heading': 'Creating New Game',

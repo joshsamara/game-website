@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Group Required{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>A Group is required to make a page</h1>
+  </div>
+
+  <div>
+      <p>You must either create or join a group to make a game.</p>
+      <a class="btn btn-success" href="{% url "core:groups-new" %}"><i class="fa fa-plus"></i> Create Group</a>
+      <a class="btn btn-primary" href="{% url "core:groups" %}"><i class="fa fa-users"></i> Join Group</a>
+  </div>
+
+{% endblock %}
