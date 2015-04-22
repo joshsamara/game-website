@@ -39,6 +39,8 @@ def preprocess_game_form(form, request):
     form.fields.get('group').queryset = request.user.group_set.all()
     form.fields.get('tags').help_text = "Type a tag name to search tags.\
  Hit enter to click to select tags. You can add multiple tags."
+    form.fields.get('image').help_text = "A preview image of the game to display."
+    form.fields.get('event_name').help_text = "Name of an event this game was made for, if any."
 
 
 @login_required

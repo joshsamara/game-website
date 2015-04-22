@@ -7,6 +7,7 @@ from django.forms import Textarea
 from core.models import Game
 from core.models import MyFile
 from django_select2.widgets import Select2MultipleWidget
+from crispy_forms.layout import MultiField
 
 
 class GameForm(forms.ModelForm):
@@ -18,7 +19,7 @@ class GameForm(forms.ModelForm):
         model = Game
         exclude = ['owner', 'date_published']
         widgets = {
-            'description': Textarea(attrs={'cols': 100, 'rows': 15}),
+            'description': Textarea(attrs={'cols': 100, 'rows': 5}),
             'tags': Select2MultipleWidget(),
         }
 
@@ -31,15 +32,19 @@ class GameForm(forms.ModelForm):
             Fieldset(
                 '{{ heading }}',
                 'name',
+                'group',
                 'description',
                 HTML("""{% if form.image.value %}<img class="img-responsive" src="{{ MEDIA_URL }}{{ form.image.value }}">
                 {% endif %}"""),
-                'image',
                 'tags',
-                'group',
+                'image',
                 'event_name',
-                'game_version',
-                'my_game_file'
+                MultiField(
+                    'Upload a file for this game.',
+                    'game_version',
+                    'my_game_file',
+                    css_class="form-upload"
+                ),
             ),
             FormActions(
                 Submit('submit', 'Submit'),
