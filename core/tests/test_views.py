@@ -184,11 +184,19 @@ class NewGameTestCase(TestCase):
         return reverse('core:games:new')
 
     def test_no_login_required(self):
-        self.assertNoLoginRequired()
+        self.assertLoginRequired()
 
     def test_create_game(self):
+        # Setup
+        user = self.client.login()
+        group = G(Group)
+        group.members.add(user)
+        group.save()
+
         self.assertNotExists(Game, name='test')
-        response = self.client.post(self.url(), {'name': 'test', 'description': 'desc'})
+        response = self.client.post(self.url(), {'name': 'test',
+                                                 'description': 'desc',
+                                                 'group': group.id})
 
         self.assertExists(Game, name='test')
         game = Game.objects.get(name='test')
@@ -197,7 +205,14 @@ class NewGameTestCase(TestCase):
                                                kwargs={'game_id': game.id}))
 
     def test_create_invalid_game(self):
+        # Setup
+        user = self.client.login()
+        group = G(Group)
+        group.members.add(user)
+        group.save()
+
         self.assertNotExists(Game, name='test')
+
         response = self.client.post(self.url(), {'name': '',
                                                  'description': 'desc'})
 
@@ -206,11 +221,21 @@ class NewGameTestCase(TestCase):
         self.assertFormError(response, 'form', 'description', 'This field is required.')
 
     def test_new_game_with_file(self):
+        # Setup
+        user = self.client.login()
+        group = G(Group)
+        group.members.add(user)
+        group.save()
+
         import tempfile
         with tempfile.NamedTemporaryFile() as fp:
             fp.write("hello")
             fp.seek(0)
-            self.client.post(self.url(), {'name': 'test', 'description': 'desc', 'my_game_file': fp, 'game_version': '2'})
+            self.client.post(self.url(), {'name': 'test',
+                                          'description': 'desc', 'my_game_file': fp,
+                                          'game_version': '2',
+                                          'group': group.id})
+
         self.assertExists(Game, name='test')
 
 
@@ -244,19 +269,20 @@ class GameEditTestCase(TestCase):
     def test_edit(self):
         # Setup a game that the user can edit
         user = self.client.login()
-        game = G(Game, name="old")
+        game = G(Game)
         group = G(Group)
         game.group = group
         group.members.add(user)
         game.save()
         group.save()
-        self.assertNotExists(Game, name="new")
+        self.assertNotExists(Game, name="new" + game.name)
         # Edit the game
-        response = self.client.post(self.url(game_id=game.id), {'name': 'new',
-                                                                'description': 'desc'})
+        response = self.client.post(self.url(game_id=game.id), {'name': 'new' + game.name,
+                                                                'description': 'desc',
+                                                                'group': group.id})
         self.assertRedirects(response, reverse('core:games:specific',
                                                kwargs={'game_id': game.id}))
-        self.assertEqual(Game.objects.get(id=game.id).name, "new")
+        self.assertEqual(Game.objects.get(id=game.id).name, "new" + game.name)
 
     def test_edit_form(self):
         # Setup a game that the user can edit
