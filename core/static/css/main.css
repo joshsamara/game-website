@@ -45,6 +45,12 @@ table {
     background: url(star.gif) left -32px;
 }
 
+.files-header {
+    border-bottom: 1px solid #ddd;
+    margin-top: 5px;
+    padding: 5px;
+}
+
 /* Home page styles */
 .results {
   min-height: 222px;

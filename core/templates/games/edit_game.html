@@ -12,9 +12,21 @@
 {% block content %}
     {% load crispy_forms_tags %}
     {% crispy form %}
-    <br>
-    <button class="btn btn-danger" onclick="deleteGame()">DELETE GAME</button>
-    <br/>
+    <div>
+        <button class="btn btn-danger" onclick="deleteGame()">DELETE GAME</button>
+    </div>
+
+    <div class="well top10">
+        <h2 class="files-header">Current Game Files</h2>
+        <ul class="list-group lead">
+            {% for file in game.game_file.all %}
+                <li class="list-group-item"><a href="{{file}}" download> {{file.name}}</a></li>
+            {% empty %}
+                <li class="list-group-item">No files found</li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <script>
         var csrftoken = $.cookie('csrftoken');
 
