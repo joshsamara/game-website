@@ -34,11 +34,16 @@ def specific(request, game_id):
     })
 
 
+def preprocess_game_form(form, request):
+    """Edit the game form before displaying."""
+    form.fields.get('group').queryset = request.user.group_set.all()
+    form.fields.get('tags').help_text = "Type a tag name to search tags.\
+ Hit enter to click to select tags. You can add multiple tags."
+
+
 @login_required
 def new_game(request):
     """Form for creating a new game."""
-    def preprocess_form(form):
-        form.fields.get('group').queryset = request.user.group_set.all()
 
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES)
@@ -51,7 +56,7 @@ def new_game(request):
         else:
             form = GameForm()
 
-    preprocess_form(form)
+    preprocess_game_form(form, request)
     return render(request, 'games/game_form.html', {
         'title': 'New Game',
         'heading': 'Creating New Game',
@@ -79,10 +84,12 @@ def edit(request, game_id):
             return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
     else:
         form = GameForm(instance=selected_game)
+
+    preprocess_game_form(form, request)
     return render(request, 'games/edit_game.html', {
         'heading': 'Currently Editing ' + selected_game.name,
         'form': form,
-        'game':selected_game,
+        'game': selected_game,
     })
 
 

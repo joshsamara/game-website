@@ -51,6 +51,10 @@ table {
     padding: 5px;
 }
 
+.select2-container {
+  height: inherit;
+}
+
 /* Home page styles */
 .results {
   min-height: 222px;

@@ -3,9 +3,10 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Submit, Button, Fieldset
 from django import forms
-from django.forms import Textarea, CheckboxSelectMultiple
+from django.forms import Textarea
 from core.models import Game
 from core.models import MyFile
+from django_select2.widgets import Select2MultipleWidget
 
 
 class GameForm(forms.ModelForm):
@@ -18,7 +19,7 @@ class GameForm(forms.ModelForm):
         exclude = ['owner', 'date_published']
         widgets = {
             'description': Textarea(attrs={'cols': 100, 'rows': 15}),
-            'tags': CheckboxSelectMultiple(),
+            'tags': Select2MultipleWidget(),
         }
 
     def __init__(self, *args, **kwargs):
