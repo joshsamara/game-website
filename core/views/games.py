@@ -45,11 +45,14 @@ def preprocess_game_form(form, request):
 def new_game(request):
     """Form for creating a new game."""
 
+    status = None
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
             game = form.save()
             return HttpResponseRedirect(reverse('core:games:specific', args=[game.id]))
+        else:
+            status = 400
     else:
         if not request.user.group_set.count():
             return render(request, 'games/group_required.html')
@@ -57,17 +60,24 @@ def new_game(request):
             form = GameForm()
 
     preprocess_game_form(form, request)
-    return render(request, 'games/game_form.html', {
+    response = render(request, 'games/game_form.html', {
         'title': 'New Game',
         'heading': 'Creating New Game',
         'form': form,
     })
+
+    if status:
+        response.status = status
+
+    return response
 
 
 @login_required
 def edit(request, game_id):
     """Page to edit a game with."""
     selected_game = Game.objects.get(pk=game_id)
+    status = None
+
     if not request.user.can_edit_game(selected_game):
             return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
 
@@ -82,15 +92,22 @@ def edit(request, game_id):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
+        else:
+            status = 400
     else:
         form = GameForm(instance=selected_game)
 
     preprocess_game_form(form, request)
-    return render(request, 'games/edit_game.html', {
+    response = render(request, 'games/edit_game.html', {
         'heading': 'Currently Editing ' + selected_game.name,
         'form': form,
         'game': selected_game,
     })
+
+    if status:
+        response.status = status
+
+    return response
 
 
 def my_games(request):
