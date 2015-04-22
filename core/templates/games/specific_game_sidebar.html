@@ -65,14 +65,18 @@
 
 {% if game.game_file %}
     <div class="row">
-        <div class="center-block" style="padding-top: 10px">
-        <h5> Versions</h5>
-        <ul>
-        {% for game in game.game_file.all %}
-          <li><a href="{{ game.game_file.url }}" download> {{game.name}}</a></li>
-        {% endfor %}
-        </ul>
+        <div class="text-center" style="padding-top: 10px">
+            <strong>Downloads</strong>
         </div>
+        <ul>
+            {% for file in game.game_file.all %}
+                <li><a href="{{ file.game_file.url }}" download>Version {{ file.name }}</a>
+                    {% if forloop.last %}
+                        (Latest)
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endif %}
 
