@@ -54,6 +54,9 @@ class GameForm(forms.ModelForm):
             my_file = MyFile(name=self.cleaned_data['game_version'], game_file=my_file)
             my_file.save()
             game.game_file.add(my_file)
+
+        # Save our tags
+        self.save_m2m()
         return game
 
     def clean_game_version(self):
