@@ -55,3 +55,13 @@ class GameForm(forms.ModelForm):
             my_file.save()
             game.game_file.add(my_file)
         return game
+
+    def clean_game_version(self):
+        version = self.cleaned_data.get('game_version')
+        game_file = self.cleaned_data.get('my_game_file')
+        if game_file and not version:
+            raise forms.ValidationError('Uploading a file requires a version.', code='invalid')
+        elif not game_file and version:
+            raise forms.ValidationError('Versioning requires a game file.', code='invalid')
+        else:
+            return version
