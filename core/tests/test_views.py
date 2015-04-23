@@ -1,9 +1,10 @@
 from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
-from core.models import User, Group, Game, GameRating, UserNotification
+from core.models import User, Group, Game, GameRating, UserNotification, GameTag
 from django.core.urlresolvers import reverse
 from datetime import datetime
 import json
+import tempfile
 
 
 class RegisterViewTestCase(TestCase):
@@ -183,8 +184,17 @@ class NewGameTestCase(TestCase):
     def url(self, *args, **kwargs):
         return reverse('core:games:new')
 
-    def test_no_login_required(self):
+    def test_login_required(self):
         self.assertLoginRequired()
+
+    def test_valid_get(self):
+        user = self.client.login()
+        group = G(Group)
+        group.members.add(user)
+        group.save()
+
+        response = self.client.get(self.url())
+        self.assertEqual(response.status_code, 200)
 
     def test_create_game(self):
         # Setup
@@ -213,12 +223,44 @@ class NewGameTestCase(TestCase):
 
         self.assertNotExists(Game, name='test')
 
+        # name
         response = self.client.post(self.url(), {'name': '',
-                                                 'description': 'desc'})
-
+                                                 'description': 'desc',
+                                                 'group': group.id})
         self.assertFormError(response, 'form', 'name', 'This field is required.')
-        response = self.client.post(self.url(), {'name': 'test'})
+
+        # group
+        response = self.client.post(self.url(), {'name': 'asdf',
+                                                 'description': 'desc'})
+        self.assertFormError(response, 'form', 'group', 'This field is required.')
+
+        # desc
+        response = self.client.post(self.url(), {'name': 'test',
+                                                 'group': group.id})
         self.assertFormError(response, 'form', 'description', 'This field is required.')
+
+        # version
+        response = self.client.post(self.url(), {'name': 'test',
+                                                 'description': 'desc',
+                                                 'group': group.id,
+                                                 'game_version': 2})
+        self.assertFormError(response, 'form', 'game_version', 'Versioning requires a game file.')
+
+        # File
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write("hello")
+            fp.seek(0)
+            response = self.client.post(self.url(), {'name': 'test',
+                                                     'description': 'desc',
+                                                     'my_game_file': fp,
+                                                     'group': group.id})
+        self.assertFormError(response, 'form', 'game_version', 'Uploading a file requires a version.')
+
+    def test_create_no_group(self):
+        # Setup
+        self.client.login()
+        response = self.client.get(self.url())
+        self.assertTemplateUsed(response, 'games/group_required.html')
 
     def test_new_game_with_file(self):
         # Setup
@@ -227,7 +269,6 @@ class NewGameTestCase(TestCase):
         group.members.add(user)
         group.save()
 
-        import tempfile
         with tempfile.NamedTemporaryFile() as fp:
             fp.write("hello")
             fp.seek(0)
@@ -235,6 +276,20 @@ class NewGameTestCase(TestCase):
                                           'description': 'desc', 'my_game_file': fp,
                                           'game_version': '2',
                                           'group': group.id})
+
+        self.assertExists(Game, name='test')
+
+    def test_new_game_with_tags(self):
+        user = self.client.login()
+        group = G(Group)
+        group.members.add(user)
+        group.save()
+        tag = G(GameTag)
+
+        self.client.post(self.url(), {'name': 'test',
+                                      'description': 'desc',
+                                      'group': group.id,
+                                      'tags': [tag.id]})
 
         self.assertExists(Game, name='test')
 
@@ -283,6 +338,21 @@ class GameEditTestCase(TestCase):
         self.assertRedirects(response, reverse('core:games:specific',
                                                kwargs={'game_id': game.id}))
         self.assertEqual(Game.objects.get(id=game.id).name, "new" + game.name)
+
+    def test_invalid_edit(self):
+        # Setup a game that the user can edit
+        user = self.client.login()
+        game = G(Game)
+        group = G(Group)
+        game.group = group
+        group.members.add(user)
+        game.save()
+        group.save()
+        # name
+        response = self.client.post(self.url(game_id=game.id), {'name': '',
+                                                                'description': 'desc',
+                                                                'group': group.id})
+        self.assertFormError(response, 'form', 'name', 'This field is required.')
 
     def test_edit_form(self):
         # Setup a game that the user can edit
