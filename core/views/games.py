@@ -35,26 +35,52 @@ def specific(request, game_id):
     })
 
 
+def preprocess_game_form(form, request):
+    """Edit the game form before displaying."""
+    form.fields.get('group').queryset = request.user.group_set.all()
+    form.fields.get('tags').help_text = "Type a tag name to search tags.\
+ Hit enter to click to select tags. You can add multiple tags."
+    form.fields.get('image').help_text = "A preview image of the game to display."
+    form.fields.get('event_name').help_text = "Name of an event this game was made for, if any."
+
+
+@login_required
 def new_game(request):
     """Form for creating a new game."""
+
+    status = None
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
             game = form.save()
             return HttpResponseRedirect(reverse('core:games:specific', args=[game.id]))
+        else:
+            status = 400
     else:
-        form = GameForm()
-    return render(request, 'games/game_form.html', {
+        if not request.user.group_set.count():
+            return render(request, 'games/group_required.html')
+        else:
+            form = GameForm()
+
+    preprocess_game_form(form, request)
+    response = render(request, 'games/game_form.html', {
         'title': 'New Game',
         'heading': 'Creating New Game',
         'form': form,
     })
+
+    if status:
+        response.status = status
+
+    return response
 
 
 @login_required
 def edit(request, game_id):
     """Page to edit a game with."""
     selected_game = Game.objects.get(pk=game_id)
+    status = None
+
     if not request.user.can_edit_game(selected_game):
             return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
 
@@ -69,13 +95,22 @@ def edit(request, game_id):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('core:games:specific', args=[game_id]))
+        else:
+            status = 400
     else:
         form = GameForm(instance=selected_game)
-    return render(request, 'games/edit_game.html', {
+
+    preprocess_game_form(form, request)
+    response = render(request, 'games/edit_game.html', {
         'heading': 'Currently Editing ' + selected_game.name,
         'form': form,
-        'game':selected_game,
+        'game': selected_game,
     })
+
+    if status:
+        response.status = status
+
+    return response
 
 
 def my_games(request):

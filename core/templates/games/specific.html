@@ -50,23 +50,24 @@
                 </div>
             </div>
 
+            {% if game.link %}
             <div class="row">
-                {% if game.link %}
                     <strong>
                         Link:
                     </strong>
                     <a href="{{ game.link }}">
                         {{ game.link }}
                     </a>
-                {% endif %}
             </div>
+            {% endif %}
 
-            <div class="row">
-                <br/>
-                {% if game.event_name %}
-                    Brought to you by {{ game.event_name }}
-                {% endif %}
-            </div>
+            {% if game.event_name %}
+                <div class="row">
+                    <br/>
+                        Brought to you by {{ game.event_name }}
+                </div>
+            {% endif %}
+
         </div>
     </div>
     <br>
@@ -79,6 +80,8 @@
             {% endif %}
         </div>
     </div>
+
+
     <div class="row">
         <h3>Related Games</h3>
 
@@ -96,6 +99,8 @@
                             </div>
                         </div>
                     </div>
+                {% empty %}
+                <p class="lead text-center top10"><em>No related games found...</em></p>
                 {% endfor %}
             </div>
         </div>

@@ -12,9 +12,10 @@
 {% block content %}
     {% load crispy_forms_tags %}
     {% crispy form %}
-    <br>
-    <button class="btn btn-danger" onclick="deleteGame()">DELETE GAME</button>
-    <br/>
+    <div class="top10">
+        <button class="btn btn-danger" onclick="deleteGame()"><i class="fa fa-trash"></i> Delete Game</button>
+    </div>
+
     <script>
         var csrftoken = $.cookie('csrftoken');
 

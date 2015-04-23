@@ -28,6 +28,7 @@ urlpatterns = patterns(
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': 'core:home'}, name='logout'),
+    url(r'^select2/', include('django_select2.urls')),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
     static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # Used to serve static media in a dev environment. Should be disabled in production

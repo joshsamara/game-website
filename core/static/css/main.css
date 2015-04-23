@@ -45,6 +45,32 @@ table {
     background: url(star.gif) left -32px;
 }
 
+.files-header {
+    border-bottom: 1px solid #ddd;
+    margin-top: 5px;
+    padding: 5px;
+}
+
+.select2-container {
+  height: inherit;
+}
+
+.form-upload {
+  border: 1px solid #aaa;
+  background-color: #eee;
+  padding: 15px;
+  margin: 10px 10px 10px 0px;
+  border-radius: 10px;
+}
+
+.form-upload p.blockLabel {
+  color: #888;
+}
+
+.form-upload div {
+  margin: 10px 0 20px 0;
+}
+
 /* Home page styles */
 .results {
   min-height: 222px;

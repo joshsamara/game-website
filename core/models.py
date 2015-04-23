@@ -139,7 +139,7 @@ class Game(models.Model):
     game_file = models.ManyToManyField(MyFile, blank=True)
     description = models.TextField(max_length=5000)
     date_published = models.DateField(auto_now_add=True)
-    group = models.ForeignKey(Group, blank=True, null=True)
+    group = models.ForeignKey(Group, null=False)
     event_name = models.CharField(max_length=75, blank=True, default='')
     tags = models.ManyToManyField(GameTag, null=True, blank=True)
     featured = models.BooleanField(default=False)

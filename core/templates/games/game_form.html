@@ -7,12 +7,4 @@
 {% block content %}
     {% load crispy_forms_tags %}
     {% crispy form %}
-    <h2>Current Game Files</h2>
-    <ul>
-    {% for game in game.game_file.all %}
-   		<li><a href="{{game.game_file.url}}" download> {{game.name}}</a></li>
-   	{% endfor %}
-   	</ul>
-
-    <br/><br/>
 {% endblock %}
