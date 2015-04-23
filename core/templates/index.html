@@ -15,7 +15,7 @@
             <div class="header text-block">
               <p ng-bind="game.name">Loading...</p>
             </div>
-            <img ng-if="game.image" ng-src="/media/{{game.image}}" />
+            <img ng-if="game.has_image" ng-src="{{game.image}}" err-src="" />
             <div class="foot text-block">
               <p ng-bind="(game.description | summarize)"></p>
             </div>
@@ -33,7 +33,7 @@
             <div class="header text-block">
               <p ng-bind="game.name">Loading...</p>
             </div>
-            <img ng-if="game.image" ng-src="/media/{{game.image}}" />
+            <img ng-if="game.has_image" ng-src="{{game.image}}" err-src="" />
             <div class="foot text-block">
               <p ng-bind="(game.description | summarize)"></p>
             </div>
@@ -51,7 +51,7 @@
             <div class="header text-block">
               <p ng-bind="game.name">Loading...</p>
             </div>
-            <img ng-if="game.image" ng-src="/media/{{game.image}}" />
+            <img ng-if="game.has_image" ng-src="{{game.image}}" err-src="" />
             <div class="foot text-block">
               <p ng-bind="(game.description | summarize)"></p>
             </div>
@@ -79,7 +79,7 @@
             <div class="header text-block">
               <p ng-bind="game.name">Loading...</p>
             </div>
-            <img ng-if="game.image" ng-src="/media/{{game.image}}" />
+            <img ng-if="game.has_image" ng-src="{{game.image}}" err-src="" />
             <div class="foot text-block">
               <p ng-bind="(game.description | summarize)"></p>
             </div>
