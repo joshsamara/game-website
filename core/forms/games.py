@@ -7,13 +7,13 @@ from django.forms import Textarea
 from core.models import Game
 from core.models import MyFile
 from django_select2.widgets import Select2MultipleWidget
-from crispy_forms.layout import MultiField
+from crispy_forms.layout import Div
 
 
 class GameForm(forms.ModelForm):
     """Form for game creation and editing."""
     my_game_file = forms.FileField(required=False)
-    game_version = forms.IntegerField(min_value=1, required=False)
+    game_version = forms.CharField(max_length=100, required=False)
 
     class Meta:
         model = Game
@@ -39,11 +39,24 @@ class GameForm(forms.ModelForm):
                 'tags',
                 'image',
                 'event_name',
-                MultiField(
-                    'Upload a file for this game.',
+                Div(
+                    HTML('<p class="blockLabel">Upload a file for this game.</p>'),
                     'game_version',
                     'my_game_file',
-                    css_class="form-upload"
+                    HTML("""\
+                    {% if game.game_file %}
+                    <div class="top10">
+                        <h2 class="files-header">Current Game Files</h2>
+                        <ul class="list-group lead">
+                            {% for file in game.game_file.all %}
+                                <li class="list-group-item"><a href="{{file}}" download> {{file.name}}</a></li>
+                            {% empty %}
+                                <li class="list-group-item">No files found</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}"""),
+                    css_class="form-upload",
                 ),
             ),
             FormActions(
