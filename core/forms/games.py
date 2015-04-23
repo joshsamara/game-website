@@ -55,14 +55,19 @@ class GameForm(forms.ModelForm):
     def save(self, commit=True):
         game = super(GameForm, self).save(commit=False)
         game.save()
-        my_file = self.cleaned_data['my_game_file']
+
+        # Save our tags
+        tags = self.cleaned_data.get('tags')
+        if tags:
+            game.tags = tags
+            game.save()
+
+        # Save the game files
+        my_file = self.cleaned_data.get('my_game_file')
         if my_file:
             my_file = MyFile(name=self.cleaned_data['game_version'], game_file=my_file)
             my_file.save()
             game.game_file.add(my_file)
-
-        # Save our tags
-        self.save_m2m()
         return game
 
     def clean_game_version(self):
