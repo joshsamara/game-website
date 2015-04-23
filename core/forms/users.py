@@ -27,7 +27,7 @@ class RegisterUserForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'birthday', 'public')
+        fields = ('email', 'password1', 'password2', 'first_name', 'last_name', 'birthday', 'public')
 
     def __init__(self, *args, **kwargs):
         """Setup the form to work with crispy_forms."""
