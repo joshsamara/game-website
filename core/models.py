@@ -8,6 +8,14 @@ from core.managers import GameManager
 from core.managers import UserManager
 
 
+class MyFile(models.Model):
+    game_file = models.FileField(blank=True, null=True)
+    name = models.CharField(max_length=100, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     """
     User for this site.
@@ -50,6 +58,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return self.email
 
+    @property
+    def has_unread_notifications(self):
+        notifications = UserNotification.objects.filter(user=self, read=False)
+        return len(notifications) is not 0
+
+    @property
+    def notifications(self):
+        notifications = UserNotification.objects.filter(user=self).order_by('read')[:5]
+        return notifications
+
     def get_full_name(self):
         """Return the first_name plus the last_name, with a space in between."""
         full_name = '%s %s' % (self.first_name, self.last_name)
@@ -61,6 +79,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def can_edit_game(self, game):
         return self in game.group.members.all()
+
+
+class UserNotification(models.Model):
+    redirect_url = models.URLField()
+    user = models.ForeignKey(User)
+    description = models.CharField(max_length=256)
+    read = models.BooleanField(default=False)
+
+    @property
+    def link(self):
+        return reverse('core:profile:notifications', kwargs={'notification_id': self.pk})
+
+    def __unicode__(self):
+        return self.description
 
 
 class Group(models.Model):
@@ -76,6 +108,14 @@ class Group(models.Model):
     def get_absolute_url(self):
         """Detail page for a group."""
         return reverse('core:groups-detail', kwargs={'pk': self.pk})
+
+    def push_notification(self, description, url):
+        for user in self.members.all():
+            notification = UserNotification()
+            notification.user = user
+            notification.description = description
+            notification.redirect_url = url
+            notification.save()
 
     def __unicode__(self):
         return self.name
@@ -96,14 +136,13 @@ class Game(models.Model):
     name = models.CharField(max_length=50)
     image = StdImageField(upload_to='game_images', null=True, blank=True,
                           variations={'thumbnail': {'width': 200, 'height': 200}})
-    game_file = models.FileField(blank=True, null=True)
+    game_file = models.ManyToManyField(MyFile, blank=True)
     description = models.TextField(max_length=5000)
     date_published = models.DateField(auto_now_add=True)
     group = models.ForeignKey(Group, blank=True, null=True)
     event_name = models.CharField(max_length=75, blank=True, default='')
     tags = models.ManyToManyField(GameTag, null=True, blank=True)
     featured = models.BooleanField(default=False)
-
     objects = GameManager()
 
     @property
@@ -128,6 +167,11 @@ class Game(models.Model):
         if len(ratings) != 0:
             return len(ratings[0])
         return 0
+
+    def push_notification(self):
+        if self.group:
+            return self.group.push_notification(description='Somebody commented on a game of yours!',
+                                                url=reverse('core:games:specific', kwargs={'game_id': self.pk}))
 
     def __unicode__(self):
         return self.name

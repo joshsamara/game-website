@@ -73,7 +73,8 @@ def edit(request, game_id):
         form = GameForm(instance=selected_game)
     return render(request, 'games/edit_game.html', {
         'heading': 'Currently Editing ' + selected_game.name,
-        'form': form
+        'form': form,
+        'game':selected_game,
     })
 
 

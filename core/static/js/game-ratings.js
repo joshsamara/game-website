@@ -1,20 +1,6 @@
 /**
  * This file handles the AJAX required to use the star ratings
  */
-var csrftoken = $.cookie('csrftoken');
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
-$.ajaxSetup({
-    beforeSend: function (xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
 
 function updateTotalRatings() {
     $.get(total_ratings_url, function (data) {

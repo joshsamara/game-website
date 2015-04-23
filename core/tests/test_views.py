@@ -1,6 +1,6 @@
 from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
-from core.models import User, Group, Game, GameRating
+from core.models import User, Group, Game, GameRating, UserNotification
 from django.core.urlresolvers import reverse
 from datetime import datetime
 import json
@@ -188,8 +188,7 @@ class NewGameTestCase(TestCase):
 
     def test_create_game(self):
         self.assertNotExists(Game, name='test')
-        response = self.client.post(self.url(), {'name': 'test',
-                                                 'description': 'desc'})
+        response = self.client.post(self.url(), {'name': 'test', 'description': 'desc'})
 
         self.assertExists(Game, name='test')
         game = Game.objects.get(name='test')
@@ -205,6 +204,14 @@ class NewGameTestCase(TestCase):
         self.assertFormError(response, 'form', 'name', 'This field is required.')
         response = self.client.post(self.url(), {'name': 'test'})
         self.assertFormError(response, 'form', 'description', 'This field is required.')
+
+    def test_new_game_with_file(self):
+        import tempfile
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write("hello")
+            fp.seek(0)
+            self.client.post(self.url(), {'name': 'test', 'description': 'desc', 'my_game_file': fp, 'game_version': '2'})
+        self.assertExists(Game, name='test')
 
 
 class GameSpecificTestCase(TestCase):
@@ -264,6 +271,20 @@ class GameEditTestCase(TestCase):
         response = self.client.get(self.url(game_id=game.id))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('games/game_form.html')
+
+    def test_delete_game(self):
+        # Setup a game that the user can edit
+        user = self.client.login()
+        game = G(Game)
+        group = G(Group)
+        game.group = group
+        group.members.add(user)
+        game.save()
+        group.save()
+        # Go to edit page
+        response = self.client.delete(self.url(game_id=game.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotExists(Game, id=game.id)
 
 
 class GameSearchTestCase(TestCase):
@@ -511,3 +532,25 @@ class ChangePasswordViewTestCase(TestCase):
         self.client.logout()
         self.assertFalse(self.client.login(username=username, password=new_pw))
         self.assertTrue(self.client.login(username=username, password=old_pw))
+
+
+class UserNotificationViewTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:profile:notifications', kwargs=kwargs)
+
+    def test_login_required(self):
+        notification = G(UserNotification)
+        self.assertLoginRequired(notification_id=notification.pk)
+
+    def test_valid_notification(self):
+        user = self.client.login()
+        notification = G(UserNotification, user=user)
+        response = self.client.get(self.url(notification_id=notification.pk))
+        self.assertRedirects(response, notification.redirect_url)
+
+    def test_invalid_notification(self):
+        self.client.login()
+        different_user = G(User)
+        notification = G(UserNotification, user=different_user)
+        response = self.client.get(self.url(notification_id=notification.pk))
+        self.assertEqual(response.status_code, 403)

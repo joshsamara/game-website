@@ -17,9 +17,9 @@
                     <li><a href="{% url 'core:games:new' %}">Add Game</a></li>
                 </ul>
             </li>
-            <li class="{% if navbar_active == 'groups' %}active{% endif %}"><a href="{% url 'core:groups' %}">Groups</a></li>
+            <li class="{% if navbar_active == 'groups' %}active{% endif %}"><a href="{% url 'core:groups' %}">Groups</a>
+            </li>
         </ul>
-
 
         {# Search in navbar #}
         <form class="navbar-form navbar-left" method="GET" action="{% url 'core:games:search' %}" role="search">
@@ -33,11 +33,43 @@
         {% if logged_in %}
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ user.email }}<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'core:profile:base' %}"><i class="fa fa-user fa-fw"></i> Profile</a></li>
-                    <li><a href="{% url 'core:user-groups' %}"><i class="fa fa-users fa-fw"></i> Groups</a></li>
-                </ul>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        {% if user.has_unread_notifications %}
+                            <i class="fa fa-flag-o" style="color: red"></i>
+                        {% else %}
+                            <i class="fa fa-flag-o"></i>
+                        {% endif %}
+
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        {% for notification in user.notifications %}
+                            {% if not notification.read %}
+                                <li>
+                                    <a href="{{ notification.link }}">{{ notification.description }}</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{{ notification.link }}" style="color: darkgrey">{{ notification.description }}</a>
+                                </li>
+                            {% endif %}
+                            {% if not forloop.last %}
+                                <li class="divider"></li>
+                            {% endif %}
+                        {% empty %}
+                            <li>
+                                <a>You have no notifications!</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-expanded="false">{{ user.email }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{% url 'core:profile:base' %}"><i class="fa fa-user fa-fw"></i> Profile</a></li>
+                        <li><a href="{% url 'core:user-groups' %}"><i class="fa fa-users fa-fw"></i> Groups</a></li>
+                    </ul>
+                </li>
                 <li><a href={% url 'core:logout' %}>Logout</a></li>
             </ul>
         {% else %}

@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from core.views import ProfileRedirectView, ProfileView, users
+from core.views import ProfileRedirectView, ProfileView, users, notifications
 from core.forms import CustomPasswordChangeForm
 
 urlpatterns = patterns(
@@ -15,4 +15,6 @@ urlpatterns = patterns(
             'post_change_redirect': 'core:profile:base'
         },
         name='password_change'),
+    url(r'^notifications/(?P<notification_id>\d+)/$',
+        notifications.base, name='notifications')
 )
