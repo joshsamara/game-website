@@ -123,6 +123,7 @@ class GroupDetailView(DetailView):
         """Set the page title."""
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context["in_group"] = self.request.user in self.object.members.all()
+        context["games"] = self.object.game_set.all()
         return context
 
 
