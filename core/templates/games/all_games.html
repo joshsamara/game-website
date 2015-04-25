@@ -1,8 +1,25 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% block content %}
     <div class="page-header">
         <h1>{{ title }}</h1>
     </div>
+    {% if searching %}
+      <h3 class="text-muted"><em>Results for search '{{term}}'</em></h3>
+      <div class="well bloodhound top10">
+        <label>Search for a game:</label>
+        <p class="help-block">
+        <small><em>Search will default to name search. When there are too few results, it will fallback to group and tag search.</em></small>
+        </p>
+        <div>
+        <input class="form-control typeahead"
+        type="text"
+        placeholder="Enter search text"
+        value={{term}}>
+        <button id="searchBtn" class="btn btn-default"><i class="fa fa-search"></i></button>
+        </div>
+      </div>
+    {% endif %}
     <div class="row text-right">
         <a href="{% url 'core:games:new' %}" class="btn btn-sm btn-success"><i class="fa fa-plus-circle fa-fw"></i>
             Upload New Game</a>
@@ -45,4 +62,6 @@
             </tbody>
         </table>
     </div>
+<script type="text/javascript" src="{% static "js/typeahead.bundle.js" %}"></script>
+<script type="text/javascript" src="{% static "js/search.js" %}"></script>
 {% endblock %}

@@ -205,6 +205,8 @@ class GameSearch(generic.ListView):
         context = super(GameSearch, self).get_context_data()
         context['games_list'] = self.object_list
         context['title'] = 'Search Results'
+        context['searching'] = True
+        context['term'] = self.request.GET.get('term', '')
         return context
 
 
