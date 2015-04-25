@@ -71,6 +71,23 @@ table {
   margin: 10px 0 20px 0;
 }
 
+/* Typeahead Styles */
+.tt-menu {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 800px;
+  padding: 5px;
+}
+
+.twitter-typeahead {
+  width: 800px;
+}
+
+.tt-cursor{
+  background-color: #eefdff;
+}
+
 /* Home page styles */
 .results {
   min-height: 222px;
@@ -136,11 +153,11 @@ table {
 }
 
 .animate-none {
-    opacity: 1;
+  opacity: 1;
 }
 
 .animate-none.ng-hide {
-    opacity: 0;
+  opacity: 0;
 }
 
 .animate-none.ng-hide-add,

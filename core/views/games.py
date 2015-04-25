@@ -197,7 +197,7 @@ class GameSearch(generic.ListView):
     def get_queryset(self):
         """Search for games based on a provided term."""
         game_name = self.request.GET.get('term', '')
-        searched_games = Game.objects.filter(name__icontains=game_name)
+        searched_games = Game.objects.search_by_term(game_name, annotated=False)
         return searched_games
 
     def get_context_data(self):
@@ -205,6 +205,8 @@ class GameSearch(generic.ListView):
         context = super(GameSearch, self).get_context_data()
         context['games_list'] = self.object_list
         context['title'] = 'Search Results'
+        context['searching'] = True
+        context['term'] = self.request.GET.get('term', '')
         return context
 
 
@@ -223,8 +225,8 @@ class GameAPI(generic.View):
         """
         randomize = False
         if name:
-            games = Game.objects.filter(name__icontains=name)
-            max_count = 21
+            games = Game.objects.search_by_term(name)
+            max_count = 50
         elif featured:
             games = Game.objects.filter(featured=True)
             max_count = 3
