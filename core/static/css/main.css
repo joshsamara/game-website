@@ -71,6 +71,23 @@ table {
   margin: 10px 0 20px 0;
 }
 
+/* Typeahead Styles */
+.tt-menu {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 100%;
+  padding: 5px;
+}
+
+.twitter-typeahead {
+  width: 100%;
+}
+
+.tt-cursor{
+  background-color: #eefdff;
+}
+
 /* Home page styles */
 .results {
   min-height: 222px;
