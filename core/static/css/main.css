@@ -76,12 +76,12 @@ table {
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
-  width: 100%;
+  width: 800px;
   padding: 5px;
 }
 
 .twitter-typeahead {
-  width: 100%;
+  width: 800px;
 }
 
 .tt-cursor{
@@ -153,11 +153,11 @@ table {
 }
 
 .animate-none {
-    opacity: 1;
+  opacity: 1;
 }
 
 .animate-none.ng-hide {
-    opacity: 0;
+  opacity: 0;
 }
 
 .animate-none.ng-hide-add,

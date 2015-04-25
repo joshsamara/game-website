@@ -197,7 +197,7 @@ class GameSearch(generic.ListView):
     def get_queryset(self):
         """Search for games based on a provided term."""
         game_name = self.request.GET.get('term', '')
-        searched_games = Game.objects.filter(name__icontains=game_name)
+        searched_games = Game.objects.search_by_term(game_name, annotated=False)
         return searched_games
 
     def get_context_data(self):

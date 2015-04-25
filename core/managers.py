@@ -39,9 +39,9 @@ class GameManager(Manager):
         all_games = self.all()
         return sorted(all_games, key=lambda g: g.average_rating, reverse=descending)
 
-    def search_by_term(self, term):
+    def search_by_term(self, term, annotated=True):
         games = self.filter(name__icontains=term).distinct()
-        if games.count() < 5:
+        if games.count() < 5 or not annotated:
             from core.models import GameTag, Group
             tags = GameTag.objects.filter(value__icontains=term)
             groups = Group.objects.filter(name__icontains=term)
