@@ -223,8 +223,8 @@ class GameAPI(generic.View):
         """
         randomize = False
         if name:
-            games = Game.objects.filter(name__icontains=name)
-            max_count = 21
+            games = Game.objects.search_by_term(name)
+            max_count = 50
         elif featured:
             games = Game.objects.filter(featured=True)
             max_count = 3

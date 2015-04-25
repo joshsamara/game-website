@@ -1,6 +1,6 @@
 """Custom managers for models."""
 from django.contrib.auth.models import BaseUserManager
-from django.db.models import Manager
+from django.db.models import Manager, Q
 from django.utils import timezone
 
 
@@ -38,3 +38,14 @@ class GameManager(Manager):
     def all_by_rating(self, descending=True):
         all_games = self.all()
         return sorted(all_games, key=lambda g: g.average_rating, reverse=descending)
+
+    def search_by_term(self, term):
+        games = self.filter(name__icontains=term).distinct()
+        if games.count() < 5:
+            from core.models import GameTag, Group
+            tags = GameTag.objects.filter(value__icontains=term)
+            groups = Group.objects.filter(name__icontains=term)
+
+            query = Q(name__icontains=term) | Q(tags__in=tags) | Q(group__in=groups)
+            games = self.filter(query).distinct()
+        return games
