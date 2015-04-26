@@ -6,7 +6,12 @@
     <div class="page-header">
         <h1>{{ page_title }}</h1>
     </div>
-    <table class="table table-bordered table-striped">
+
+    <div>
+    <a href="{% url 'core:groups-new' %}" class="btn btn-sm btn-success"><i class="fa fa-plus-circle fa-fw"></i> New
+        Group</a>
+    </div>
+    <table class="top10 table table-bordered table-striped">
         <thead>
         <tr>
             <th>Group Name</th>
@@ -19,8 +24,8 @@
         {% for group in object_list %}
             <tr>
                 <td>{{ group.name }}</td>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td>{{ group.members.all | length }}</td>
+                <td>{{ group.game_set.all | length }}</td>
                 <td>
                     <a href="{% url 'core:groups-detail' group.pk %}" class="btn btn-sm btn-primary"><i
                             class="fa fa-search fa-fw"></i> View</a>
@@ -33,6 +38,4 @@
         {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'core:groups-new' %}" class="btn btn-sm btn-success"><i class="fa fa-plus-circle fa-fw"></i> New
-        Group</a>
 {% endblock %}

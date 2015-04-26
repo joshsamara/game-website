@@ -1,5 +1,5 @@
 from .utils import BaseTestCase as TestCase
-from core.models import User, Group, GameTag, Game, MyFile, UserNotification
+from core.models import User, Group, GameTag, Game, MyFile, UserNotification, GroupInvitation
 from django_dynamic_fixture import G
 from django.core.urlresolvers import reverse
 
@@ -28,6 +28,12 @@ class UserTestCase(TestCase):
         user = G(User, first_name='', last_name='', public=True)
         expected = user.email
         self.assertEqual(expected, user.display_name)
+
+    def test_push_notification(self):
+        user = G(User)
+        self.assertNotExists(UserNotification, user=user)
+        user.push_notification('123', 'abc')
+        self.assertExists(UserNotification, user=user)
 
 
 class GroupTestCase(TestCase):
@@ -98,3 +104,61 @@ class UserNotificationTestCase(TestCase):
     def test_unicode(self):
         notification = G(UserNotification, description="Abc")
         self.assertEqual(str(notification), "Abc")
+
+
+class GroupInvitationTestCase(TestCase):
+    def test_accept(self):
+        user = G(User)
+        group = G(Group)
+        invite = G(GroupInvitation, user=user, group=group)
+        self.assertNotIn(user, group.members.all())
+        self.assertExists(GroupInvitation, user=user)
+        invite.accept()
+        self.assertIn(user, group.members.all())
+        self.assertNotExists(GroupInvitation, user=user)
+
+    def test_decline(self):
+        user = G(User)
+        group = G(Group)
+        invite = G(GroupInvitation, user=user, group=group)
+        self.assertNotIn(user, group.members.all())
+        self.assertExists(GroupInvitation, user=user)
+        invite.decline()
+        self.assertNotIn(user, group.members.all())
+        self.assertNotExists(GroupInvitation, user=user)
+
+    def test_invite_create(self):
+        user = G(User)
+        group = G(Group)
+        self.assertNotExists(GroupInvitation, user=user)
+        GroupInvitation.create(group=group, user=user, inviting=True)
+        self.assertExists(UserNotification, user=user)
+        self.assertExists(GroupInvitation, user=user)
+
+    def test_request_create(self):
+        user = G(User)
+        user2 = G(User)
+        group = G(Group)
+        group.members = [user2]
+        self.assertNotExists(GroupInvitation, user=user)
+        GroupInvitation.create(group=group, user=user, inviting=False)
+        self.assertExists(UserNotification, user=user2)
+        self.assertExists(GroupInvitation, user=user)
+
+    def test_valid_user_invite(self):
+        user = G(User)
+        user2 = G(User)
+        group = G(Group)
+        group.members = [user2]
+        invite = GroupInvitation.create(group=group, user=user, inviting=True)
+        self.assertTrue(invite.valid_user(user))
+        self.assertFalse(invite.valid_user(user2))
+
+    def test_valid_user_request(self):
+        user = G(User)
+        user2 = G(User)
+        group = G(Group)
+        group.members = [user2]
+        invite = GroupInvitation.create(group=group, user=user, inviting=False)
+        self.assertTrue(invite.valid_user(user2))
+        self.assertFalse(invite.valid_user(user))

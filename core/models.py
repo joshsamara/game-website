@@ -68,6 +68,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         notifications = UserNotification.objects.filter(user=self).order_by('read')[:5]
         return notifications
 
+    def push_notification(self, description, url):
+        notification = UserNotification()
+        notification.user = self
+        notification.description = description
+        notification.redirect_url = url
+        notification.save()
+
     def get_full_name(self):
         """Return the first_name plus the last_name, with a space in between."""
         full_name = '%s %s' % (self.first_name, self.last_name)
@@ -119,6 +126,44 @@ class Group(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class GroupInvitation(models.Model):
+    """An invitation for a group."""
+
+    user = models.ForeignKey(User, null=False)
+    group = models.ForeignKey(Group, null=False)
+    inviting = models.BooleanField(null=False, default=True)
+
+    # For the inviting field here:
+    # true: this is an invation from the group to the user
+    # false: this is a request from the user to join the group
+
+    def accept(self):
+        self.group.members.add(self.user)
+        self.group.save()
+        self.group.push_notification('A new user has joined your group!',
+                                     reverse('core:groups-detail', kwargs={'pk': self.group.id}))
+        self.delete()
+
+    def decline(self):
+        self.delete()
+
+    def valid_user(self, user):
+        return ((self.inviting and user == self.user) or
+                (not self.inviting and user in self.group.members.all()))
+
+    @classmethod
+    def create(cls, group, user, inviting):
+        invite = cls(user=user, group=group, inviting=inviting)
+        invite.save()
+        if inviting:
+            invite.user.push_notification('A group has invited you to join.',
+                                          reverse('core:invite', kwargs={'pk': invite.id}))
+        else:
+            invite.group.push_notification('A user has requested to join your group.',
+                                           reverse('core:invite', kwargs={'pk': invite.id}))
+        return invite
 
 
 class GameTag(models.Model):

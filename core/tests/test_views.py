@@ -1,6 +1,8 @@
 from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
-from core.models import User, Group, Game, GameRating, UserNotification, GameTag
+from core.models import (User, Group, Game, GameRating,
+                         UserNotification, GameTag,
+                         GroupInvitation)
 from django.core.urlresolvers import reverse
 from datetime import datetime
 import json
@@ -78,6 +80,12 @@ class ProfileViewTestCase(TestCase):
         user = G(User)
         self.assertNoLoginRequired(pk=user.pk)
 
+    def test_login_get_successful(self):
+        user = G(User)
+        self.client.login()
+        response = self.client.get(self.url(pk=user.pk))
+        self.assertEqual(response.status_code, 200)
+
 
 class UserGroupsViewTestCase(TestCase):
     def url(self, *args, **kwargs):
@@ -116,9 +124,27 @@ class GroupJoinViewTestCase(TestCase):
     def test_join_group(self):
         user = self.client.login()
         group = G(Group)
-        self.assertNotIn(user, group.members.all())
+        self.assertNotExists(GroupInvitation, user=user)
         self.client.get(self.url(pk=group.pk))
-        self.assertIn(user, group.members.all())
+        self.assertExists(GroupInvitation, user=user)
+
+    def test_join_group_post(self):
+        user = self.client.login()
+        group = G(Group)
+        group.members = [user]
+        user2 = G(User)
+        self.assertNotExists(GroupInvitation, user=user2)
+        self.client.post(self.url(pk=group.pk), {"user": user2.id})
+        self.assertExists(GroupInvitation, user=user2)
+
+    def test_join_group_post_invalid(self):
+        user = self.client.login()
+        group = G(Group)
+        group.members = [user]
+        user2 = G(User)
+        self.assertNotExists(GroupInvitation, user=user2)
+        self.client.post(self.url(pk=group.pk))
+        self.assertNotExists(GroupInvitation, user=user2)
 
 
 class GroupLeaveViewTestCase(TestCase):
@@ -650,3 +676,38 @@ class UserNotificationViewTestCase(TestCase):
         notification = G(UserNotification, user=different_user)
         response = self.client.get(self.url(notification_id=notification.pk))
         self.assertEqual(response.status_code, 403)
+
+
+class GroupInvitationViewTestCase(TestCase):
+    def url(self, *args, **kwargs):
+        return reverse('core:invite', kwargs=kwargs)
+
+    def test_login_required(self):
+        invite = G(GroupInvitation)
+        self.assertLoginRequired(pk=invite.pk)
+
+    def test_get(self):
+        self.client.login()
+        invite = G(GroupInvitation)
+        response = self.client.get(self.url(pk=invite.pk))
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_accept(self):
+        user = self.client.login()
+        invite = G(GroupInvitation, user=user, inviting=True)
+        group = invite.group
+        self.assertNotIn(user, group.members.all())
+
+        self.client.post(self.url(pk=invite.pk), {"accept": True})
+        self.assertIn(user, group.members.all())
+        self.assertNotExists(GroupInvitation, user=user)
+
+    def test_post_decline(self):
+        user = self.client.login()
+        invite = G(GroupInvitation, user=user, inviting=True)
+        group = invite.group
+        self.assertNotIn(user, group.members.all())
+
+        self.client.post(self.url(pk=invite.pk), {"accept": False})
+        self.assertNotIn(user, group.members.all())
+        self.assertNotExists(GroupInvitation, user=user)
