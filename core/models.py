@@ -158,11 +158,12 @@ class GroupInvitation(models.Model):
         invite = cls(user=user, group=group, inviting=inviting)
         invite.save()
         if inviting:
-            invite.user.push_notification('A group has requested you join.',
+            invite.user.push_notification('A group has invited you to join.',
                                           reverse('core:invite', kwargs={'pk': invite.id}))
         else:
             invite.group.push_notification('A user has requested to join your group.',
                                            reverse('core:invite', kwargs={'pk': invite.id}))
+        return invite
 
 
 class GameTag(models.Model):

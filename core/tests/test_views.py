@@ -1,6 +1,8 @@
 from .utils import BaseViewTestCase as TestCase
 from django_dynamic_fixture import G
-from core.models import User, Group, Game, GameRating, UserNotification, GameTag
+from core.models import (User, Group, Game, GameRating,
+                         UserNotification, GameTag,
+                         GroupInvitation)
 from django.core.urlresolvers import reverse
 from datetime import datetime
 import json
@@ -116,9 +118,9 @@ class GroupJoinViewTestCase(TestCase):
     def test_join_group(self):
         user = self.client.login()
         group = G(Group)
-        self.assertNotIn(user, group.members.all())
+        self.assertNotExists(GroupInvitation, user=user)
         self.client.get(self.url(pk=group.pk))
-        self.assertIn(user, group.members.all())
+        self.assertExists(GroupInvitation, user=user)
 
 
 class GroupLeaveViewTestCase(TestCase):

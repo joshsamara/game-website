@@ -72,7 +72,7 @@ class ProfileView(DetailView):
         groups = Group.objects.filter(members=user)
         context['games_list'] = Game.objects.filter(group__in=groups)
         context['show_edit'] = user.pk is self.request.user.pk
-        if self.request.user and self.request.user != user:
+        if self.request.user and self.request.user != user and hasattr(self.request.user, 'group_set'):
             invite_groups = set(self.request.user.group_set.all())
             invite_groups -= set(groups)
             pending_invites = set(i.group for i in GroupInvitation.objects.filter(user=user))
