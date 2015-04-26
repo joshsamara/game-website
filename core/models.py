@@ -121,6 +121,18 @@ class Group(models.Model):
         return self.name
 
 
+class GroupInvitation(models.Model):
+    """An invitation for a group."""
+
+    user = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    inviting = models.BooleanField(null=False, default=True)
+
+    # For the inviting field here:
+    # true: this is an invation from the group to the user
+    # false: this is a request from the user to join the group
+
+
 class GameTag(models.Model):
     """Tags to label Games."""
 
