@@ -3,7 +3,7 @@ var games = new Bloodhound({
   datumTokenizer: Bloodhound.tokenizers.whitespace,
   queryTokenizer: Bloodhound.tokenizers.whitespace,
   remote: {
-    url: '/games/api',
+    url: baseURL + 'games/api',
     replace: function(url, query) {
       return url + "?term=" + query;
     },
@@ -29,7 +29,7 @@ $('.typeahead').typeahead({
 
 $('#searchBtn').click(function(){
   term = $('.tt-input').val();
-  url = '/games/search/?term=' + term;
+  url = baseURL + 'games/search/?term=' + term;
   window.location.href = url;
 });
 
