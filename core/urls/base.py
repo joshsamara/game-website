@@ -24,7 +24,7 @@ urlpatterns = patterns(
     url(r'^groups/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='groups-detail'),
     url(r'^groups/(?P<pk>\d+)/join/$', GroupJoinView.as_view(), name='groups-join'),
     url(r'^groups/(?P<pk>\d+)/leave/$', GroupLeaveView.as_view(), name='groups-leave'),
-    url(r'^invite/(?P<pk>\d+)/$', GroupInvitationView.as_view(), name='invitation'),
+    url(r'^invite/(?P<pk>\d+)/$', GroupInvitationView.as_view(), name='invite'),
     url(r'^groups/new/$', GroupCreateView.as_view(), name='groups-new'),
 
     # Login urls

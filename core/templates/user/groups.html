@@ -6,7 +6,12 @@
     <div class="page-header">
         <h1>{{ page_title }}</h1>
     </div>
-    <table class="table table-bordered table-striped">
+
+    <div>
+    <a href="{% url 'core:groups-new' %}" class="btn btn-sm btn-success"><i class="fa fa-plus-circle fa-fw"></i> New
+        Group</a>
+    </div>
+    <table class="top10 table table-bordered table-striped">
         <thead>
         <tr>
             <th>Group Name</th>
@@ -33,6 +38,4 @@
         {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'core:groups-new' %}" class="btn btn-sm btn-success"><i class="fa fa-plus-circle fa-fw"></i> New
-        Group</a>
 {% endblock %}

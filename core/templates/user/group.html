@@ -26,7 +26,7 @@
             </tr>
         {% empty %}
             <tr>
-                <td colspan="4">No members found.</td>
+                <td colspan="2">No members found.</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -72,8 +72,10 @@
     {% if in_group %}
         <a href="{% url 'core:groups-leave' group.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-minus fa-fw"></i>
             Leave Group</a>
-    {% else %}
+    {% elif request_sent %}
+        <p><em>Join request is pending...</em></p>
+    {% elif not request_sent %}
         <a href="{% url 'core:groups-join' group.pk %}" class="btn btn-sm btn-success"><i class="fa fa-plus fa-fw"></i>
-            Join Group</a>
+            Request to Join Group</a>
     {% endif %}
 {% endblock %}

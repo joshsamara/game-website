@@ -68,6 +68,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         notifications = UserNotification.objects.filter(user=self).order_by('read')[:5]
         return notifications
 
+    def push_notification(self, description, url):
+        notification = UserNotification()
+        notification.user = self
+        notification.description = description
+        notification.redirect_url = url
+        notification.save()
+
     def get_full_name(self):
         """Return the first_name plus the last_name, with a space in between."""
         full_name = '%s %s' % (self.first_name, self.last_name)
@@ -135,6 +142,8 @@ class GroupInvitation(models.Model):
     def accept(self):
         self.group.members.add(self.user)
         self.group.save()
+        self.group.push_notification('A new user has joined your group!',
+                                     reverse('core:groups-detail', kwargs={'pk': self.group.id}))
         self.delete()
 
     def decline(self):
@@ -143,6 +152,17 @@ class GroupInvitation(models.Model):
     def valid_user(self, user):
         return ((self.inviting and user == self.user) or
                 (not self.inviting and user in self.group.members.all()))
+
+    @classmethod
+    def create(cls, group, user, inviting):
+        invite = cls(user=user, group=group, inviting=inviting)
+        invite.save()
+        if not inviting:
+            invite.group.push_notification('A user has requested to join your group.',
+                                           reverse('core:invite', kwargs={'pk': invite.id}))
+        else:
+            invite.user.push_notification('A group has requested you join.',
+                                          reverse('core:invite', kwargs={'pk': invite.id}))
 
 
 class GameTag(models.Model):

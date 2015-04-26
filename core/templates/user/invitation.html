@@ -8,23 +8,24 @@
         <h1>Group Invitation</h1>
     </div>
     <div class="lead">
-    <p>
         {% if not viewable %}
+            <p>
             You do not have permission to view this invitation. Click <a href="{% url 'core:home' %}">here</a> to return home.
-        {% endif %}
-
-        {% if invite.inviting and is_user %}
-            Group "<a href="{% url 'core:groups-detail' pk=invite.user.id %}">{{invite.group}}</a>" would like you to join their group.
+            </p>
         {% else %}
-            User "<a href="{% url 'core:profile:user-profile' pk=invite.user.id %}">{{invite.user}}</a>" would like to join your group 
-                "<a href="{% url 'core:groups-detail' pk=invite.user.id %}">{{invite.group}}</a>".</p>
+            <p>
+            {% if invite.inviting and is_user %}
+                Group "<a href="{% url 'core:groups-detail' pk=invite.user.id %}">{{invite.group}}</a>" would like you to join their group.
+            {% else %}
+                User "<a href="{% url 'core:profile:user-profile' pk=invite.user.id %}">{{invite.user}}</a>" would like to join your group 
+                    "<a href="{% url 'core:groups-detail' pk=invite.user.id %}">{{invite.group}}</a>".</p>
+            {% endif %}
+            </p>
+            <div>
+                <button id="acceptBtn" class="btn btn-success"><i class="fa fa-check"></i> Accept</button>
+                <button id="declineBtn" class="btn btn-danger"><i class="fa fa-times"></i> Decline</button>
+            </div>
         {% endif %}
-
-    </p>
-    </div>
-    <div>
-        <button id="acceptBtn" class="btn btn-success"><i class="fa fa-check"></i> Accept</button>
-        <button id="declineBtn" class="btn btn-danger"><i class="fa fa-times"></i> Decline</button>
     </div>
 
 <script type="text/javascript" src="{% static "js/invite.js" %}"></script>

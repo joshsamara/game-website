@@ -125,6 +125,7 @@ class GroupDetailView(DetailView):
         """Set the page title."""
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context["in_group"] = self.request.user in self.object.members.all()
+        context["request_sent"] = GroupInvitation.objects.filter(user=self.request.user, group=self.object).exists()
         context["games"] = self.object.game_set.all()
         return context
 
@@ -160,7 +161,7 @@ class GroupInvitationView(LoginRequiredMixin, DetailView):
         is_user = self.request.user == user
 
         # not inviting === this is a request to join the group
-        viewable = inviting and is_user or not inviting and in_group
+        viewable = (inviting and is_user) or (not inviting and in_group)
         context["viewable"] = viewable
 
         context["in_group"] = in_group
@@ -191,10 +192,8 @@ class GroupJoinView(LoginRequiredMixin, View):
         """Add the logged in user to this group."""
         pk = self.kwargs.get('pk')
         group = Group.objects.get(id=pk)
-        group.push_notification('A new user has joined your group!',
-                                reverse('core:groups-detail', kwargs={'pk': pk}))
-        group.members.add(self.request.user)
-        group.save()
+        user = self.request.user
+        GroupInvitation.create(user=user, group=group, inviting=False)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
@@ -218,3 +217,9 @@ class GroupCreateView(LoginRequiredMixin, CreateView):
     model = Group
     fields = ['name']
     template_name = "user/new_group.html"
+
+    def form_valid(self, form):
+        response = super(GroupCreateView, self).form_valid(form)
+        self.object.members.add(self.request.user)
+        self.object.save()
+        return response
