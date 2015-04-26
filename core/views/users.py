@@ -72,6 +72,12 @@ class ProfileView(DetailView):
         groups = Group.objects.filter(members=user)
         context['games_list'] = Game.objects.filter(group__in=groups)
         context['show_edit'] = user.pk is self.request.user.pk
+        if self.request.user and self.request.user != user:
+            invite_groups = set(self.request.user.group_set.all())
+            invite_groups -= set(groups)
+            pending_invites = set(i.group for i in GroupInvitation.objects.filter(user=user))
+            invite_groups -= pending_invites
+            context['invite_groups'] = invite_groups
         return context
 
 
@@ -188,6 +194,11 @@ class GroupJoinView(LoginRequiredMixin, View):
 
     model = Group
 
+    # We need this to override django's defaults for posting.
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(GroupJoinView, self).dispatch(*args, **kwargs)
+
     def get(self, request, *args, **kwargs):
         """Add the logged in user to this group."""
         pk = self.kwargs.get('pk')
@@ -195,6 +206,17 @@ class GroupJoinView(LoginRequiredMixin, View):
         user = self.request.user
         GroupInvitation.create(user=user, group=group, inviting=False)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        group = Group.objects.get(id=pk)
+        user_pk = self.request.POST.get('user')
+        if user_pk:
+            user = User.objects.get(id=user_pk)
+            GroupInvitation.create(user=user, group=group, inviting=True)
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False})
 
 
 class GroupLeaveView(LoginRequiredMixin, View):

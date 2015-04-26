@@ -1,6 +1,6 @@
 function sendResponse(val){
-    var pathname = window.location.pathname; 
-    $.post(pathname, {accept: val}, function(data){
+    var pathname = window.location.pathname;
+    $.post(pathname, {accept: val}, function(data) {
         window.location.href = data.url;
     });
 }
