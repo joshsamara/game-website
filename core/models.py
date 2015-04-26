@@ -131,8 +131,8 @@ class Group(models.Model):
 class GroupInvitation(models.Model):
     """An invitation for a group."""
 
-    user = models.ForeignKey(User)
-    group = models.ForeignKey(Group)
+    user = models.ForeignKey(User, null=False)
+    group = models.ForeignKey(Group, null=False)
     inviting = models.BooleanField(null=False, default=True)
 
     # For the inviting field here:

@@ -176,11 +176,13 @@ class GroupInvitationView(LoginRequiredMixin, DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-        # Don't worry about invalid posts
+        # Don't do anything about invalid posts
         invite = self.get_object()
         group = invite.group
         if invite.valid_user(request.user):
             accept = request.POST.get('accept')
+            # Convert from a string here
+            accept = {'True': True, 'False': False}.get(accept)
             if accept:
                 invite.accept()
             elif accept is False:
