@@ -7,7 +7,7 @@
 </div>
 
 <div class="row">
-    <div class="center-block">
+    <div class="center-block" style="padding-left: 10px; padding-right: 10px">
         {% if game.image %}
             <img src="{{ game.image.thumbnail.url }}"
                  class="img-responsive img-rounded"
@@ -50,6 +50,7 @@
 <script>
     {# This script is used to pass django variables to game-ratings.js #}
     ratings_url = "{% url 'core:games:ratings' game.id %}";
+    console.log(ratings_url);
     total_ratings_url = "{% url 'core:games:total_ratings' game.id %}";
     avg_rating = ({{ game.average_rating }})
 </script>
@@ -75,6 +76,8 @@
                         (Latest)
                     {% endif %}
                 </li>
+            {% empty %}
+                <li>No downloads available!</li>
             {% endfor %}
         </ul>
     </div>

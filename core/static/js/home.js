@@ -3,7 +3,7 @@ var app = angular.module("HomePage", ['ngAnimate']);
 app.controller("ListController", function($scope, $http){
   // Do a search, set the field in the scope to the response
   function search(params, field){
-    $http({url: "/games/api", method: "GET", params: params})
+    $http({url: baseURL + "games/api", method: "GET", params: params})
       .success(function(response){
         $scope[field] = response;
       }
