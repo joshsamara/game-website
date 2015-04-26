@@ -33,7 +33,8 @@
     <div class="row">
 
         {#### SIDEBAR ####}
-        <div class="col-md-2" style="border-right: solid 1px #eee; border-top: solid 1px #eee">
+        <div class="col-md-2"
+             style="border-right: solid 1px #eee; border-top: solid 1px #eee; padding-left: 10px; padding-right: 10px">
             {% include "games/specific_game_sidebar.html" %}
         </div>
 
@@ -51,20 +52,20 @@
             </div>
 
             {% if game.link %}
-            <div class="row">
+                <div class="row">
                     <strong>
                         Link:
                     </strong>
                     <a href="{{ game.link }}">
                         {{ game.link }}
                     </a>
-            </div>
+                </div>
             {% endif %}
 
             {% if game.event_name %}
                 <div class="row">
                     <br/>
-                        Brought to you by {{ game.event_name }}
+                    Brought to you by {{ game.event_name }}
                 </div>
             {% endif %}
 
@@ -100,7 +101,7 @@
                         </div>
                     </div>
                 {% empty %}
-                <p class="lead text-center top10"><em>No related games found...</em></p>
+                    <p class="lead text-center top10"><em>No related games found...</em></p>
                 {% endfor %}
             </div>
         </div>
