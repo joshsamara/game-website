@@ -1,7 +1,8 @@
 """User related views."""
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View, ListView, DetailView, CreateView, RedirectView
-from django.http import HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseRedirect, JsonResponse
 from core.forms import RegisterUserForm, EditUserForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
@@ -141,6 +142,11 @@ class GroupInvitationView(LoginRequiredMixin, DetailView):
         invitation = get_object_or_404(GroupInvitation, id=pk)
         return invitation
 
+    # We need this to override django's defaults for posting.
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(GroupInvitationView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         """Set the page title."""
         context = super(GroupInvitationView, self).get_context_data(**kwargs)
@@ -155,12 +161,25 @@ class GroupInvitationView(LoginRequiredMixin, DetailView):
 
         # not inviting === this is a request to join the group
         viewable = inviting and is_user or not inviting and in_group
-        context["viewable"] = True
+        context["viewable"] = viewable
 
         context["in_group"] = in_group
         context["is_user"] = is_user
         context["invite"] = invite
         return context
+
+    def post(self, request, *args, **kwargs):
+        # Don't worry about invalid posts
+        invite = self.get_object()
+        group = invite.group
+        if invite.valid_user(request.user):
+            accept = request.POST.get('accept')
+            if accept:
+                invite.accept()
+            elif accept is False:
+                invite.decline()
+        return JsonResponse({'url': reverse('core:groups-detail',
+                                            kwargs={'pk': group.id})})
 
 
 class GroupJoinView(LoginRequiredMixin, View):

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block title %}Group Invitation{% endblock %}
 
@@ -11,15 +12,20 @@
         {% if not viewable %}
             You do not have permission to view this invitation. Click <a href="{% url 'core:home' %}">here</a> to return home.
         {% endif %}
-        User "<a href="{% url 'core:profile:user-profile' pk=invite.user.id %}">{{invite.user}}</a>" would like to join your group 
-            "<a href="{% url 'core:groups-detail' pk=invite.user.id %}">{{invite.group}}</a>". Allow this? </p>
 
-        Group "<a href="{% url 'core:groups-detail' pk=invite.user.id %}">{{invite.group}}</a>" would like you to join their group. Allow this?
-        </div>
+        {% if invite.inviting and is_user %}
+            Group "<a href="{% url 'core:groups-detail' pk=invite.user.id %}">{{invite.group}}</a>" would like you to join their group.
+        {% else %}
+            User "<a href="{% url 'core:profile:user-profile' pk=invite.user.id %}">{{invite.user}}</a>" would like to join your group 
+                "<a href="{% url 'core:groups-detail' pk=invite.user.id %}">{{invite.group}}</a>".</p>
+        {% endif %}
+
     </p>
+    </div>
     <div>
-        <button class="btn btn-success"><i class="fa fa-check"></i> Accept</button>
-        <button class="btn btn-danger"><i class="fa fa-times"></i> Decline</button>
+        <button id="acceptBtn" class="btn btn-success"><i class="fa fa-check"></i> Accept</button>
+        <button id="declineBtn" class="btn btn-danger"><i class="fa fa-times"></i> Decline</button>
     </div>
 
+<script type="text/javascript" src="{% static "js/invite.js" %}"></script>
 {% endblock %}

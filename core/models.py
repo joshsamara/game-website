@@ -132,6 +132,18 @@ class GroupInvitation(models.Model):
     # true: this is an invation from the group to the user
     # false: this is a request from the user to join the group
 
+    def accept(self):
+        self.group.members.add(self.user)
+        self.group.save()
+        self.delete()
+
+    def decline(self):
+        self.delete()
+
+    def valid_user(self, user):
+        return ((self.inviting and user == self.user) or
+                (not self.inviting and user in self.group.members.all()))
+
 
 class GameTag(models.Model):
     """Tags to label Games."""

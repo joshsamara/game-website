@@ -16,9 +16,9 @@ urlpatterns = patterns(
     url(r'^games/', include('core.urls.games', namespace="games")),
     url(r'^register/$', register, name='register'),
 
-    # TODO: Separate user urls out
     url(r'^profile/', include('core.urls.profile', namespace='profile')),
 
+    # Group urls
     url(r'^user/groups/$', UserGroupsView.as_view(), name='user-groups'),
     url(r'^groups/$', GroupsView.as_view(), name='groups'),
     url(r'^groups/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='groups-detail'),
@@ -26,6 +26,8 @@ urlpatterns = patterns(
     url(r'^groups/(?P<pk>\d+)/leave/$', GroupLeaveView.as_view(), name='groups-leave'),
     url(r'^invite/(?P<pk>\d+)/$', GroupInvitationView.as_view(), name='invitation'),
     url(r'^groups/new/$', GroupCreateView.as_view(), name='groups-new'),
+
+    # Login urls
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': 'core:home'}, name='logout'),
