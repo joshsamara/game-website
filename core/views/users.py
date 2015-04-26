@@ -6,7 +6,8 @@ from core.forms import RegisterUserForm, EditUserForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
-from core.models import Group, User, Game
+from core.models import Group, User, Game, GroupInvitation
+from django.shortcuts import get_object_or_404
 from . import LoginRequiredMixin
 
 
@@ -124,6 +125,41 @@ class GroupDetailView(DetailView):
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context["in_group"] = self.request.user in self.object.members.all()
         context["games"] = self.object.game_set.all()
+        return context
+
+
+class GroupInvitationView(LoginRequiredMixin, DetailView):
+    """View a group invitation."""
+
+    model = GroupInvitation
+    template_name = "user/invitation.html"
+
+    def get_object(self, **kwargs):
+        """Get the specific group.
+        """
+        pk = self.kwargs.get('pk')
+        invitation = get_object_or_404(GroupInvitation, id=pk)
+        return invitation
+
+    def get_context_data(self, **kwargs):
+        """Set the page title."""
+        context = super(GroupInvitationView, self).get_context_data(**kwargs)
+        invite = self.object
+        group = invite.group
+        user = invite.user
+        inviting = invite.inviting
+
+        # Simplify our checks here
+        in_group = self.request.user in group.members.all()
+        is_user = self.request.user == user
+
+        # not inviting === this is a request to join the group
+        viewable = inviting and is_user or not inviting and in_group
+        context["viewable"] = True
+
+        context["in_group"] = in_group
+        context["is_user"] = is_user
+        context["invite"] = invite
         return context
 
 
